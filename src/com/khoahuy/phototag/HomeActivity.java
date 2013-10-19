@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-
 import com.khoahuy.database.NFCItemProvider;
 import com.khoahuy.phototag.model.NFCItem;
 
@@ -30,8 +29,6 @@ import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.nfc.NfcAdapter;
 import android.os.Build;
@@ -40,9 +37,6 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.Log;
-import android.view.View;
-import android.widget.ImageView;
-
 
 /**
  * An {@link Activity} which handles a broadcast of a new tag that the device
@@ -52,23 +46,11 @@ public class HomeActivity extends Activity {
 
 	private static final int ACTION_TAKE_PHOTO_B = 1;
 	private static final int ACTION_OPEN_GALLERY = 4;
-
-	//private static final String BITMAP_STORAGE_KEY = "viewbitmap";
-	//private static final String IMAGEVIEW_VISIBILITY_STORAGE_KEY = "imageviewvisibility";
-	private ImageView mImageView;
-	//private Bitmap mImageBitmap;
-
 	private String mCurrentPhotoPath;
-
 	private static final String JPEG_FILE_PREFIX = "IMG_";
 	private static final String JPEG_FILE_SUFFIX = ".jpg";
-
 	private AlbumStorageDirFactory mAlbumStorageDirFactory = null;
-
-	private String uid;
-	//private static final DateFormat TIME_FORMAT = SimpleDateFormat
-	//		.getDateTimeInstance();
-	
+	private String nfcid;
 	private NfcAdapter mAdapter;
 	private PendingIntent mPendingIntent;
 
@@ -82,7 +64,7 @@ public class HomeActivity extends Activity {
 
 		nfcProvider = new NFCItemProvider(this.getContentResolver());
 		// Init NFC Reader
-		
+
 		mDialog = new AlertDialog.Builder(this).setNeutralButton("Ok", null)
 				.create();
 
@@ -98,7 +80,7 @@ public class HomeActivity extends Activity {
 
 		// Init PhotoIntent
 		// mImageView = (ImageView) findViewById(R.id.imageView1);
-		
+
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
 			mAlbumStorageDirFactory = new FroyoAlbumDirFactory();
 			Log.i("Huy", "Load FroyoAlbumDirFactory");
@@ -116,6 +98,17 @@ public class HomeActivity extends Activity {
 				showWirelessSettingsDialog();
 			}
 			mAdapter.enableForegroundDispatch(this, mPendingIntent, null, null);
+		}
+
+		Intent callerIntent = getIntent();
+		if (callerIntent != null && Intent.EXTRA_UID.equals(callerIntent.getAction()) ) {
+			Bundle packageFromCaller = callerIntent.getBundleExtra("MyPackage");
+			if (packageFromCaller != null)
+			{
+				nfcid = packageFromCaller.getString("nfcid");
+				processNfcID();
+				setIntent(callerIntent);
+			}
 		}
 	}
 
@@ -172,25 +165,31 @@ public class HomeActivity extends Activity {
 
 	@Override
 	public void onNewIntent(Intent intent) {
-		uid = "";
+		nfcid = "";
 		if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
-			uid = this.ByteArrayToHexString(intent
+			nfcid = this.ByteArrayToHexString(intent
 					.getByteArrayExtra(NfcAdapter.EXTRA_ID));
-			Log.i("Huy", "NDEF DISCOVERED = " + uid);
+			Log.i("Huy", "NDEF DISCOVERED = " + nfcid);
 
 		} else if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction())) {
-			uid = this.ByteArrayToHexString(intent
+			nfcid = this.ByteArrayToHexString(intent
 					.getByteArrayExtra(NfcAdapter.EXTRA_ID));
-			Log.i("Huy", "TAG DISCOVERED = " + uid);
+			Log.i("Huy", "TAG DISCOVERED = " + nfcid);
 
 		} else if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(intent.getAction())) {
-			uid = this.ByteArrayToHexString(getIntent().getByteArrayExtra(
+			nfcid = this.ByteArrayToHexString(getIntent().getByteArrayExtra(
 					NfcAdapter.EXTRA_ID));
-			Log.i("Huy", "TECH DISCOVERED = " + uid);
+			Log.i("Huy", "TECH DISCOVERED = " + nfcid);
 		}
 		setIntent(intent);
-		if (("").equals(uid) || uid == null) {
-			AlertDialog.Builder builder = new AlertDialog.Builder(HomeActivity.this);
+		processNfcID();
+		// resolveIntent(intent);
+	}
+
+	private void processNfcID() {
+		if (("").equals(nfcid) || nfcid == null) {
+			AlertDialog.Builder builder = new AlertDialog.Builder(
+					HomeActivity.this);
 			builder.setTitle("Error");
 			builder.setMessage("Dected your tag fail");
 			builder.setPositiveButton("Continue",
@@ -200,26 +199,24 @@ public class HomeActivity extends Activity {
 						}
 					});
 			builder.show();
-		} else if (existedUID(uid)) {
-			displayNFCItem(uid);
+		} else if (existedUID(nfcid)) {
+			displayNFCItem(nfcid);
 		} else {
 			dispatchTakePictureIntent(ACTION_TAKE_PHOTO_B);
 		}
-		// resolveIntent(intent);
 	}
-	
-	private void displayNFCItem(String uid)
-	{
+
+	private void displayNFCItem(String nfcid) {
 		Intent myIntent = new Intent(this, ViewImageActivity.class);
-		Bundle bundle=new Bundle();
-		bundle.putString("uid", uid);
+		Bundle bundle = new Bundle();
+		bundle.putString("nfcid", nfcid);
 		myIntent.setAction(Intent.ACTION_VIEW);
 		myIntent.putExtra("MyPackage", bundle);
 		startActivity(myIntent);
 	}
 
-	private boolean existedUID(String uid) {
-		if (nfcProvider.findProduct(uid) == null)
+	private boolean existedUID(String nfcid) {
+		if (nfcProvider.findWaitingItem(nfcid) == null)
 			return false;
 		else
 			return true;
@@ -319,6 +316,7 @@ public class HomeActivity extends Activity {
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		setIntent(data);
 		switch (requestCode) {
 		case ACTION_TAKE_PHOTO_B: {
 			if (resultCode == RESULT_OK) {
@@ -359,11 +357,10 @@ public class HomeActivity extends Activity {
 		// Store to db
 
 		NFCItem item = new NFCItem();
-		item.id = uid;
-		item.image = mCurrentPhotoPath;
-		item.checkIn = new Date();
-		item.checkOut = new Date();
-		nfcProvider.addProduct(item);
+		item.setNfcid(nfcid);
+		item.setImage(mCurrentPhotoPath);
+		item.setCheckIn((new Date()).getTime());
+		nfcProvider.addWaitingItem(item);
 	}
 
 }

@@ -1,5 +1,7 @@
 package com.khoahuy.database;
 
+import java.util.Date;
+
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -8,61 +10,75 @@ import com.khoahuy.database.provider.MyContentProvider;
 import com.khoahuy.phototag.model.NFCItem;
 
 public class NFCItemProvider {
-	
-	private ContentResolver myCR;
-	
-	public final String COLUMN_ID = "_id";
-	public final String COLUMN_IMAGE = "image";
-	public final String COLUMN_CHECK_IN = "checkin";
-	public final String COLUMN_CHECK_OUT = "checkout";
 
-	public NFCItemProvider(ContentResolver cr)
-	{
+	private ContentResolver myCR;
+
+	public static final String COLUMN_ID = "id";
+	public static final String COLUMN_IMAGE = "image";
+	public static final String COLUMN_CHECK_IN = "checkin";
+	public static final String COLUMN_CHECK_OUT = "checkout";
+	
+	public static final String COLUMN_NFCID = "nfcid";
+
+	public NFCItemProvider(ContentResolver cr) {
 		myCR = cr;
 	}
-	
-	public void addProduct(NFCItem item) {
+
+	public void addWaitingItem(NFCItem item) {
 
 		ContentValues values = new ContentValues();
-		values.put(COLUMN_ID, item.getId());
+		values.put(COLUMN_NFCID, item.getNfcid());
 		values.put(COLUMN_IMAGE, item.getImage());
-		values.put(COLUMN_CHECK_IN, item.getCheckIn().getTime());
-		values.put(COLUMN_CHECK_OUT, item.getCheckOut().getTime());
-		myCR.insert(MyContentProvider.CONTENT_URI, values);
+		if (item.getCheckIn() != null)
+			values.put(COLUMN_CHECK_IN, item.getCheckIn());
+		else
+			values.put(COLUMN_CHECK_IN, ((new Date()).getTime()));
+
+		myCR.insert(MyContentProvider.WAITING_CONTENT_URI, values);
 	}
 
-	public NFCItem findProduct(String id) {
-		String[] projection = { COLUMN_ID, COLUMN_IMAGE, COLUMN_CHECK_IN,
-				COLUMN_CHECK_OUT };
+	public NFCItem findWaitingItem(String nfcid) {
+		String[] projection = { COLUMN_NFCID, COLUMN_IMAGE, COLUMN_CHECK_IN};
 
-		String selection = COLUMN_ID + " = \"" + id + "\"";
+		String selection = COLUMN_NFCID + " = \"" + nfcid + "\"";
 
-		Cursor cursor = myCR.query(MyContentProvider.CONTENT_URI, projection,
+		Cursor cursor = myCR.query(MyContentProvider.WAITING_CONTENT_URI, projection,
 				selection, null, null);
 
 		NFCItem item = new NFCItem();
 
 		if (cursor.moveToFirst()) {
 			cursor.moveToFirst();
-			item.setId(cursor.getString(0));
+			item.setNfcid(cursor.getString(0));
 			item.setImage(cursor.getString(1));
-			//item.setCheckIn(cursor.getString(2));
-			//item.setCheckOut(cursor.getString(2));
-
+			item.setCheckIn(cursor.getLong(2));
 			cursor.close();
 		} else {
 			item = null;
 		}
 		return item;
 	}
+	
+	public void addUsedItem(NFCItem item) {
 
-	public boolean deleteItem(String id) {
+		ContentValues values = new ContentValues();
+		values.put(COLUMN_NFCID, item.getNfcid());
+		values.put(COLUMN_CHECK_IN, item.getCheckIn());
+		if (item.getCheckOut() != null)
+			values.put(COLUMN_CHECK_OUT, item.getCheckOut());
+		else			
+			values.put(COLUMN_CHECK_OUT, ((new Date()).getTime()));
+
+		myCR.insert(MyContentProvider.USED_CONTENT_URI, values);
+	}
+
+	public boolean deleteWaitingItem(String nfcid) {
 
 		boolean result = false;
 
-		String selection = COLUMN_ID + " = \"" + id + "\"";
+		String selection = COLUMN_NFCID + " = \"" + nfcid + "\"";
 
-		int rowsDeleted = myCR.delete(MyContentProvider.CONTENT_URI, selection,
+		int rowsDeleted = myCR.delete(MyContentProvider.WAITING_CONTENT_URI, selection,
 				null);
 
 		if (rowsDeleted > 0)

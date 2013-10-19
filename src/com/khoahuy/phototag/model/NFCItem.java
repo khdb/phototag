@@ -1,26 +1,27 @@
 package com.khoahuy.phototag.model;
 
-
-import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import android.net.ParseException;
-
 public class NFCItem {
 
-	public String id;
+	public int id;
+	public String nfcid;
 	public String image;
-	public Date checkIn;
-	public Date checkOut;
+	public Long checkIn;
+	public Long checkOut;
 
-	public String getId() {
+	public int getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(int id) {
 		this.id = id;
+	}
+	
+	public String getNfcid() {
+		return nfcid;
+	}
+
+	public void setNfcid(String nfcid) {
+		this.nfcid = nfcid;
 	}
 
 	public String getImage() {
@@ -31,20 +32,22 @@ public class NFCItem {
 		this.image = image;
 	}
 
-	public Date getCheckIn() {
+	public Long getCheckIn() {
 		return checkIn;
 	}
 
-	public void setCheckIn(Date checkIn) {
+	public void setCheckIn(Long checkIn) {
 		this.checkIn = checkIn;
 	}
 
-	public Date getCheckOut() {
+	public Long getCheckOut() {
 		return checkOut;
 	}
 
-	public void setCheckOut(Date checkOut) {
+	public void setCheckOut(Long checkOut) {
 		this.checkOut = checkOut;
 	}
+	
+	
 
 }

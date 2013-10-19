@@ -16,89 +16,113 @@ public class MyContentProvider extends ContentProvider {
 	private MyDBHandler myDB;
 
 	private static final String AUTHORITY = "com.khoahuy.database.provider.MyContentProvider";
-	private static final String ITEMS_TABLE = "items";
-	public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY
-			+ "/" + ITEMS_TABLE);
+	private static final String WAITING_ITEMS_TABLE = "waiting_items";
+	private static final String USED_ITEMS_TABLE = "used_items";
+	public static final Uri WAITING_CONTENT_URI = Uri.parse("content://"
+			+ AUTHORITY + "/" + WAITING_ITEMS_TABLE);
+	public static final Uri USED_CONTENT_URI = Uri.parse("content://"
+			+ AUTHORITY + "/" + USED_ITEMS_TABLE);
 
-	public static final int ITEMS = 1;
-	public static final int ITEMS_ID = 2;
+	public static final int WAITING_ITEMS = 1;
+	public static final int WAITING_ITEMS_ID = 2;
+	public static final int USED_ITEMS = 3;
+	public static final int USED_ITEMS_ID = 4;
 
 	private static final UriMatcher sURIMatcher = new UriMatcher(
 			UriMatcher.NO_MATCH);
 
 	static {
-		sURIMatcher.addURI(AUTHORITY, ITEMS_TABLE, ITEMS);
-		sURIMatcher.addURI(AUTHORITY, ITEMS_TABLE + "/#", ITEMS_ID);
+		sURIMatcher.addURI(AUTHORITY, WAITING_ITEMS_TABLE, WAITING_ITEMS);
+		sURIMatcher.addURI(AUTHORITY, WAITING_ITEMS_TABLE + "/#",
+				WAITING_ITEMS_ID);
+		sURIMatcher.addURI(AUTHORITY, USED_ITEMS_TABLE, USED_ITEMS);
+		sURIMatcher.addURI(AUTHORITY, USED_ITEMS_TABLE + "/#", USED_ITEMS_ID);
 	}
 
 	@Override
-	public int delete(Uri uri, String selection, String[] selectionArgs) {	
+	public int delete(Uri uri, String selection, String[] selectionArgs) {
 
 		int uriType = sURIMatcher.match(uri);
 		SQLiteDatabase sqlDB = myDB.getWritableDatabase();
 		int rowsDeleted = 0;
 
 		switch (uriType) {
-		    case ITEMS:
-		      rowsDeleted = sqlDB.delete(MyDBHandler.TABLE_ITEMS,
-	              selection,
-		        selectionArgs);
-		        break;
-		      
-		    case ITEMS_ID:
-		      String id = uri.getLastPathSegment();
-		      if (TextUtils.isEmpty(selection)) {
-		        rowsDeleted = sqlDB.delete(MyDBHandler.TABLE_ITEMS,
-		        		MyDBHandler.COLUMN_ID + "=" + id, 
-		            null);
-		      } else {
-		        rowsDeleted = sqlDB.delete(MyDBHandler.TABLE_ITEMS,
-		        		MyDBHandler.COLUMN_ID + "=" + id 
-		            + " and " + selection,
-		            selectionArgs);
-		      }
-		      break;
-		    default:
-		      throw new IllegalArgumentException("Unknown URI: " + uri);
-		    }
-		    getContext().getContentResolver().notifyChange(uri, null);
-		    return rowsDeleted;
+		case WAITING_ITEMS:
+			rowsDeleted = sqlDB.delete(MyDBHandler.WAITING_ITEMS_TABLE,
+					selection, selectionArgs);
+			break;
+
+		case WAITING_ITEMS_ID:
+			String nfcid = uri.getLastPathSegment();
+			if (TextUtils.isEmpty(selection)) {
+				rowsDeleted = sqlDB.delete(MyDBHandler.WAITING_ITEMS_TABLE,
+						MyDBHandler.COLUMN_ID + "=" + nfcid, null);
+			} else {
+				rowsDeleted = sqlDB.delete(MyDBHandler.WAITING_ITEMS_TABLE,
+						MyDBHandler.COLUMN_ID + "=" + nfcid + " and " + selection,
+						selectionArgs);
+			}
+			break;
+		case USED_ITEMS:
+			rowsDeleted = sqlDB.delete(MyDBHandler.USED_ITEMS_TABLE, selection,
+					selectionArgs);
+			break;
+
+		case USED_ITEMS_ID:
+			String id = uri.getLastPathSegment();
+			if (TextUtils.isEmpty(selection)) {
+				rowsDeleted = sqlDB.delete(MyDBHandler.USED_ITEMS_TABLE,
+						MyDBHandler.COLUMN_ID + "=" + id, null);
+			} else {
+				rowsDeleted = sqlDB.delete(MyDBHandler.WAITING_ITEMS_TABLE,
+						MyDBHandler.COLUMN_ID + "=" + id + " and " + selection,
+						selectionArgs);
+			}
+			break;
+
+		default:
+			throw new IllegalArgumentException("Unknown URI: " + uri);
+		}
+		getContext().getContentResolver().notifyChange(uri, null);
+		return rowsDeleted;
 	}
-
-
 
 	@Override
 	public String getType(Uri uri) {
 		// TODO Auto-generated method stub
 		return null;
-		/*switch (uriMatcher.match(uri)){
-	      case ITEMS:
-	         return "vnd.android.cursor.dir/vnd.example.students";
-	     
-	      case ITEMS_ID:
-	         return "vnd.android.cursor.item/vnd.example.students";
-	      default:
-	         throw new IllegalArgumentException("Unsupported URI: " + uri);
-	      }*/
+		/*
+		 * switch (uriMatcher.match(uri)){ case ITEMS: return
+		 * "vnd.android.cursor.dir/vnd.example.students";
+		 * 
+		 * case ITEMS_ID: return "vnd.android.cursor.item/vnd.example.students";
+		 * default: throw new IllegalArgumentException("Unsupported URI: " +
+		 * uri); }
+		 */
 	}
 
 	@Override
 	public Uri insert(Uri uri, ContentValues values) {
 		// TODO Auto-generated method stub
 		int uriType = sURIMatcher.match(uri);
-
+		Uri result;
 		SQLiteDatabase sqlDB = myDB.getWritableDatabase();
 
 		long id = 0;
 		switch (uriType) {
-		case ITEMS:
-			id = sqlDB.insert(MyDBHandler.TABLE_ITEMS, null, values);
+		case WAITING_ITEMS:
+			id = sqlDB.insert(MyDBHandler.WAITING_ITEMS_TABLE, null, values);
+			result = Uri.parse(WAITING_ITEMS_TABLE + "/" + id); 
+			break;
+		case USED_ITEMS:
+			id = sqlDB.insert(MyDBHandler.USED_ITEMS_TABLE, null, values);
+			result = Uri.parse(USED_ITEMS_TABLE + "/" + id);
 			break;
 		default:
 			throw new IllegalArgumentException("Unknown URI: " + uri);
 		}
 		getContext().getContentResolver().notifyChange(uri, null);
-		return Uri.parse(ITEMS_TABLE + "/" + id);
+		return result;
 	}
 
 	@Override
@@ -113,16 +137,22 @@ public class MyContentProvider extends ContentProvider {
 			String[] selectionArgs, String sortOrder) {
 
 		SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
-		queryBuilder.setTables(MyDBHandler.TABLE_ITEMS);
+		queryBuilder.setTables(MyDBHandler.WAITING_ITEMS_TABLE);
 
 		int uriType = sURIMatcher.match(uri);
 
 		switch (uriType) {
-		case ITEMS_ID:
+		case WAITING_ITEMS_ID:
+			queryBuilder.appendWhere(MyDBHandler.COLUMN_NFCID + "="
+					+ uri.getLastPathSegment());
+			break;
+		case WAITING_ITEMS:
+			break;
+		case USED_ITEMS_ID:
 			queryBuilder.appendWhere(MyDBHandler.COLUMN_ID + "="
 					+ uri.getLastPathSegment());
 			break;
-		case ITEMS:
+		case USED_ITEMS:
 			break;
 		default:
 			throw new IllegalArgumentException("Unknown URI");
@@ -143,19 +173,34 @@ public class MyContentProvider extends ContentProvider {
 		int rowsUpdated = 0;
 
 		switch (uriType) {
-		case ITEMS:
-			rowsUpdated = sqlDB.update(MyDBHandler.TABLE_ITEMS, values,
+		case WAITING_ITEMS:
+			rowsUpdated = sqlDB.update(MyDBHandler.WAITING_ITEMS_TABLE, values,
 					selection, selectionArgs);
 			break;
-		case ITEMS_ID:
+		case WAITING_ITEMS_ID:
+			String nfcid = uri.getLastPathSegment();
+			if (TextUtils.isEmpty(selection)) {
+				rowsUpdated = sqlDB.update(MyDBHandler.WAITING_ITEMS_TABLE,
+						values, MyDBHandler.COLUMN_NFCID + "=" + nfcid, null);
+			} else {
+				rowsUpdated = sqlDB.update(MyDBHandler.WAITING_ITEMS_TABLE,
+						values, MyDBHandler.COLUMN_NFCID + "=" + nfcid + " and "
+								+ selection, selectionArgs);
+			}
+			break;
+		case USED_ITEMS:
+			rowsUpdated = sqlDB.update(MyDBHandler.USED_ITEMS_TABLE, values,
+					selection, selectionArgs);
+			break;
+		case USED_ITEMS_ID:
 			String id = uri.getLastPathSegment();
 			if (TextUtils.isEmpty(selection)) {
-				rowsUpdated = sqlDB.update(MyDBHandler.TABLE_ITEMS, values,
-						MyDBHandler.COLUMN_ID + "=" + id, null);
+				rowsUpdated = sqlDB.update(MyDBHandler.USED_ITEMS_TABLE,
+						values, MyDBHandler.COLUMN_ID + "=" + id, null);
 			} else {
-				rowsUpdated = sqlDB.update(MyDBHandler.TABLE_ITEMS, values,
-						MyDBHandler.COLUMN_ID + "=" + id + " and " + selection,
-						selectionArgs);
+				rowsUpdated = sqlDB.update(MyDBHandler.USED_ITEMS_TABLE,
+						values, MyDBHandler.COLUMN_ID + "=" + id + " and "
+								+ selection, selectionArgs);
 			}
 			break;
 		default:

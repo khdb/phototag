@@ -29,6 +29,7 @@ import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Shader.TileMode;
 import android.net.Uri;
 import android.nfc.NfcAdapter;
 import android.os.Build;
@@ -37,6 +38,8 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 
 /**
  * An {@link Activity} which handles a broadcast of a new tag that the device
@@ -74,7 +77,7 @@ public class HomeActivity extends Activity {
 			finish();
 			return;
 		}
-
+	
 		mPendingIntent = PendingIntent.getActivity(this, 0, new Intent(this,
 				getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
 
@@ -99,6 +102,10 @@ public class HomeActivity extends Activity {
 			}
 			mAdapter.enableForegroundDispatch(this, mPendingIntent, null, null);
 		}
+		
+		CharSequence title = "Photo Tag " + nfcProvider.countWaitingItem();
+		Log.i("Huy", "Title = " + title);
+		this.setTitle(title);
 
 		Intent callerIntent = getIntent();
 		if (callerIntent != null && Intent.EXTRA_UID.equals(callerIntent.getAction()) ) {
@@ -110,6 +117,21 @@ public class HomeActivity extends Activity {
 				setIntent(callerIntent);
 			}
 		}
+	}
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		if (mAdapter != null) {
+			mAdapter.disableForegroundDispatch(this);
+		}
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+	    MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.main, menu);
+	    return true;
 	}
 
 	private void showMessage(int title, int message) {
@@ -132,14 +154,6 @@ public class HomeActivity extends Activity {
 			out += hex[i];
 		}
 		return out;
-	}
-
-	@Override
-	protected void onPause() {
-		super.onPause();
-		if (mAdapter != null) {
-			mAdapter.disableForegroundDispatch(this);
-		}
 	}
 
 	private void showWirelessSettingsDialog() {

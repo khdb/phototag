@@ -59,6 +59,16 @@ public class NFCItemProvider {
 		return item;
 	}
 	
+	public int countWaitingItem() {
+		String[] projection = { COLUMN_NFCID };
+		Cursor cursor = myCR.query(MyContentProvider.WAITING_CONTENT_URI, projection,
+				null, null, null);
+
+		int result = cursor.getCount();
+		cursor.close();
+		return result;
+	}
+	
 	public void addUsedItem(NFCItem item) {
 
 		ContentValues values = new ContentValues();

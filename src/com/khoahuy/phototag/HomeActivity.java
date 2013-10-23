@@ -26,26 +26,20 @@ import com.khoahuy.phototag.model.NFCItem;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Shader.TileMode;
 import android.net.Uri;
-import android.nfc.NfcAdapter;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.provider.Settings;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
 
 /**
  * An {@link Activity} which handles a broadcast of a new tag that the device
  * just discovered.
  */
-public class HomeActivity extends Activity {
+public class HomeActivity extends AbstractActivity {
 
 	private static final int ACTION_TAKE_PHOTO_B = 1;
 	private static final int ACTION_OPEN_GALLERY = 4;
@@ -53,11 +47,8 @@ public class HomeActivity extends Activity {
 	private static final String JPEG_FILE_PREFIX = "IMG_";
 	private static final String JPEG_FILE_SUFFIX = ".jpg";
 	private AlbumStorageDirFactory mAlbumStorageDirFactory = null;
-	private String nfcid;
-	private NfcAdapter mAdapter;
-	private PendingIntent mPendingIntent;
 
-	private AlertDialog mDialog;
+
 	private NFCItemProvider nfcProvider;
 
 	@Override
@@ -68,18 +59,7 @@ public class HomeActivity extends Activity {
 		nfcProvider = new NFCItemProvider(this.getContentResolver());
 		// Init NFC Reader
 
-		mDialog = new AlertDialog.Builder(this).setNeutralButton("Ok", null)
-				.create();
-
-		mAdapter = NfcAdapter.getDefaultAdapter(this);
-		if (mAdapter == null) {
-			showMessage(R.string.error, R.string.no_nfc);
-			finish();
-			return;
-		}
-	
-		mPendingIntent = PendingIntent.getActivity(this, 0, new Intent(this,
-				getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+		
 
 		// Init PhotoIntent
 		// mImageView = (ImageView) findViewById(R.id.imageView1);
@@ -96,12 +76,7 @@ public class HomeActivity extends Activity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		if (mAdapter != null) {
-			if (!mAdapter.isEnabled()) {
-				showWirelessSettingsDialog();
-			}
-			mAdapter.enableForegroundDispatch(this, mPendingIntent, null, null);
-		}
+		
 		
 		CharSequence title = "Photo Tag " + nfcProvider.countWaitingItem();
 		Log.i("Huy", "Title = " + title);
@@ -118,89 +93,9 @@ public class HomeActivity extends Activity {
 			}
 		}
 	}
-	
+		
 	@Override
-	protected void onPause() {
-		super.onPause();
-		if (mAdapter != null) {
-			mAdapter.disableForegroundDispatch(this);
-		}
-	}
-	
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-	    MenuInflater inflater = getMenuInflater();
-	    inflater.inflate(R.menu.main, menu);
-	    return true;
-	}
-
-	private void showMessage(int title, int message) {
-		mDialog.setTitle(title);
-		mDialog.setMessage(getText(message));
-		mDialog.show();
-	}
-
-	private String ByteArrayToHexString(byte[] inarray) {
-		int i, j, in;
-		String[] hex = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A",
-				"B", "C", "D", "E", "F" };
-		String out = "";
-
-		for (j = 0; j < inarray.length; ++j) {
-			in = (int) inarray[j] & 0xff;
-			i = (in >> 4) & 0x0f;
-			out += hex[i];
-			i = in & 0x0f;
-			out += hex[i];
-		}
-		return out;
-	}
-
-	private void showWirelessSettingsDialog() {
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage(R.string.nfc_disabled);
-		builder.setPositiveButton(android.R.string.ok,
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialogInterface, int i) {
-						Intent intent = new Intent(
-								Settings.ACTION_WIRELESS_SETTINGS);
-						startActivity(intent);
-					}
-				});
-		builder.setNegativeButton(android.R.string.cancel,
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialogInterface, int i) {
-						finish();
-					}
-				});
-		builder.create().show();
-		return;
-	}
-
-	@Override
-	public void onNewIntent(Intent intent) {
-		nfcid = "";
-		if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
-			nfcid = this.ByteArrayToHexString(intent
-					.getByteArrayExtra(NfcAdapter.EXTRA_ID));
-			Log.i("Huy", "NDEF DISCOVERED = " + nfcid);
-
-		} else if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction())) {
-			nfcid = this.ByteArrayToHexString(intent
-					.getByteArrayExtra(NfcAdapter.EXTRA_ID));
-			Log.i("Huy", "TAG DISCOVERED = " + nfcid);
-
-		} else if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(intent.getAction())) {
-			nfcid = this.ByteArrayToHexString(getIntent().getByteArrayExtra(
-					NfcAdapter.EXTRA_ID));
-			Log.i("Huy", "TECH DISCOVERED = " + nfcid);
-		}
-		setIntent(intent);
-		processNfcID();
-		// resolveIntent(intent);
-	}
-
-	private void processNfcID() {
+	protected void processNfcID() {
 		if (("").equals(nfcid) || nfcid == null) {
 			AlertDialog.Builder builder = new AlertDialog.Builder(
 					HomeActivity.this);

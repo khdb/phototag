@@ -17,6 +17,7 @@
 package com.khoahuy.phototag;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -31,12 +32,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.Display;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -47,6 +50,7 @@ import android.widget.TextView;
 public class HomeActivity extends AbstractActivity {
 
 	private static final int ACTION_TAKE_PHOTO_B = 1;
+	private static final int ACTION_TAKE_PHOTO_M = 2;
 	private static final int ACTION_OPEN_GALLERY = 4;
 	private String mCurrentPhotoPath;
 	private static final String JPEG_FILE_PREFIX = "IMG_";
@@ -82,7 +86,7 @@ public class HomeActivity extends AbstractActivity {
 			mAlbumStorageDirFactory = new BaseAlbumDirFactory();
 			Log.i("Huy", "Load BaseAlbumDirFactory");
 		}
-		
+
 	}
 
 	private void resizeControl() {
@@ -102,9 +106,8 @@ public class HomeActivity extends AbstractActivity {
 			img1.setImageResource(R.raw.noimage);
 			text1.setText(R.string.check_in_not_found);
 		}
-		
-		
-		//Get last waiting item from 24h ago
+
+		// Get last waiting item from 24h ago
 		nfcItem = nfcProvider.getOldestWaitingItemOfToday();
 		if (nfcItem != null) {
 			Bitmap bmp = BitmapFactory.decodeFile(nfcItem.getImage());
@@ -120,7 +123,7 @@ public class HomeActivity extends AbstractActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		
+
 		loadContent();
 
 		CharSequence title = "Photo Tag " + nfcProvider.countWaitingItem();
@@ -156,7 +159,7 @@ public class HomeActivity extends AbstractActivity {
 		} else if (existedUID(nfcid)) {
 			displayNFCItem(nfcid);
 		} else {
-			dispatchTakePictureIntent(ACTION_TAKE_PHOTO_B);
+			dispatchTakePictureIntent(ACTION_TAKE_PHOTO_M);
 		}
 	}
 
@@ -178,23 +181,21 @@ public class HomeActivity extends AbstractActivity {
 
 	// Yeath! This is area of PhotoIntent
 	private void dispatchTakePictureIntent(int actionCode) {
-
 		Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
+		File f = null;
+		try {
+			f = setUpPhotoFile();
+			mCurrentPhotoPath = f.getAbsolutePath();
+			// takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,Uri.fromFile(f));
+		} catch (IOException e) {
+			e.printStackTrace();
+			f = null;
+			mCurrentPhotoPath = null;
+		}
 		switch (actionCode) {
 		case ACTION_TAKE_PHOTO_B:
-			File f = null;
-
-			try {
-				f = setUpPhotoFile();
-				mCurrentPhotoPath = f.getAbsolutePath();
-				takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
-						Uri.fromFile(f));
-			} catch (IOException e) {
-				e.printStackTrace();
-				f = null;
-				mCurrentPhotoPath = null;
-			}
+			takePictureIntent
+					.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
 			break;
 
 		default:
@@ -277,7 +278,13 @@ public class HomeActivity extends AbstractActivity {
 				handleBigCameraPhoto();
 			}
 			break;
-		} // ACTION_TAKE_PHOTO_B
+		}
+		case ACTION_TAKE_PHOTO_M: {
+			if (resultCode == RESULT_OK) {
+				handleSmallCameraPhoto(data);
+			}
+			break;
+		}
 
 		case ACTION_OPEN_GALLERY: {
 			if (resultCode == RESULT_OK) {
@@ -288,6 +295,34 @@ public class HomeActivity extends AbstractActivity {
 			break;
 		} // ACTION_OPEN_GALLERY
 		} // switch
+	}
+
+	private void handleSmallCameraPhoto(Intent intent) {
+
+		if (mCurrentPhotoPath != null) {
+			Bundle extras = intent.getExtras();
+			Bitmap bm = (Bitmap) extras.get("data");
+			File file = new File(mCurrentPhotoPath);
+			if (file.exists())
+				file.delete();
+			try {
+				FileOutputStream out = new FileOutputStream(file);
+				bm.compress(Bitmap.CompressFormat.JPEG, 90, out);
+				out.flush();
+				out.close();
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			NFCItem item = new NFCItem();
+			item.setNfcid(nfcid);
+			item.setImage(mCurrentPhotoPath);
+			item.setCheckIn((new Date()).getTime());
+			nfcProvider.addWaitingItem(item);
+			mCurrentPhotoPath = null;
+		}
+
 	}
 
 	private void handleBigCameraPhoto() {

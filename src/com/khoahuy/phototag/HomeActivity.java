@@ -23,17 +23,22 @@ import java.util.Date;
 
 import com.khoahuy.database.NFCItemProvider;
 import com.khoahuy.phototag.model.NFCItem;
+import com.khoahuy.utils.DateUtils;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 /**
  * An {@link Activity} which handles a broadcast of a new tag that the device
@@ -48,6 +53,10 @@ public class HomeActivity extends AbstractActivity {
 	private static final String JPEG_FILE_SUFFIX = ".jpg";
 	private AlbumStorageDirFactory mAlbumStorageDirFactory = null;
 
+	private ImageView img1;
+	private ImageView img2;
+	private TextView text1;
+	private TextView text2;
 
 	private NFCItemProvider nfcProvider;
 
@@ -56,13 +65,15 @@ public class HomeActivity extends AbstractActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.home);
 
+		resizeControl();
+
 		nfcProvider = new NFCItemProvider(this.getContentResolver());
-		// Init NFC Reader
 
-		
-
-		// Init PhotoIntent
-		// mImageView = (ImageView) findViewById(R.id.imageView1);
+		// img1 = (ImageView) findViewById(R.id.img_newest);
+		// text1 = (TextView) findViewById(R.id.txt_time_newest);
+		//
+		// img2 = (ImageView) findViewById(R.id.img_oldest);
+		// text2 = (TextView) findViewById(R.id.txt_time_oldest);
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
 			mAlbumStorageDirFactory = new FroyoAlbumDirFactory();
@@ -71,29 +82,49 @@ public class HomeActivity extends AbstractActivity {
 			mAlbumStorageDirFactory = new BaseAlbumDirFactory();
 			Log.i("Huy", "Load BaseAlbumDirFactory");
 		}
+		//loadContent()2;
+	}
+
+	private void resizeControl() {
+		img1 = (ImageView) findViewById(R.id.img_newest);
+		text1 = (TextView) findViewById(R.id.txt_time_newest);
+		// img1.img1.getWidth();
+	}
+
+	private void loadContent() {
+		NFCItem nfcItem = nfcProvider.getLastWaitingItem();
+		if (nfcItem != null) {
+			Bitmap bmp = BitmapFactory.decodeFile(nfcItem.getImage());
+			img1.setImageBitmap(bmp);
+			if (nfcItem.getCheckIn() != null)
+				text1.setText(DateUtils.getDate(nfcItem.getCheckIn()));
+		} else {
+			img1.setImageResource(R.raw.noimage);
+			text1.setText(R.string.check_in_not_found);
+		}
+		//img2.setImageResource(R.raw.noimage);
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		
-		
+
 		CharSequence title = "Photo Tag " + nfcProvider.countWaitingItem();
 		Log.i("Huy", "Title = " + title);
 		this.setTitle(title);
 
 		Intent callerIntent = getIntent();
-		if (callerIntent != null && Intent.EXTRA_UID.equals(callerIntent.getAction()) ) {
+		if (callerIntent != null
+				&& Intent.EXTRA_UID.equals(callerIntent.getAction())) {
 			Bundle packageFromCaller = callerIntent.getBundleExtra("MyPackage");
-			if (packageFromCaller != null)
-			{
+			if (packageFromCaller != null) {
 				nfcid = packageFromCaller.getString("nfcid");
 				processNfcID();
 				setIntent(callerIntent);
 			}
 		}
 	}
-		
+
 	@Override
 	protected void processNfcID() {
 		if (("").equals(nfcid) || nfcid == null) {

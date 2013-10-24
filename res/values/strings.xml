@@ -14,15 +14,17 @@
     <string name="cannot">Cannot</string>
     <string name="album_name">CameraSample</string>
     
-    <string name="intro_message">This is a simple app to read various tags (NDEF, RFID, FeliCa, ISO 14443, etc).\n\nYou use it by holding a tag/card against the back of your phone/tablet.\n\nPlease let me know if you want me to change how the data is displayed. Also send me an e-mail (adam@anyro.se) if you have any problems with the app and I\'ll let you know when I\'ve fixed it. You can also see the source code and report issues at https://github.com/nadam/nfc-reader.\n\nIf you can\'t read any tag, please try some of the other NFC apps on Google Play and let me know if this app is the only one not working. Thanks!\n\n/Adam</string>
     <string name="error">Error</string>
     <string name="no_nfc">No NFC found on this device</string>
     <string name="nfc_disabled">NFC is not enabled. Please go to the wireless settings to enable it.</string>
+    <string name="check_in_not_found">Not found checkin time</string>
+    <string name="thumbnail_desc">Thumbnail</string>
     
     <string name="title_activity_view_image">Display Image</string>
     <string name="btn_checkout">Check out</string>
     <string name="btn_new">New</string>
     <string name="detect_nfc_fail">Fail detect your tag</string>
-    
-
+    <string name="checkInNumber">0</string>
+    <string name="checkOUtNumber">0</string>
+    <string name="totalNumber">0</string>
 </resources>

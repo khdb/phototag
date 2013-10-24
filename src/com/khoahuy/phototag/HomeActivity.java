@@ -69,11 +69,11 @@ public class HomeActivity extends AbstractActivity {
 
 		nfcProvider = new NFCItemProvider(this.getContentResolver());
 
-		// img1 = (ImageView) findViewById(R.id.img_newest);
-		// text1 = (TextView) findViewById(R.id.txt_time_newest);
-		//
-		// img2 = (ImageView) findViewById(R.id.img_oldest);
-		// text2 = (TextView) findViewById(R.id.txt_time_oldest);
+		img1 = (ImageView) findViewById(R.id.img_newest);
+		text1 = (TextView) findViewById(R.id.txt_time_newest);
+
+		img2 = (ImageView) findViewById(R.id.img_oldest);
+		text2 = (TextView) findViewById(R.id.txt_time_oldest);
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
 			mAlbumStorageDirFactory = new FroyoAlbumDirFactory();
@@ -82,7 +82,7 @@ public class HomeActivity extends AbstractActivity {
 			mAlbumStorageDirFactory = new BaseAlbumDirFactory();
 			Log.i("Huy", "Load BaseAlbumDirFactory");
 		}
-		//loadContent()2;
+		
 	}
 
 	private void resizeControl() {
@@ -92,7 +92,7 @@ public class HomeActivity extends AbstractActivity {
 	}
 
 	private void loadContent() {
-		NFCItem nfcItem = nfcProvider.getLastWaitingItem();
+		NFCItem nfcItem = nfcProvider.getNewestWaitingItem();
 		if (nfcItem != null) {
 			Bitmap bmp = BitmapFactory.decodeFile(nfcItem.getImage());
 			img1.setImageBitmap(bmp);
@@ -102,12 +102,26 @@ public class HomeActivity extends AbstractActivity {
 			img1.setImageResource(R.raw.noimage);
 			text1.setText(R.string.check_in_not_found);
 		}
-		//img2.setImageResource(R.raw.noimage);
+		
+		
+		//Get last waiting item from 24h ago
+		nfcItem = nfcProvider.getOldestWaitingItemOfToday();
+		if (nfcItem != null) {
+			Bitmap bmp = BitmapFactory.decodeFile(nfcItem.getImage());
+			img2.setImageBitmap(bmp);
+			if (nfcItem.getCheckIn() != null)
+				text2.setText(DateUtils.getDate(nfcItem.getCheckIn()));
+		} else {
+			img2.setImageResource(R.raw.noimage);
+			text2.setText(R.string.check_in_not_found);
+		}
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
+		
+		loadContent();
 
 		CharSequence title = "Photo Tag " + nfcProvider.countWaitingItem();
 		Log.i("Huy", "Title = " + title);

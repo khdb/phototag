@@ -17,44 +17,55 @@
 package com.khoahuy.phototag;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import com.khoahuy.database.NFCItemProvider;
 import com.khoahuy.phototag.model.NFCItem;
+import com.khoahuy.utils.DateUtils;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Point;
 import android.net.Uri;
-import android.nfc.NfcAdapter;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.provider.Settings;
 import android.util.Log;
+import android.view.Display;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 /**
  * An {@link Activity} which handles a broadcast of a new tag that the device
  * just discovered.
  */
-public class HomeActivity extends Activity {
+public class HomeActivity extends AbstractActivity {
 
 	private static final int ACTION_TAKE_PHOTO_B = 1;
+	private static final int ACTION_TAKE_PHOTO_M = 2;
 	private static final int ACTION_OPEN_GALLERY = 4;
 	private String mCurrentPhotoPath;
 	private static final String JPEG_FILE_PREFIX = "IMG_";
 	private static final String JPEG_FILE_SUFFIX = ".jpg";
 	private AlbumStorageDirFactory mAlbumStorageDirFactory = null;
-	private String nfcid;
-	private NfcAdapter mAdapter;
-	private PendingIntent mPendingIntent;
 
-	private AlertDialog mDialog;
+	private ImageView img1;
+	private ImageView img2;
+	private TextView text1;
+	private TextView text2;
+	
+	private TextView checkinCount;
+	private TextView checkoutCount;
+	private TextView totalCount;
+
 	private NFCItemProvider nfcProvider;
 
 	@Override
@@ -62,24 +73,19 @@ public class HomeActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.home);
 
+		resizeControl();
+
 		nfcProvider = new NFCItemProvider(this.getContentResolver());
-		// Init NFC Reader
 
-		mDialog = new AlertDialog.Builder(this).setNeutralButton("Ok", null)
-				.create();
+		img1 = (ImageView) findViewById(R.id.img_newest);
+		text1 = (TextView) findViewById(R.id.txt_time_newest);
 
-		mAdapter = NfcAdapter.getDefaultAdapter(this);
-		if (mAdapter == null) {
-			showMessage(R.string.error, R.string.no_nfc);
-			finish();
-			return;
-		}
-
-		mPendingIntent = PendingIntent.getActivity(this, 0, new Intent(this,
-				getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
-
-		// Init PhotoIntent
-		// mImageView = (ImageView) findViewById(R.id.imageView1);
+		img2 = (ImageView) findViewById(R.id.img_oldest);
+		text2 = (TextView) findViewById(R.id.txt_time_oldest);
+		
+		checkinCount = (TextView) findViewById(R.id.txt_checkin_count);
+		checkoutCount = (TextView) findViewById(R.id.txt_checkout_count);
+		totalCount = (TextView) findViewById(R.id.txt_total_count);
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
 			mAlbumStorageDirFactory = new FroyoAlbumDirFactory();
@@ -88,23 +94,63 @@ public class HomeActivity extends Activity {
 			mAlbumStorageDirFactory = new BaseAlbumDirFactory();
 			Log.i("Huy", "Load BaseAlbumDirFactory");
 		}
+
+	}
+
+	private void resizeControl() {
+		img1 = (ImageView) findViewById(R.id.img_newest);
+		text1 = (TextView) findViewById(R.id.txt_time_newest);
+		// img1.img1.getWidth();
+	}
+
+	private void loadContent() {
+		NFCItem nfcItem = nfcProvider.getNewestWaitingItem();
+		if (nfcItem != null) {
+			Bitmap bmp = BitmapFactory.decodeFile(nfcItem.getImage());
+			img1.setImageBitmap(bmp);
+			if (nfcItem.getCheckIn() != null)
+				text1.setText(DateUtils.getDate(nfcItem.getCheckIn()));
+		} else {
+			img1.setImageResource(R.raw.noimage);
+			text1.setText(R.string.check_in_not_found);
+		}
+
+		// Get last waiting item from 24h ago
+		nfcItem = nfcProvider.getOldestWaitingItemOfToday();
+		if (nfcItem != null) {
+			Bitmap bmp = BitmapFactory.decodeFile(nfcItem.getImage());
+			img2.setImageBitmap(bmp);
+			if (nfcItem.getCheckIn() != null)
+				text2.setText(DateUtils.getDate(nfcItem.getCheckIn()));
+		} else {
+			img2.setImageResource(R.raw.noimage);
+			text2.setText(R.string.check_in_not_found);
+		}
+		
+		//Update Checkin/Checkout/Total count
+		int checkinItemToday = nfcProvider.countWaitingItemOfToday();
+		int checkoutItemToday = nfcProvider.countUsedItemOfToday();
+		int totalItemToday = checkinItemToday + checkoutItemToday;
+		checkinCount.setText(String.valueOf(checkinItemToday));
+		checkoutCount.setText(String.valueOf(checkoutItemToday));
+		totalCount.setText(String.valueOf(totalItemToday));
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		if (mAdapter != null) {
-			if (!mAdapter.isEnabled()) {
-				showWirelessSettingsDialog();
-			}
-			mAdapter.enableForegroundDispatch(this, mPendingIntent, null, null);
-		}
+
+		loadContent();
+
+		CharSequence title = "Photo Tag " + nfcProvider.countWaitingItem();
+		Log.i("Huy", "Title = " + title);
+		this.setTitle(title);
 
 		Intent callerIntent = getIntent();
-		if (callerIntent != null && Intent.EXTRA_UID.equals(callerIntent.getAction()) ) {
+		if (callerIntent != null
+				&& Intent.EXTRA_UID.equals(callerIntent.getAction())) {
 			Bundle packageFromCaller = callerIntent.getBundleExtra("MyPackage");
-			if (packageFromCaller != null)
-			{
+			if (packageFromCaller != null) {
 				nfcid = packageFromCaller.getString("nfcid");
 				processNfcID();
 				setIntent(callerIntent);
@@ -112,81 +158,8 @@ public class HomeActivity extends Activity {
 		}
 	}
 
-	private void showMessage(int title, int message) {
-		mDialog.setTitle(title);
-		mDialog.setMessage(getText(message));
-		mDialog.show();
-	}
-
-	private String ByteArrayToHexString(byte[] inarray) {
-		int i, j, in;
-		String[] hex = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A",
-				"B", "C", "D", "E", "F" };
-		String out = "";
-
-		for (j = 0; j < inarray.length; ++j) {
-			in = (int) inarray[j] & 0xff;
-			i = (in >> 4) & 0x0f;
-			out += hex[i];
-			i = in & 0x0f;
-			out += hex[i];
-		}
-		return out;
-	}
-
 	@Override
-	protected void onPause() {
-		super.onPause();
-		if (mAdapter != null) {
-			mAdapter.disableForegroundDispatch(this);
-		}
-	}
-
-	private void showWirelessSettingsDialog() {
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage(R.string.nfc_disabled);
-		builder.setPositiveButton(android.R.string.ok,
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialogInterface, int i) {
-						Intent intent = new Intent(
-								Settings.ACTION_WIRELESS_SETTINGS);
-						startActivity(intent);
-					}
-				});
-		builder.setNegativeButton(android.R.string.cancel,
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialogInterface, int i) {
-						finish();
-					}
-				});
-		builder.create().show();
-		return;
-	}
-
-	@Override
-	public void onNewIntent(Intent intent) {
-		nfcid = "";
-		if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
-			nfcid = this.ByteArrayToHexString(intent
-					.getByteArrayExtra(NfcAdapter.EXTRA_ID));
-			Log.i("Huy", "NDEF DISCOVERED = " + nfcid);
-
-		} else if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction())) {
-			nfcid = this.ByteArrayToHexString(intent
-					.getByteArrayExtra(NfcAdapter.EXTRA_ID));
-			Log.i("Huy", "TAG DISCOVERED = " + nfcid);
-
-		} else if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(intent.getAction())) {
-			nfcid = this.ByteArrayToHexString(getIntent().getByteArrayExtra(
-					NfcAdapter.EXTRA_ID));
-			Log.i("Huy", "TECH DISCOVERED = " + nfcid);
-		}
-		setIntent(intent);
-		processNfcID();
-		// resolveIntent(intent);
-	}
-
-	private void processNfcID() {
+	protected void processNfcID() {
 		if (("").equals(nfcid) || nfcid == null) {
 			AlertDialog.Builder builder = new AlertDialog.Builder(
 					HomeActivity.this);
@@ -202,7 +175,7 @@ public class HomeActivity extends Activity {
 		} else if (existedUID(nfcid)) {
 			displayNFCItem(nfcid);
 		} else {
-			dispatchTakePictureIntent(ACTION_TAKE_PHOTO_B);
+			dispatchTakePictureIntent(ACTION_TAKE_PHOTO_M);
 		}
 	}
 
@@ -224,23 +197,21 @@ public class HomeActivity extends Activity {
 
 	// Yeath! This is area of PhotoIntent
 	private void dispatchTakePictureIntent(int actionCode) {
-
 		Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
+		File f = null;
+		try {
+			f = setUpPhotoFile();
+			mCurrentPhotoPath = f.getAbsolutePath();
+			// takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,Uri.fromFile(f));
+		} catch (IOException e) {
+			e.printStackTrace();
+			f = null;
+			mCurrentPhotoPath = null;
+		}
 		switch (actionCode) {
 		case ACTION_TAKE_PHOTO_B:
-			File f = null;
-
-			try {
-				f = setUpPhotoFile();
-				mCurrentPhotoPath = f.getAbsolutePath();
-				takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
-						Uri.fromFile(f));
-			} catch (IOException e) {
-				e.printStackTrace();
-				f = null;
-				mCurrentPhotoPath = null;
-			}
+			takePictureIntent
+					.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
 			break;
 
 		default:
@@ -316,14 +287,21 @@ public class HomeActivity extends Activity {
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		setIntent(data);
+		super.onActivityResult(requestCode, resultCode, data);
+		
 		switch (requestCode) {
 		case ACTION_TAKE_PHOTO_B: {
 			if (resultCode == RESULT_OK) {
 				handleBigCameraPhoto();
 			}
 			break;
-		} // ACTION_TAKE_PHOTO_B
+		}
+		case ACTION_TAKE_PHOTO_M: {
+			if (resultCode == RESULT_OK) {
+				handleSmallCameraPhoto(data);
+			}
+			break;
+		}
 
 		case ACTION_OPEN_GALLERY: {
 			if (resultCode == RESULT_OK) {
@@ -334,6 +312,34 @@ public class HomeActivity extends Activity {
 			break;
 		} // ACTION_OPEN_GALLERY
 		} // switch
+	}
+
+	private void handleSmallCameraPhoto(Intent intent) {
+
+		if (mCurrentPhotoPath != null) {
+			Bundle extras = intent.getExtras();
+			Bitmap bm = (Bitmap) extras.get("data");
+			File file = new File(mCurrentPhotoPath);
+			if (file.exists())
+				file.delete();
+			try {
+				FileOutputStream out = new FileOutputStream(file);
+				bm.compress(Bitmap.CompressFormat.JPEG, 90, out);
+				out.flush();
+				out.close();
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			NFCItem item = new NFCItem();
+			item.setNfcid(nfcid);
+			item.setImage(mCurrentPhotoPath);
+			item.setCheckIn((new Date()).getTime());
+			nfcProvider.addWaitingItem(item);
+			mCurrentPhotoPath = null;
+		}
+
 	}
 
 	private void handleBigCameraPhoto() {

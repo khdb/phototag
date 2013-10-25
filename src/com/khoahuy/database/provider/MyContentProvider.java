@@ -137,22 +137,26 @@ public class MyContentProvider extends ContentProvider {
 			String[] selectionArgs, String sortOrder) {
 
 		SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
-		queryBuilder.setTables(MyDBHandler.WAITING_ITEMS_TABLE);
+		
 
 		int uriType = sURIMatcher.match(uri);
 
 		switch (uriType) {
 		case WAITING_ITEMS_ID:
+			queryBuilder.setTables(MyDBHandler.WAITING_ITEMS_TABLE);
 			queryBuilder.appendWhere(MyDBHandler.COLUMN_NFCID + "="
 					+ uri.getLastPathSegment());
 			break;
 		case WAITING_ITEMS:
+			queryBuilder.setTables(MyDBHandler.WAITING_ITEMS_TABLE);
 			break;
 		case USED_ITEMS_ID:
+			queryBuilder.setTables(MyDBHandler.USED_ITEMS_TABLE);
 			queryBuilder.appendWhere(MyDBHandler.COLUMN_ID + "="
 					+ uri.getLastPathSegment());
 			break;
 		case USED_ITEMS:
+			queryBuilder.setTables(MyDBHandler.USED_ITEMS_TABLE);
 			break;
 		default:
 			throw new IllegalArgumentException("Unknown URI");

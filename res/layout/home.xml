@@ -1,34 +1,114 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-     Copyright (C) 2010 The Android Open Source Project
-
-     Licensed under the Apache License, Version 2.0 (the "License");
-     you may not use this file except in compliance with the License.
-     You may obtain a copy of the License at
-
-          http://www.apache.org/licenses/LICENSE-2.0
-
-     Unless required by applicable law or agreed to in writing, software
-     distributed under the License is distributed on an "AS IS" BASIS,
-     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     See the License for the specific language governing permissions and
-     limitations under the License.
--->
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_weight="1">
+    android:orientation="vertical" >
+
     <LinearLayout
-        android:id="@+id/list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="0dp"
+        android:layout_weight="10"
+        android:background="#a2add0"
+        android:orientation="horizontal" >
+
         <TextView
-            android:layout_width="fill_parent"
+            android:id="@+id/txt_checkin_count"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight=".30"
             android:padding="6dp"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:autoLink="email|web"
-            android:text="@string/intro_message" />
+            android:text="@string/check_in_count"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/txt_total_count"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".40"
+            android:padding="6dp"
+            android:text="@string/total_count"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/txt_checkout_count"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".30"
+            android:padding="6dp"
+            android:text="@string/check_out_count"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
     </LinearLayout>
-</ScrollView>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="35" >
+
+        <ImageView
+            android:id="@+id/img_newest"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:adjustViewBounds="false"
+            android:contentDescription="@string/thumbnail_desc"
+            android:scaleType="centerCrop"
+            android:src="@raw/noimage" />
+
+        <TextView
+            android:id="@+id/txt_newest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Newest" />
+
+        <TextView
+            android:id="@+id/txt_time_newest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:text="@string/check_in_not_found" />
+    </FrameLayout>
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="10"
+        android:background="#62CFC2" >
+
+        <TextView
+            android:id="@+id/ready_scan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="[[ READY TO SCAN ]]"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+    </RelativeLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="35" >
+
+        <ImageView
+            android:id="@+id/img_oldest"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:adjustViewBounds="false"
+            android:contentDescription="@string/thumbnail_desc"
+            android:scaleType="centerCrop"
+            android:src="@raw/noimage" />
+
+        <TextView
+            android:id="@+id/txt_oldest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Oldest" />
+
+        <TextView
+            android:id="@+id/txt_time_oldest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:text="@string/check_in_not_found" />
+    </FrameLayout>
+
+</LinearLayout>

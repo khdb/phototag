@@ -61,6 +61,10 @@ public class HomeActivity extends AbstractActivity {
 	private ImageView img2;
 	private TextView text1;
 	private TextView text2;
+	
+	private TextView checkinCount;
+	private TextView checkoutCount;
+	private TextView totalCount;
 
 	private NFCItemProvider nfcProvider;
 
@@ -78,6 +82,10 @@ public class HomeActivity extends AbstractActivity {
 
 		img2 = (ImageView) findViewById(R.id.img_oldest);
 		text2 = (TextView) findViewById(R.id.txt_time_oldest);
+		
+		checkinCount = (TextView) findViewById(R.id.txt_checkin_count);
+		checkoutCount = (TextView) findViewById(R.id.txt_checkout_count);
+		totalCount = (TextView) findViewById(R.id.txt_total_count);
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
 			mAlbumStorageDirFactory = new FroyoAlbumDirFactory();
@@ -118,6 +126,14 @@ public class HomeActivity extends AbstractActivity {
 			img2.setImageResource(R.raw.noimage);
 			text2.setText(R.string.check_in_not_found);
 		}
+		
+		//Update Checkin/Checkout/Total count
+		int checkinItemToday = nfcProvider.countWaitingItemOfToday();
+		int checkoutItemToday = nfcProvider.countUsedItemOfToday();
+		int totalItemToday = checkinItemToday + checkoutItemToday;
+		checkinCount.setText(String.valueOf(checkinItemToday));
+		checkoutCount.setText(String.valueOf(checkoutItemToday));
+		totalCount.setText(String.valueOf(totalItemToday));
 	}
 
 	@Override
@@ -271,7 +287,8 @@ public class HomeActivity extends AbstractActivity {
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		setIntent(data);
+		super.onActivityResult(requestCode, resultCode, data);
+		
 		switch (requestCode) {
 		case ACTION_TAKE_PHOTO_B: {
 			if (resultCode == RESULT_OK) {

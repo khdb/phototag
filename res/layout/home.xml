@@ -13,27 +13,30 @@
         android:orientation="horizontal" >
 
         <TextView
+            android:id="@+id/txt_checkin_count"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight=".30"
             android:padding="6dp"
-            android:text="@string/checkInNumber"
+            android:text="@string/check_in_count"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <TextView
+            android:id="@+id/txt_total_count"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight=".40"
             android:padding="6dp"
-            android:text="@string/checkInNumber"
+            android:text="@string/total_count"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <TextView
+            android:id="@+id/txt_checkout_count"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight=".30"
             android:padding="6dp"
-            android:text="@string/checkInNumber"
+            android:text="@string/check_out_count"
             android:textAppearance="?android:attr/textAppearanceMedium" />
     </LinearLayout>
 
@@ -49,7 +52,7 @@
             android:adjustViewBounds="false"
             android:contentDescription="@string/thumbnail_desc"
             android:scaleType="centerCrop"
-            android:src="@raw/land1" />
+            android:src="@raw/noimage" />
 
         <TextView
             android:id="@+id/txt_newest"
@@ -92,7 +95,7 @@
             android:adjustViewBounds="false"
             android:contentDescription="@string/thumbnail_desc"
             android:scaleType="centerCrop"
-            android:src="@raw/port1" />
+            android:src="@raw/noimage" />
 
         <TextView
             android:id="@+id/txt_oldest"

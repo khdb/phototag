@@ -13,19 +13,20 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-public abstract class AbstractActivity extends Activity{
-	
-	
+public abstract class AbstractActivity extends Activity {
+
 	protected NfcAdapter mAdapter;
 	protected PendingIntent mPendingIntent;
 	protected AlertDialog mDialog;
 	protected String nfcid;
 	
+	private static final int ACTION_PREFS = -1;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-		
+
 		mDialog = new AlertDialog.Builder(this).setNeutralButton("Ok", null)
 				.create();
 
@@ -35,11 +36,11 @@ public abstract class AbstractActivity extends Activity{
 			finish();
 			return;
 		}
-	
+
 		mPendingIntent = PendingIntent.getActivity(this, 0, new Intent(this,
 				getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
 	}
-	
+
 	@Override
 	protected void onResume() {
 		super.onResume();
@@ -50,7 +51,7 @@ public abstract class AbstractActivity extends Activity{
 			mAdapter.enableForegroundDispatch(this, mPendingIntent, null, null);
 		}
 	};
-	
+
 	@Override
 	protected void onPause() {
 		super.onPause();
@@ -58,35 +59,49 @@ public abstract class AbstractActivity extends Activity{
 			mAdapter.disableForegroundDispatch(this);
 		}
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-	    MenuInflater inflater = getMenuInflater();
-	    inflater.inflate(R.menu.main, menu);
-	    return true;
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.main, menu);
+		return true;
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-	    // Handle item selection
-	    switch (item.getItemId()) {
-	        case R.id.action_settings:
-	            return true; 
-	        case R.id.action_statistic:
-	            return true;
-	        case R.id.action_about:
-	            return true;
-	        default:
-	            return super.onOptionsItemSelected(item);
-	    }
+		// Handle item selection
+		switch (item.getItemId()) {
+		case R.id.action_settings:
+			Intent intent = new Intent(this, SetPreferenceActivity.class);
+			startActivityForResult(intent, ACTION_PREFS);
+			return true;
+		case R.id.action_statistic:
+			return true;
+		case R.id.action_about:
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
 	}
-	
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// TODO Auto-generated method stub
+		setIntent(data);
+		switch (requestCode) {
+		case ACTION_PREFS: {
+			Log.i("Huy", "ACTION_PREFS return");
+			break;
+		}
+		}
+	}
+
 	protected void showMessage(int title, int message) {
 		mDialog.setTitle(title);
 		mDialog.setMessage(getText(message));
 		mDialog.show();
 	}
-	
+
 	protected void showWirelessSettingsDialog() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setMessage(R.string.nfc_disabled);
@@ -107,7 +122,7 @@ public abstract class AbstractActivity extends Activity{
 		builder.create().show();
 		return;
 	}
-	
+
 	@Override
 	public void onNewIntent(Intent intent) {
 		nfcid = "";
@@ -130,7 +145,7 @@ public abstract class AbstractActivity extends Activity{
 		processNfcID();
 		// resolveIntent(intent);
 	}
-	
+
 	private String ByteArrayToHexString(byte[] inarray) {
 		int i, j, in;
 		String[] hex = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A",
@@ -146,9 +161,7 @@ public abstract class AbstractActivity extends Activity{
 		}
 		return out;
 	}
-	
+
 	protected abstract void processNfcID();
-
-
 
 }

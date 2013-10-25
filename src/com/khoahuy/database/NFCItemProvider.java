@@ -112,6 +112,43 @@ public class NFCItemProvider {
 		}
 
 	}
+	
+	public int countWaitingItemOfToday()
+	{
+		try {
+			Long timestamp = DateUtils.getTimestampBeginOfDay();
+			String[] projection = { COLUMN_NFCID };
+			String selection = COLUMN_CHECK_IN + " >= \"" + timestamp + "\"";
+
+			Cursor cursor = myCR.query(MyContentProvider.WAITING_CONTENT_URI,
+					projection, selection, null, null);
+			int result = cursor.getCount();
+			cursor.close();
+			return result;
+		} catch (Exception ex) {
+			Log.e("Huy", ex.toString());
+			return 0;
+		}
+
+	}
+	
+	public int countUsedItemOfToday()
+	{
+		try {
+			Long timestamp = DateUtils.getTimestampBeginOfDay();
+			String[] projection = { COLUMN_NFCID };
+			String selection = COLUMN_CHECK_OUT+ " >= \"" + timestamp + "\"";
+			Cursor cursor = myCR.query(MyContentProvider.USED_CONTENT_URI,
+					projection, selection, null, null);
+			int result = cursor.getCount();
+			cursor.close();
+			return result;
+		} catch (Exception ex) {
+			Log.e("Huy", ex.toString());
+			return 0;
+		}
+
+	}
 
 	public int countWaitingItem() {
 		String[] projection = { COLUMN_NFCID };

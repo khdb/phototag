@@ -1,5 +1,14 @@
 package com.khoahuy.phototag;
 
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import com.khoahuy.database.NFCItemProvider;
+import com.khoahuy.phototag.statistic.BarGraph;
+import com.khoahuy.phototag.statistic.LineGraph;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
@@ -19,6 +28,7 @@ public abstract class AbstractActivity extends Activity {
 	protected PendingIntent mPendingIntent;
 	protected AlertDialog mDialog;
 	protected String nfcid;
+	protected NFCItemProvider nfcProvider;
 	
 	private static final int ACTION_PREFS = -1;
 
@@ -39,6 +49,8 @@ public abstract class AbstractActivity extends Activity {
 
 		mPendingIntent = PendingIntent.getActivity(this, 0, new Intent(this,
 				getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+		
+		nfcProvider = new NFCItemProvider(this.getContentResolver());
 	}
 
 	@Override
@@ -76,6 +88,11 @@ public abstract class AbstractActivity extends Activity {
 			startActivityForResult(intent, ACTION_PREFS);
 			return true;
 		case R.id.action_statistic:
+			BarGraph bar = new BarGraph();
+			//Please remove /1000 when active real database
+			HashMap<String, Integer> data = nfcProvider.getWaitingItemOfDate(new Date());
+	    	Intent barIntent =  bar.getIntent(this, data);
+	        startActivity(barIntent);
 			return true;
 		case R.id.action_about:
 			return true;

@@ -22,15 +22,32 @@ public class DateUtils {
 		try {
 			Date date = new Date();
 			Calendar cal = Calendar.getInstance();
-	        cal.setTime(date); 
-	        cal.set(Calendar.MINUTE, 0);
-	        cal.set(Calendar.SECOND, 0);
-	        cal.set(Calendar.MILLISECOND, 0);
-	        cal.set(Calendar.HOUR_OF_DAY, 0);
-	       
-	        return cal.getTime().getTime();
+			cal.setTime(date);
+			cal.set(Calendar.MINUTE, 0);
+			cal.set(Calendar.SECOND, 0);
+			cal.set(Calendar.MILLISECOND, 0);
+			cal.set(Calendar.HOUR_OF_DAY, 0);
+
+			return cal.getTime().getTime();
 		} catch (Exception ex) {
 			throw new Exception("Get time ago error");
 		}
 	}
+
+	public static long getTimestampOfDate(Date date) throws Exception {
+		try {
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(date);
+			cal.set(Calendar.MINUTE, 0);
+			cal.set(Calendar.SECOND, 0);
+			cal.set(Calendar.MILLISECOND, 0);
+			cal.set(Calendar.HOUR_OF_DAY, 0);
+
+			return cal.getTime().getTime() /1000;
+		} catch (Exception ex) {
+			throw new Exception("Get time ago error");
+		}
+
+	}
+
 }

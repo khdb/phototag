@@ -1,6 +1,10 @@
 package com.khoahuy.database;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -112,9 +116,8 @@ public class NFCItemProvider {
 		}
 
 	}
-	
-	public int countWaitingItemOfToday()
-	{
+
+	public int countWaitingItemOfToday() {
 		try {
 			Long timestamp = DateUtils.getTimestampBeginOfDay();
 			String[] projection = { COLUMN_NFCID };
@@ -131,13 +134,12 @@ public class NFCItemProvider {
 		}
 
 	}
-	
-	public int countUsedItemOfToday()
-	{
+
+	public int countUsedItemOfToday() {
 		try {
 			Long timestamp = DateUtils.getTimestampBeginOfDay();
 			String[] projection = { COLUMN_NFCID };
-			String selection = COLUMN_CHECK_OUT+ " >= \"" + timestamp + "\"";
+			String selection = COLUMN_CHECK_OUT + " >= \"" + timestamp + "\"";
 			Cursor cursor = myCR.query(MyContentProvider.USED_CONTENT_URI,
 					projection, selection, null, null);
 			int result = cursor.getCount();
@@ -158,6 +160,41 @@ public class NFCItemProvider {
 		int result = cursor.getCount();
 		cursor.close();
 		return result;
+	}
+
+	public HashMap<String, Integer> getWaitingItemOfDate(Date date) {
+		/*
+		 * SELECT strftime('%H', checkin, 'unixepoch'), count(*) FROM
+		 * waiting_items WHERE(checkin >= "1382979600000" AND checkin <=
+		 * "1382979686400") GROUP BY (strftime('%H', checkin,'unixepoch'));
+		 */
+		try {
+			Long from = DateUtils.getTimestampOfDate(date);
+			Long to = from + 86400;
+			String[] projection = {
+					"strftime('%H', " + COLUMN_CHECK_IN + ", 'unixepoch')",
+					"count(*)" };
+			String selection = COLUMN_CHECK_IN + " >= \"" + from + "\" AND "
+					+ COLUMN_CHECK_IN + " <= \"" + to + "\""
+					+ ") GROUP BY (strftime('%H', " + COLUMN_CHECK_IN
+					+ ",'unixepoch')";
+			String sort = COLUMN_CHECK_IN + " ASC";
+			Cursor cursor = myCR.query(MyContentProvider.WAITING_CONTENT_URI,
+					projection, selection, null, sort);
+
+			HashMap<String, Integer> result = new HashMap<String, Integer>();
+			if (cursor.moveToFirst())
+				do {
+					String hour = cursor.getString(0);
+					int count = cursor.getInt(1);
+					result.put(hour, count);
+				} while (cursor.moveToNext());
+			cursor.close();
+			return result;
+		} catch (Exception ex) {
+			Log.e("Huy", ex.toString());
+			return null;
+		}
 	}
 
 	public void addUsedItem(NFCItem item) {

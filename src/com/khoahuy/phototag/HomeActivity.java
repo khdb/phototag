@@ -66,16 +66,12 @@ public class HomeActivity extends AbstractActivity {
 	private TextView checkoutCount;
 	private TextView totalCount;
 
-	private NFCItemProvider nfcProvider;
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.home);
-
-		resizeControl();
-
-		nfcProvider = new NFCItemProvider(this.getContentResolver());
 
 		img1 = (ImageView) findViewById(R.id.img_newest);
 		text1 = (TextView) findViewById(R.id.txt_time_newest);
@@ -95,12 +91,6 @@ public class HomeActivity extends AbstractActivity {
 			Log.i("Huy", "Load BaseAlbumDirFactory");
 		}
 
-	}
-
-	private void resizeControl() {
-		img1 = (ImageView) findViewById(R.id.img_newest);
-		text1 = (TextView) findViewById(R.id.txt_time_newest);
-		// img1.img1.getWidth();
 	}
 
 	private void loadContent() {

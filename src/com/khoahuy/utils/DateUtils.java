@@ -7,8 +7,8 @@ import java.util.Date;
 
 public class DateUtils {
 
-	public static Long timestampOfDay = 86400L;
-	public static Long timestampOfWeek = 86400L * 7;
+	public static long timestampOfDay = 86400L;
+	public static long timestampOfWeek = 86400L * 7;
 
 	public static String getDate(Long timeStamp) {
 
@@ -21,6 +21,16 @@ public class DateUtils {
 		}
 	}
 
+	public static long getCurrentTimestamp() {
+		try {
+			Date date = new Date();
+			return date.getTime() / 1000;
+		} catch (Exception ex) {
+			return 0L;
+		}
+
+	}
+
 	public static long getTimestampBeginOfDay() throws Exception {
 		try {
 			Date date = new Date();
@@ -31,7 +41,7 @@ public class DateUtils {
 			cal.set(Calendar.MILLISECOND, 0);
 			cal.set(Calendar.HOUR_OF_DAY, 0);
 
-			return cal.getTime().getTime();
+			return cal.getTime().getTime() / 1000;
 		} catch (Exception ex) {
 			throw new Exception("Get time ago error");
 		}
@@ -79,7 +89,7 @@ public class DateUtils {
 			throw new Exception("Get time ago error");
 		}
 	}
-	
+
 	public static long getTimestampEndDateOfMonth(int month, int year)
 			throws Exception {
 		try {
@@ -91,7 +101,5 @@ public class DateUtils {
 			throw new Exception("Get time ago error");
 		}
 	}
-	
-	
 
 }

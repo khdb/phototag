@@ -325,7 +325,7 @@ public class HomeActivity extends AbstractActivity {
 			NFCItem item = new NFCItem();
 			item.setNfcid(nfcid);
 			item.setImage(mCurrentPhotoPath);
-			item.setCheckIn((new Date()).getTime());
+			item.setCheckIn(DateUtils.getCurrentTimestamp());
 			nfcProvider.addWaitingItem(item);
 			mCurrentPhotoPath = null;
 		}
@@ -355,7 +355,7 @@ public class HomeActivity extends AbstractActivity {
 		NFCItem item = new NFCItem();
 		item.setNfcid(nfcid);
 		item.setImage(mCurrentPhotoPath);
-		item.setCheckIn((new Date()).getTime());
+		item.setCheckIn(DateUtils.getCurrentTimestamp());
 		nfcProvider.addWaitingItem(item);
 	}
 

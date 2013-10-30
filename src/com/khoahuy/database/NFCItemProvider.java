@@ -40,7 +40,7 @@ public class NFCItemProvider {
 		if (item.getCheckIn() != null)
 			values.put(COLUMN_CHECK_IN, item.getCheckIn());
 		else
-			values.put(COLUMN_CHECK_IN, ((new Date()).getTime()));
+			values.put(COLUMN_CHECK_IN, DateUtils.getCurrentTimestamp());
 
 		myCR.insert(MyContentProvider.WAITING_CONTENT_URI, values);
 	}
@@ -171,7 +171,7 @@ public class NFCItemProvider {
 		if (item.getCheckOut() != null)
 			values.put(COLUMN_CHECK_OUT, item.getCheckOut());
 		else
-			values.put(COLUMN_CHECK_OUT, ((new Date()).getTime()));
+			values.put(COLUMN_CHECK_OUT, DateUtils.getCurrentTimestamp());
 
 		myCR.insert(MyContentProvider.USED_CONTENT_URI, values);
 	}

@@ -1,13 +1,19 @@
 package com.khoahuy.phototag;
 
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.khoahuy.database.NFCItemProvider;
 import com.khoahuy.phototag.statistic.BarGraph;
+import com.khoahuy.phototag.statistic.DateBarGraph;
 import com.khoahuy.phototag.statistic.LineGraph;
+import com.khoahuy.phototag.statistic.MonthBarGraph;
+import com.khoahuy.phototag.statistic.WeekBarGraph;
+import com.khoahuy.utils.StatisticUtils;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -84,17 +90,35 @@ public abstract class AbstractActivity extends Activity {
 		// Handle item selection
 		switch (item.getItemId()) {
 		case R.id.action_settings:
-			Intent intent = new Intent(this, SetPreferenceActivity.class);
-			startActivityForResult(intent, ACTION_PREFS);
+			//Intent intent = new Intent(this, SetPreferenceActivity.class);
+			//startActivityForResult(intent, ACTION_PREFS);
+			BarGraph bar2 = new MonthBarGraph();
+			//Please remove /1000 when active real database
+			Calendar cal2 = Calendar.getInstance();
+			Map<String, Integer> data2 = nfcProvider.getWaitingItemOfMonth(9, cal2.get(Calendar.YEAR));
+			//data2 = StatisticUtils.normalizationDateData(data2);
+	    	Intent barIntent2 =  bar2.getIntent(this, data2);
+	        startActivity(barIntent2);
 			return true;
 		case R.id.action_statistic:
-			BarGraph bar = new BarGraph();
+			BarGraph bar = new WeekBarGraph();
 			//Please remove /1000 when active real database
-			HashMap<String, Integer> data = nfcProvider.getWaitingItemOfDate(new Date());
+			Calendar cal = Calendar.getInstance();
+			//cal.add(Calendar.DATE, -1);
+			Map<String, Integer> data = nfcProvider.getWaitingItemOfWeek(cal.getTime());
+			
 	    	Intent barIntent =  bar.getIntent(this, data);
 	        startActivity(barIntent);
 			return true;
 		case R.id.action_about:
+			BarGraph bar1 = new DateBarGraph();
+			//Please remove /1000 when active real database
+			Calendar cal1 = Calendar.getInstance();
+			cal1.add(Calendar.DATE, -1);
+			Map<String, Integer> data1 = nfcProvider.getWaitingItemOfDate(cal1.getTime());
+			data = StatisticUtils.normalizationDateData(data1);
+	    	Intent barIntent1 =  bar1.getIntent(this, data);
+	        startActivity(barIntent1);
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);

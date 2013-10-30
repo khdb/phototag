@@ -7,6 +7,9 @@ import java.util.Date;
 
 public class DateUtils {
 
+	public static Long timestampOfDay = 86400L;
+	public static Long timestampOfWeek = 86400L * 7;
+
 	public static String getDate(Long timeStamp) {
 
 		try {
@@ -34,7 +37,7 @@ public class DateUtils {
 		}
 	}
 
-	public static long getTimestampOfDate(Date date) throws Exception {
+	public static long getTimestampBeginOfDate(Date date) throws Exception {
 		try {
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(date);
@@ -43,11 +46,52 @@ public class DateUtils {
 			cal.set(Calendar.MILLISECOND, 0);
 			cal.set(Calendar.HOUR_OF_DAY, 0);
 
-			return cal.getTime().getTime() /1000;
+			return cal.getTime().getTime() / 1000;
 		} catch (Exception ex) {
 			throw new Exception("Get time ago error");
 		}
 
 	}
+
+	public static long getTimestampEndOfDate(Date date) throws Exception {
+		try {
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(date);
+			cal.set(Calendar.MINUTE, 59);
+			cal.set(Calendar.SECOND, 59);
+			cal.set(Calendar.MILLISECOND, 0);
+			cal.set(Calendar.HOUR_OF_DAY, 23);
+
+			return cal.getTime().getTime() / 1000;
+		} catch (Exception ex) {
+			throw new Exception("Get time ago error");
+		}
+
+	}
+
+	public static long getTimestampFirstDateOfMonth(int month, int year)
+			throws Exception {
+		try {
+			Calendar cal = Calendar.getInstance();
+			cal.set(year, month, 1, 0, 0, 0);
+			return cal.getTime().getTime() / 1000;
+		} catch (Exception ex) {
+			throw new Exception("Get time ago error");
+		}
+	}
+	
+	public static long getTimestampEndDateOfMonth(int month, int year)
+			throws Exception {
+		try {
+			Calendar cal = Calendar.getInstance();
+			cal.set(year, month + 1, 1, 0, 0, 0);
+			cal.add(Calendar.DAY_OF_MONTH, -1);
+			return cal.getTime().getTime() / 1000;
+		} catch (Exception ex) {
+			throw new Exception("Get time ago error");
+		}
+	}
+	
+	
 
 }

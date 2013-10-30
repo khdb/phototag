@@ -36,7 +36,6 @@ public class ViewImageActivity extends AbstractActivity{
 	TextView txtCheckin;
 	Button btnCheckout;
 	Button btnNew;
-	NFCItemProvider nfcProvider;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -48,8 +47,6 @@ public class ViewImageActivity extends AbstractActivity{
 		btnCheckout = (Button) findViewById(R.id.btn_checkout);
 		btnNew = (Button) findViewById(R.id.btn_new);
 		txtCheckin = (TextView) findViewById(R.id.txt_checkin);
-
-		nfcProvider = new NFCItemProvider(this.getContentResolver());
 
 		Intent callerIntent = getIntent();
 		Bundle packageFromCaller = callerIntent.getBundleExtra("MyPackage");

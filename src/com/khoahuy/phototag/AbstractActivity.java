@@ -1,19 +1,16 @@
 package com.khoahuy.phototag;
 
-
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.khoahuy.database.NFCItemProvider;
 import com.khoahuy.phototag.statistic.BarGraph;
 import com.khoahuy.phototag.statistic.DateBarGraph;
-import com.khoahuy.phototag.statistic.LineGraph;
 import com.khoahuy.phototag.statistic.MonthBarGraph;
+import com.khoahuy.phototag.statistic.PieGraph;
 import com.khoahuy.phototag.statistic.WeekBarGraph;
-import com.khoahuy.utils.StatisticUtils;
+import com.khoahuy.utils.DateUtils;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -35,7 +32,7 @@ public abstract class AbstractActivity extends Activity {
 	protected AlertDialog mDialog;
 	protected String nfcid;
 	protected NFCItemProvider nfcProvider;
-	
+
 	private static final int ACTION_PREFS = -1;
 
 	@Override
@@ -55,7 +52,7 @@ public abstract class AbstractActivity extends Activity {
 
 		mPendingIntent = PendingIntent.getActivity(this, 0, new Intent(this,
 				getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
-		
+
 		nfcProvider = new NFCItemProvider(this.getContentResolver());
 	}
 
@@ -90,35 +87,51 @@ public abstract class AbstractActivity extends Activity {
 		// Handle item selection
 		switch (item.getItemId()) {
 		case R.id.action_settings:
-			//Intent intent = new Intent(this, SetPreferenceActivity.class);
-			//startActivityForResult(intent, ACTION_PREFS);
+			// Intent intent = new Intent(this, SetPreferenceActivity.class);
+			// startActivityForResult(intent, ACTION_PREFS);
 			BarGraph bar2 = new MonthBarGraph();
-			//Please remove /1000 when active real database
+			// Please remove /1000 when active real database
 			Calendar cal2 = Calendar.getInstance();
-			Map<String, Integer> data2 = nfcProvider.getWaitingItemOfMonth(9, cal2.get(Calendar.YEAR));
-			//data2 = StatisticUtils.normalizationDateData(data2);
-	    	Intent barIntent2 =  bar2.getIntent(this, data2);
-	        startActivity(barIntent2);
+			Map<String, Integer> data2 = nfcProvider
+					.getWaitingItemOfMonthStatistic(9, cal2.get(Calendar.YEAR));
+			// data2 = StatisticUtils.normalizationDateData(data2);
+			Intent barIntent2 = bar2.getIntent(this, data2);
+			startActivity(barIntent2);
 			return true;
 		case R.id.action_statistic:
 			BarGraph bar = new WeekBarGraph();
-			//Please remove /1000 when active real database
+			// Please remove /1000 when active real database
 			Calendar cal = Calendar.getInstance();
-			//cal.add(Calendar.DATE, -1);
-			Map<String, Integer> data = nfcProvider.getWaitingItemOfWeek(cal.getTime());
-			
-	    	Intent barIntent =  bar.getIntent(this, data);
-	        startActivity(barIntent);
+			// cal.add(Calendar.DATE, -1);
+			Map<String, Integer> data = nfcProvider
+					.getWaitingItemOfWeekStatistic(cal.getTime());
+			Intent barIntent = bar.getIntent(this, data);
+			startActivity(barIntent);
 			return true;
 		case R.id.action_about:
 			BarGraph bar1 = new DateBarGraph();
-			//Please remove /1000 when active real database
+			// Please remove /1000 when active real database
 			Calendar cal1 = Calendar.getInstance();
 			cal1.add(Calendar.DATE, -1);
-			Map<String, Integer> data1 = nfcProvider.getWaitingItemOfDate(cal1.getTime());
-			data = StatisticUtils.normalizationDateData(data1);
-	    	Intent barIntent1 =  bar1.getIntent(this, data);
-	        startActivity(barIntent1);
+			Map<String, Integer> data1 = nfcProvider
+					.getWaitingItemOfDayStatistic(cal1.getTime());
+			Intent barIntent1 = bar1.getIntent(this, data1);
+			startActivity(barIntent1);
+			return true;
+		case R.id.action_test:
+			try {
+				int[] thresholdArray = { 60, 120, 180, 240, 300, 360, 420, 480,
+						540, 600 };
+				long from = DateUtils.getTimestampFirstDateOfMonth(0, 2013);
+				long to = DateUtils.getTimestampEndDateOfMonth(11, 2013);
+				Map<String, Integer> data4 = nfcProvider.getUsedItemStatistic(
+						from, to, thresholdArray);
+				PieGraph pie = new PieGraph();
+				Intent pieIntent = pie.getIntent(this, data4);
+				startActivity(pieIntent);
+			} catch (Exception ex) {
+				Log.e("Huy", ex.toString());
+			}
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);

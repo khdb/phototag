@@ -1,10 +1,7 @@
 package com.khoahuy.database;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import android.content.ContentResolver;
@@ -13,6 +10,7 @@ import android.database.Cursor;
 import android.util.Log;
 
 import com.khoahuy.utils.DateUtils;
+import com.khoahuy.utils.StatisticUtils;
 
 import com.khoahuy.database.provider.MyContentProvider;
 import com.khoahuy.phototag.model.NFCItem;
@@ -191,9 +189,9 @@ public class NFCItemProvider {
 		return result;
 	}
 
-	// Statistic region
+	// Bar graphic Statistic region
 
-	public Map<String, Integer> getWaitingItemOfDate(Date date) {
+	public Map<String, Integer> getWaitingItemOfDayStatistic(Date date) {
 		/*
 		 * SELECT strftime('%H', checkin, 'unixepoch'), count(*) FROM
 		 * waiting_items WHERE(checkin >= "1382979600000" AND checkin <=
@@ -221,6 +219,7 @@ public class NFCItemProvider {
 					result.put(hour, count);
 				} while (cursor.moveToNext());
 			cursor.close();
+			result = StatisticUtils.normalizationDateData(result);
 			return result;
 		} catch (Exception ex) {
 			Log.e("Huy", ex.toString());
@@ -228,7 +227,7 @@ public class NFCItemProvider {
 		}
 	}
 
-	public Map<String, Integer> getWaitingItemOfWeek(Date dateEndOfWeek) {
+	public Map<String, Integer> getWaitingItemOfWeekStatistic(Date dateEndOfWeek) {
 		/*
 		 * SELECT strftime('%d', checkin, 'unixepoch'), count(*) FROM
 		 * waiting_items WHERE(checkin >= "1382979600000" AND checkin <=
@@ -256,6 +255,8 @@ public class NFCItemProvider {
 					result.put(date, count);
 				} while (cursor.moveToNext());
 			cursor.close();
+			result = StatisticUtils.normalizationWeekData(result,
+					DateUtils.getDateOfMonth(dateEndOfWeek));
 			return result;
 		} catch (Exception ex) {
 			Log.e("Huy", ex.toString());
@@ -263,7 +264,8 @@ public class NFCItemProvider {
 		}
 	}
 
-	public Map<String, Integer> getWaitingItemOfMonth(int month, int year) {
+	public Map<String, Integer> getWaitingItemOfMonthStatistic(int month,
+			int year) {
 		/*
 		 * SELECT strftime('%d', checkin, 'unixepoch'), count(*) FROM
 		 * waiting_items WHERE(checkin >= "1382979600000" AND checkin <=
@@ -312,7 +314,7 @@ public class NFCItemProvider {
 		}
 	}
 
-	public Map<String, Integer> getWaitingItemOfYear(int year) {
+	public Map<String, Integer> getWaitingItemOfYearStatistic(int year) {
 		/*
 		 * SELECT strftime('%m', checkin, 'unixepoch'), count(*) FROM
 		 * waiting_items WHERE(checkin >= "1382979600000" AND checkin <=
@@ -331,10 +333,9 @@ public class NFCItemProvider {
 			String sort = COLUMN_CHECK_IN + " ASC";
 			Cursor cursor = myCR.query(MyContentProvider.WAITING_CONTENT_URI,
 					projection, selection, null, sort);
-			
+
 			Map<String, Integer> result = new LinkedHashMap<String, Integer>();
-			for (int i = 1; i <= 12; i++)
-			{
+			for (int i = 1; i <= 12; i++) {
 				result.put(String.valueOf(i), 0);
 			}
 			if (cursor.moveToFirst())
@@ -344,7 +345,49 @@ public class NFCItemProvider {
 					result.put(date, count);
 				} while (cursor.moveToNext());
 			cursor.close();
-			
+
+			return result;
+		} catch (Exception ex) {
+			Log.e("Huy", ex.toString());
+			return null;
+		}
+	}
+
+	// Pie graphic Statistic region
+
+	public Map<String, Integer> getUsedItemStatistic(long from, long to,
+			int[] thresholdArray) {
+		/*
+		 * SELECT strftime('%d', checkout, 'unixepoch'), count(*) FROM
+		 * used_items WHERE(checkout >= "1380405237" AND checkout <=
+		 * "1482979686400") GROUP BY (strftime('%d', checkout,'unixepoch'));
+		 */
+		try {
+			String[] projection = { "(checkout - checkin) as time" };
+			String selection = COLUMN_CHECK_OUT + " >= \"" + from + "\" AND "
+					+ COLUMN_CHECK_OUT + " <= \"" + to + "\"";
+			Cursor cursor = myCR.query(MyContentProvider.USED_CONTENT_URI,
+					projection, null, null, null);
+
+			thresholdArray = StatisticUtils.convertToTimestamp(thresholdArray);
+
+			Map<String, Integer> result = new LinkedHashMap<String, Integer>();
+			int[] qualityArray = new int[thresholdArray.length + 1];
+			if (cursor.moveToFirst())
+				do {
+					int timeQuality = cursor.getInt(0);
+					for (int i = 0; i < thresholdArray.length; i++) {
+						if (timeQuality < thresholdArray[i]) {
+							qualityArray[i]++;
+							break;
+						}
+						if (i == thresholdArray.length - 1)
+							qualityArray[i+1]++;
+					}
+				} while (cursor.moveToNext());
+			cursor.close();
+			result = StatisticUtils.convert2ArrayIntoMap(thresholdArray,
+					qualityArray);
 			return result;
 		} catch (Exception ex) {
 			Log.e("Huy", ex.toString());

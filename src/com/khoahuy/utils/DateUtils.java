@@ -30,6 +30,16 @@ public class DateUtils {
 		}
 
 	}
+	
+	public static int getDateOfMonth(Date date) throws Exception{
+		try {
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(date);
+			return cal.get(Calendar.DAY_OF_MONTH);
+		} catch (Exception ex) {
+			throw new Exception("Get time ago error");
+		}
+	}
 
 	public static long getTimestampBeginOfDay() throws Exception {
 		try {
@@ -100,6 +110,14 @@ public class DateUtils {
 		} catch (Exception ex) {
 			throw new Exception("Get time ago error");
 		}
+	}
+	
+	public static String convertTimestampToHourText(long timestamp)
+	{
+		int hour = (int)timestamp/3600;
+		timestamp = timestamp - hour*3600;
+		int minute = (int)timestamp/60;
+		return  hour + "h" + minute + "m";
 	}
 
 }

@@ -56,6 +56,21 @@ public abstract class AbstractActivity extends Activity {
 
 		nfcProvider = new NFCItemProvider(this.getContentResolver());
 	}
+	
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		Log.i("Huy", "on save instance state of Abstract");
+        outState.putString("nfcid", nfcid);
+	};
+	
+	@Override
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
+		Log.i("Huy", "on restore instance state of Abstract");
+		nfcid = savedInstanceState.getString("nfcid");
+	};
+
 
 	@Override
 	protected void onResume() {

@@ -26,11 +26,13 @@ import com.khoahuy.database.NFCItemProvider;
 import com.khoahuy.phototag.model.NFCItem;
 import com.khoahuy.utils.DateUtils;
 import com.khoahuy.utils.FileUtils;
+import com.khoahuy.utils.ImageUtils;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -113,6 +115,18 @@ public class HomeActivity extends AbstractActivity {
 		checkoutCount.setText(String.valueOf(checkoutItemToday));
 		totalCount.setText(String.valueOf(totalItemToday));
 	}
+	
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+        outState.putString("mCurrentPhotoPath", mCurrentPhotoPath);
+	};
+	
+	@Override
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
+		mCurrentPhotoPath = savedInstanceState.getString("mCurrentPhotoPath");
+	};
 
 	@Override
 	protected void onResume() {
@@ -184,7 +198,7 @@ public class HomeActivity extends AbstractActivity {
 		File f = null;
 		try {
 			f = setUpPhotoFile();
-			mCurrentPhotoPath = f.getAbsolutePath();
+			//mCurrentPhotoPath = f.getAbsolutePath();
 			// takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,Uri.fromFile(f));
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -193,6 +207,7 @@ public class HomeActivity extends AbstractActivity {
 		}
 		switch (actionCode) {
 		case ACTION_TAKE_PHOTO_B:
+			//takePictureIntent.putExtra(MediaStore.EXTRA_SCREEN_ORIENTATION, ActivityInfo.SCREEN_ORIENTATION_PORTRAIT); 
 			takePictureIntent
 					.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
 			break;
@@ -286,15 +301,28 @@ public class HomeActivity extends AbstractActivity {
 	}
 
 	private void galleryAddPic() {
-		Intent mediaScanIntent = new Intent(
+		/*Intent mediaScanIntent = new Intent(
 				"android.intent.action.MEDIA_SCANNER_SCAN_FILE");
 		File f = new File(mCurrentPhotoPath);
 		Uri contentUri = Uri.fromFile(f);
 		mediaScanIntent.setData(contentUri);
-		this.sendBroadcast(mediaScanIntent);
+		this.sendBroadcast(mediaScanIntent);*/
+		
+		// Resize image
+		try {
+			Bitmap bm = BitmapFactory.decodeFile(mCurrentPhotoPath);
+			Bitmap bm2 = ImageUtils.getReduce4TimesBitmap(bm);
+			FileOutputStream out = new FileOutputStream(mCurrentPhotoPath);
+			bm2.compress(Bitmap.CompressFormat.JPEG, 90, out);
+			out.flush();
+			out.close();
+		} catch (Exception e) {
+		       e.printStackTrace();
+		}
+
+
 
 		// Store to db
-
 		NFCItem item = new NFCItem();
 		item.setNfcid(nfcid);
 		item.setImage(mCurrentPhotoPath);

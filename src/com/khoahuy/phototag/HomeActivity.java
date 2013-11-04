@@ -142,7 +142,7 @@ public class HomeActivity extends AbstractActivity {
 	}
 
 	@Override
-	protected void processNfcID() {
+	protected void processNfcID() {	
 		if (("").equals(nfcid) || nfcid == null) {
 			AlertDialog.Builder builder = new AlertDialog.Builder(
 					HomeActivity.this);
@@ -158,7 +158,7 @@ public class HomeActivity extends AbstractActivity {
 		} else if (existedUID(nfcid)) {
 			displayNFCItem(nfcid);
 		} else {
-			dispatchTakePictureIntent(ACTION_TAKE_PHOTO_M);
+			dispatchTakePictureIntent(ACTION_TAKE_PHOTO_B);
 		}
 	}
 

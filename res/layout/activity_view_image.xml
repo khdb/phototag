@@ -1,43 +1,138 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@color/main_bg_dark" >
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:adjustViewBounds="true"
-        android:scaleType="fitXY" />
-
-    <TextView
-        android:id="@+id/txt_checkin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Not found checkin time"
-        android:layout_marginTop="40dp"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <LinearLayout
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" >
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="18dp"
+        android:orientation="vertical" >
+        
+        <TextView
+    		    android:id="@+id/title_in"
+    		    android:layout_width="match_parent"
+    		    android:layout_height="wrap_content"
+    		    android:gravity="center"
+    		    android:text="Xe vào lúc"
+    		    android:textColor="@color/title_in_out"
+    		    android:textSize="22dp"
+    		    android:textStyle="bold" />
+        <TextView
+    		    android:id="@+id/txt_checkin"
+    		    android:layout_width="match_parent"
+    		    android:layout_height="wrap_content"
+    		    android:gravity="center"
+    		    android:text="14:15 giờ, ngày 22.11.2013"
+    		    android:textColor="@color/text_date_in_out"
+    		    android:textSize="20dp"
+    		    android:textStyle="normal" />
+        
+    </LinearLayout>   
+    
 
-        <Button
-            android:id="@+id/btn_checkout"
-            android:layout_width="wrap_content"
+    
+    <LinearLayout
+        android:id="@+id/plate_container_layout"
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:orientation="vertical"
+        android:layout_weight=".60"
+        android:showDividers="end" >
+        
+        <RelativeLayout
+            android:id="@+id/checkin"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/btn_checkout" />
+            android:orientation="vertical"
+             >
+            
+            <ImageView
+        		android:id="@+id/imageView"
+        		android:layout_width="fill_parent"
+        		android:layout_height="wrap_content"
+        		android:adjustViewBounds="true"  
+        		android:scaleType="centerCrop"  
+        		android:src="@drawable/autoplate_test"
+        		 />
 
+ <!--            <ImageView
+                android:id="@+id/label_in_out"
+                android:layout_width="fill_parent"
+                android:layout_height="35dp"
+                android:layout_alignParentTop="true"
+                android:adjustViewBounds="true"
+                android:maxHeight="35dp"
+                android:scaleType="fitXY"
+                android:src="@drawable/in_out_label" />
+            
+            <TextView
+    		    android:id="@+id/title_in"
+    		    android:layout_width="wrap_content"
+    		    android:layout_height="wrap_content"
+    		    android:layout_alignParentTop="true"
+    		    android:layout_alignParentLeft="true"
+    		    android:layout_marginLeft="16dp"
+    		    android:gravity="center_vertical"
+    		    android:text="Xe vào lúc"
+    		    android:textColor="@color/title_in_out"
+    		    android:textSize="18dp"
+    		    android:textStyle="bold" />
+            
+    		<TextView
+    		    android:id="@+id/date_in"
+    		    android:layout_width="wrap_content"
+    		    android:layout_height="wrap_content"
+    		    android:layout_alignParentRight="true"
+    		    android:gravity="right"
+    		    android:layout_marginLeft="16dp"
+    		    android:text="14:15 giờ, ngày 22.11.2013"
+    		    android:textColor="@color/text_date_in_out"
+    		    android:textSize="16dp"
+    		    android:textStyle="normal" /> -->
+
+
+    		
+        </RelativeLayout>          
+        
+    </LinearLayout>
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical" >
+        
         <Button
             android:id="@+id/btn_new"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/btn_new" />
+            android:layout_weight=".60"
+            android:text="@string/btn_new"
+            android:textSize="20dp"
+            android:textColor="@color/title_in_out" />
+        
+        <Button
+        	android:id="@+id/btn_checkout"
+        	android:layout_width="match_parent"
+        	android:layout_height="wrap_content"
+        	android:layout_weight=".60"
+        	android:text="@string/btn_checkout" 
+        	android:textSize="20dp"
+        	android:textColor="@color/title_in_out"/>
+        
+        		    
     </LinearLayout>
 
+    
+    
 </LinearLayout>

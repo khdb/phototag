@@ -22,8 +22,8 @@
     
     <string name="title_activity_view_image">Display Image</string>
     <string name="title_activity_setting">Setting</string>
-    <string name="btn_checkout">Check out</string>
-    <string name="btn_new">New</string>
+    <string name="btn_checkout"> Lấy xé ra </string>
+    <string name="btn_new"> Chụp hình mới </string>
     <string name="detect_nfc_fail">Fail detect your tag</string>
     <string name="check_in_count">0</string>
     <string name="check_out_count">0</string>

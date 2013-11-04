@@ -43,10 +43,14 @@
             android:screenOrientation="landscape" />
         <activity
             android:name="com.khoahuy.phototag.ViewImageActivity"
-            android:label="@string/title_activity_view_image" >
+            android:label="@string/title_activity_view_image" 
+            android:parentActivityName="com.khoahuy.phototag.HomeActivity" >
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+        	<meta-data
+            	android:name="android.support.PARENT_ACTIVITY"
+            	android:value="com.khoahuy.phototag.HomeActivity" />
             <intent-filter>
                 <action android:name="android.nfc.action.TAG_DISCOVERED" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>

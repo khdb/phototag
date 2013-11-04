@@ -20,9 +20,9 @@
     <string name="check_in_not_found">Not found checkin time</string>
     <string name="thumbnail_desc">Thumbnail</string>
     
-    <string name="title_activity_view_image">Display Image</string>
+    <string name="title_activity_view_image">Kiểm tra biến số xe</string>
     <string name="title_activity_setting">Setting</string>
-    <string name="btn_checkout"> Lấy xé ra </string>
+    <string name="btn_checkout"> Lấy xe ra </string>
     <string name="btn_new"> Chụp hình mới </string>
     <string name="detect_nfc_fail">Fail detect your tag</string>
     <string name="check_in_count">0</string>

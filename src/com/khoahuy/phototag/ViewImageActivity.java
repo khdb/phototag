@@ -43,12 +43,15 @@ public class ViewImageActivity extends AbstractActivity {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_view_image);
+		
+		//To allow up navigation to home activity (Parent activity)
+		getActionBar().setDisplayHomeAsUpEnabled(true);
 
 		imgView = (ImageView) findViewById(R.id.imageView);
 		btnCheckout = (Button) findViewById(R.id.btn_checkout);
 		btnNew = (Button) findViewById(R.id.btn_new);
 		txtCheckin = (TextView) findViewById(R.id.txt_checkin);
-
+  
 		Intent callerIntent = getIntent();
 		Bundle packageFromCaller = callerIntent.getBundleExtra("MyPackage");
 		nfcid = packageFromCaller.getString("nfcid");

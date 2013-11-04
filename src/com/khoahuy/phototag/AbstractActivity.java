@@ -1,10 +1,12 @@
 package com.khoahuy.phototag;
 
+import java.io.File;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 
 import com.khoahuy.database.NFCItemProvider;
+import com.khoahuy.phototag.model.NFCItem;
 import com.khoahuy.phototag.statistic.BarGraph;
 import com.khoahuy.phototag.statistic.DateBarGraph;
 import com.khoahuy.phototag.statistic.MonthBarGraph;
@@ -12,6 +14,7 @@ import com.khoahuy.phototag.statistic.PieGraph;
 import com.khoahuy.phototag.statistic.WeekBarGraph;
 import com.khoahuy.phototag.statistic.YearBarGraph;
 import com.khoahuy.utils.DateUtils;
+import com.khoahuy.utils.FileUtils;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -57,6 +60,21 @@ public abstract class AbstractActivity extends Activity {
 
 		nfcProvider = new NFCItemProvider(this.getContentResolver());
 	}
+	
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		Log.i("Huy", "on save instance state of Abstract");
+        outState.putString("nfcid", nfcid);
+	};
+	
+	@Override
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
+		Log.i("Huy", "on restore instance state of Abstract");
+		nfcid = savedInstanceState.getString("nfcid");
+	};
+
 
 	@Override
 	protected void onResume() {
@@ -166,6 +184,31 @@ public abstract class AbstractActivity extends Activity {
 			break;
 		}
 		}
+	}
+	
+	protected void checkoutNFCItem(String nfcid) {
+		NFCItem nfcItem = nfcProvider.findWaitingItem(nfcid);
+		if (nfcItem != null) {
+			if (nfcProvider.deleteWaitingItem(nfcid)) {
+				// Delete image file:
+				renameImageFileToTemp(nfcItem.getImage());
+				nfcProvider.addUsedItem(nfcItem);
+			}
+		}
+	}
+	
+	private void renameImageFileToTemp(String filePath) {
+		try {
+			File file = new File(filePath);
+			File tempFile = FileUtils
+					.createImageFileTemp(getString(R.string.album_name));
+			if (tempFile.exists())
+				tempFile.delete();
+			file.renameTo(tempFile);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	protected void showMessage(int title, int message) {

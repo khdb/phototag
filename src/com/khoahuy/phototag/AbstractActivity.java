@@ -10,6 +10,7 @@ import com.khoahuy.phototag.statistic.DateBarGraph;
 import com.khoahuy.phototag.statistic.MonthBarGraph;
 import com.khoahuy.phototag.statistic.PieGraph;
 import com.khoahuy.phototag.statistic.WeekBarGraph;
+import com.khoahuy.phototag.statistic.YearBarGraph;
 import com.khoahuy.utils.DateUtils;
 
 import android.app.Activity;
@@ -90,7 +91,6 @@ public abstract class AbstractActivity extends Activity {
 			// Intent intent = new Intent(this, SetPreferenceActivity.class);
 			// startActivityForResult(intent, ACTION_PREFS);
 			BarGraph bar2 = new MonthBarGraph();
-			// Please remove /1000 when active real database
 			Calendar cal2 = Calendar.getInstance();
 			Map<String, Integer> data2 = nfcProvider
 					.getWaitingItemOfMonthStatistic(9, cal2.get(Calendar.YEAR));
@@ -100,7 +100,6 @@ public abstract class AbstractActivity extends Activity {
 			return true;
 		case R.id.action_statistic:
 			BarGraph bar = new WeekBarGraph();
-			// Please remove /1000 when active real database
 			Calendar cal = Calendar.getInstance();
 			// cal.add(Calendar.DATE, -1);
 			Map<String, Integer> data = nfcProvider
@@ -109,12 +108,19 @@ public abstract class AbstractActivity extends Activity {
 			startActivity(barIntent);
 			return true;
 		case R.id.action_about:
+			/*
 			BarGraph bar1 = new DateBarGraph();
-			// Please remove /1000 when active real database
 			Calendar cal1 = Calendar.getInstance();
 			cal1.add(Calendar.DATE, -1);
 			Map<String, Integer> data1 = nfcProvider
 					.getWaitingItemOfDayStatistic(cal1.getTime());
+			Intent barIntent1 = bar1.getIntent(this, data1);
+			startActivity(barIntent1);*/
+			BarGraph bar1 = new YearBarGraph();
+			Calendar cal1 = Calendar.getInstance();
+			cal1.add(Calendar.DATE, -1);
+			Map<String, Integer> data1 = nfcProvider
+					.getWaitingItemOfYearStatistic(2013);
 			Intent barIntent1 = bar1.getIntent(this, data1);
 			startActivity(barIntent1);
 			return true;

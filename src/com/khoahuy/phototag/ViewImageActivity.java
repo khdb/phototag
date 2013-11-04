@@ -1,30 +1,17 @@
 package com.khoahuy.phototag;
 
-import java.io.File;
-
 import com.imagezoom.ImageAttacher;
 import com.imagezoom.ImageAttacher.OnMatrixChangedListener;
 import com.imagezoom.ImageAttacher.OnPhotoTapListener;
-import com.khoahuy.database.NFCItemProvider;
 import com.khoahuy.phototag.model.NFCItem;
 import com.khoahuy.utils.DateUtils;
-import com.khoahuy.utils.FileUtils;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.PendingIntent;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.RectF;
-import android.nfc.NfcAdapter;
-import android.nfc.NfcManager;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.provider.Settings;
 import android.util.Log;
-import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -59,7 +46,7 @@ public class ViewImageActivity extends AbstractActivity {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				checkoutNFCItem();
+				checkoutNFCItem(nfcid);
 				finish();
 			}
 		});
@@ -69,7 +56,6 @@ public class ViewImageActivity extends AbstractActivity {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				checkoutNFCItem();
 				backToMainAndShot();
 			}
 		});
@@ -102,30 +88,9 @@ public class ViewImageActivity extends AbstractActivity {
 		this.finish();
 	}
 
-	private void checkoutNFCItem() {
-		NFCItem nfcItem = nfcProvider.findWaitingItem(nfcid);
-		if (nfcItem != null) {
-			if (nfcProvider.deleteWaitingItem(nfcid)) {
-				// Delete image file:
-				renameImageFileToTemp(nfcItem.getImage());
-				nfcProvider.addUsedItem(nfcItem);
-			}
-		}
-	}
+	
 
-	private void renameImageFileToTemp(String filePath) {
-		try {
-			File file = new File(filePath);
-			File tempFile = FileUtils
-					.createImageFileTemp(getString(R.string.album_name));
-			if (tempFile.exists())
-				tempFile.delete();
-			file.renameTo(tempFile);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-	}
+	
 
 	private void getAndDisplayNFCITem() {
 		NFCItem nfcItem = nfcProvider.findWaitingItem(nfcid);

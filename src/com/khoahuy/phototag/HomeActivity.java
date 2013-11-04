@@ -126,6 +126,12 @@ public class HomeActivity extends AbstractActivity {
 	protected void onRestoreInstanceState(Bundle savedInstanceState) {
 		super.onRestoreInstanceState(savedInstanceState);
 		mCurrentPhotoPath = savedInstanceState.getString("mCurrentPhotoPath");
+		Intent intent = getIntent();
+		if (intent != null
+				&& Intent.EXTRA_UID.equals(intent.getAction())) {
+			setIntent(null);
+		}
+		
 	};
 
 	@Override
@@ -145,8 +151,9 @@ public class HomeActivity extends AbstractActivity {
 						.getBundleExtra("MyPackage");
 				if (packageFromCaller != null) {
 					nfcid = packageFromCaller.getString("nfcid");
-					processNfcID();
+					//processNfcID();
 					setIntent(callerIntent);
+					dispatchTakePictureIntent(ACTION_TAKE_PHOTO_B);
 				}
 			}
 		} catch (Exception e) {
@@ -236,11 +243,20 @@ public class HomeActivity extends AbstractActivity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-
+		setIntent(data);
 		switch (requestCode) {
 		case ACTION_TAKE_PHOTO_B: {
 			if (resultCode == RESULT_OK) {
+				//Check nfcid. If it existed, checkout it
+				if (existedUID(nfcid)) {
+					checkoutNFCItem(nfcid);
+				} 
 				handleBigCameraPhoto();
+			}else if (resultCode == RESULT_CANCELED)
+			{
+				//Goto view image of nfcid
+				if (existedUID(nfcid))
+					displayNFCItem(nfcid);
 			}
 			break;
 		}

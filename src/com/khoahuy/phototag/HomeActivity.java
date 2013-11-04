@@ -25,7 +25,7 @@ import java.util.Date;
 import com.khoahuy.database.NFCItemProvider;
 import com.khoahuy.phototag.model.NFCItem;
 import com.khoahuy.utils.DateUtils;
-
+     
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;

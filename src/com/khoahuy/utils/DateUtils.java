@@ -131,11 +131,12 @@ public class DateUtils {
 		int hour = ((int) delta - (day * 3600 * 24)) / 3600;
 		int minute = ((int) delta - (day * 3600 * 24) - hour * 3600) / 60;
 		int second = ((int) delta - (day * 3600 * 24) - hour * 3600 - minute * 60);
-		if (delta < 0) {
+		
+		if (delta < 1) {
 			return "chưa có";
 		}
 		if (delta < 1 * MINUTE) {
-			return second == 1 ? "một giây trước" : second + " hai giây trước";
+			return second == 1 ? "một giây trước" : second + " giây trước";
 		}
 		if (delta < 2 * MINUTE) {
 			return "một phút trước";

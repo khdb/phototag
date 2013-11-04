@@ -37,6 +37,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -74,6 +76,8 @@ public class HomeActivity extends AbstractActivity {
 		checkinCount = (TextView) findViewById(R.id.txt_checkin_count);
 		checkoutCount = (TextView) findViewById(R.id.txt_checkout_count);
 		totalCount = (TextView) findViewById(R.id.txt_total_count);
+		
+		showReady2ScanBlinkText();
 
 	}
 
@@ -170,6 +174,8 @@ public class HomeActivity extends AbstractActivity {
 		myIntent.putExtra("MyPackage", bundle);
 		startActivity(myIntent);
 	}
+	
+
 
 	private boolean existedUID(String nfcid) {
 		if (nfcProvider.findWaitingItem(nfcid) == null)
@@ -301,5 +307,19 @@ public class HomeActivity extends AbstractActivity {
 		item.setCheckIn(DateUtils.getCurrentTimestamp());
 		nfcProvider.addWaitingItem(item);
 	}
+	
+	//Khoa
+	private void showReady2ScanBlinkText() {
+	      
+	      TextView myText = (TextView) findViewById(R.id.text_ready2scan );
+
+	      Animation anim = new AlphaAnimation(0.0f, 1.0f);
+	      anim.setDuration(550); //You can manage the time of the blink with this parameter
+	      anim.setStartOffset(1000);
+	      anim.setRepeatMode(Animation.REVERSE);
+	      anim.setRepeatCount(Animation.INFINITE);
+	      myText.startAnimation(anim);
+			
+		}
 
 }

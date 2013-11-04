@@ -25,6 +25,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 public abstract class AbstractActivity extends Activity {
 
@@ -137,6 +138,17 @@ public abstract class AbstractActivity extends Activity {
 				startActivity(pieIntent);
 			} catch (Exception ex) {
 				Log.e("Huy", ex.toString());
+			}
+			return true;
+		case R.id.action_khoa_stats:
+			try {
+//				Toast.makeText(this, "Khoa stats selected", Toast.LENGTH_SHORT)
+//	            .show();
+				Intent khdIntent = new Intent(this, DisplayKhoaStatsActivity.class);
+				startActivity(khdIntent);
+				
+			} catch (Exception ex) {
+				
 			}
 			return true;
 		default:

@@ -85,7 +85,7 @@ public class HomeActivity extends AbstractActivity {
 			Bitmap bmp = BitmapFactory.decodeFile(nfcItem.getImage());
 			img1.setImageBitmap(bmp);
 			if (nfcItem.getCheckIn() != null)
-				text1.setText(DateUtils.getDate(nfcItem.getCheckIn()));
+				text1.setText(DateUtils.getDate(nfcItem.getCheckIn()) + " - " +  DateUtils.getRelativeTime(nfcItem.getCheckIn()));
 		} else {
 			img1.setImageResource(R.raw.noimage);
 			text1.setText(R.string.check_in_not_found);
@@ -101,7 +101,7 @@ public class HomeActivity extends AbstractActivity {
 			} else
 				img2.setImageResource(R.raw.noimage);
 			if (nfcItem.getCheckIn() != null)
-				text2.setText(DateUtils.getDate(nfcItem.getCheckIn()));
+				text2.setText(DateUtils.getDate(nfcItem.getCheckIn()) + " - " + DateUtils.getRelativeTime(nfcItem.getCheckIn()));
 		} else {
 			img2.setImageResource(R.raw.noimage);
 			text2.setText(R.string.check_in_not_found);
@@ -115,23 +115,22 @@ public class HomeActivity extends AbstractActivity {
 		checkoutCount.setText(String.valueOf(checkoutItemToday));
 		totalCount.setText(String.valueOf(totalItemToday));
 	}
-	
+
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-        outState.putString("mCurrentPhotoPath", mCurrentPhotoPath);
+		outState.putString("mCurrentPhotoPath", mCurrentPhotoPath);
 	};
-	
+
 	@Override
 	protected void onRestoreInstanceState(Bundle savedInstanceState) {
 		super.onRestoreInstanceState(savedInstanceState);
 		mCurrentPhotoPath = savedInstanceState.getString("mCurrentPhotoPath");
 		Intent intent = getIntent();
-		if (intent != null
-				&& Intent.EXTRA_UID.equals(intent.getAction())) {
+		if (intent != null && Intent.EXTRA_UID.equals(intent.getAction())) {
 			setIntent(null);
 		}
-		
+
 	};
 
 	@Override
@@ -151,7 +150,7 @@ public class HomeActivity extends AbstractActivity {
 						.getBundleExtra("MyPackage");
 				if (packageFromCaller != null) {
 					nfcid = packageFromCaller.getString("nfcid");
-					//processNfcID();
+					// processNfcID();
 					setIntent(callerIntent);
 					dispatchTakePictureIntent(ACTION_TAKE_PHOTO_B);
 				}
@@ -163,7 +162,7 @@ public class HomeActivity extends AbstractActivity {
 	}
 
 	@Override
-	protected void processNfcID() {	
+	protected void processNfcID() {
 		if (("").equals(nfcid) || nfcid == null) {
 			AlertDialog.Builder builder = new AlertDialog.Builder(
 					HomeActivity.this);
@@ -205,7 +204,7 @@ public class HomeActivity extends AbstractActivity {
 		File f = null;
 		try {
 			f = setUpPhotoFile();
-			//mCurrentPhotoPath = f.getAbsolutePath();
+			// mCurrentPhotoPath = f.getAbsolutePath();
 			// takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,Uri.fromFile(f));
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -214,7 +213,8 @@ public class HomeActivity extends AbstractActivity {
 		}
 		switch (actionCode) {
 		case ACTION_TAKE_PHOTO_B:
-			//takePictureIntent.putExtra(MediaStore.EXTRA_SCREEN_ORIENTATION, ActivityInfo.SCREEN_ORIENTATION_PORTRAIT); 
+			// takePictureIntent.putExtra(MediaStore.EXTRA_SCREEN_ORIENTATION,
+			// ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 			takePictureIntent
 					.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
 			break;
@@ -247,14 +247,13 @@ public class HomeActivity extends AbstractActivity {
 		switch (requestCode) {
 		case ACTION_TAKE_PHOTO_B: {
 			if (resultCode == RESULT_OK) {
-				//Check nfcid. If it existed, checkout it
+				// Check nfcid. If it existed, checkout it
 				if (existedUID(nfcid)) {
 					checkoutNFCItem(nfcid);
-				} 
+				}
 				handleBigCameraPhoto();
-			}else if (resultCode == RESULT_CANCELED)
-			{
-				//Goto view image of nfcid
+			} else if (resultCode == RESULT_CANCELED) {
+				// Goto view image of nfcid
 				if (existedUID(nfcid))
 					displayNFCItem(nfcid);
 			}
@@ -317,13 +316,14 @@ public class HomeActivity extends AbstractActivity {
 	}
 
 	private void galleryAddPic() {
-		/*Intent mediaScanIntent = new Intent(
-				"android.intent.action.MEDIA_SCANNER_SCAN_FILE");
-		File f = new File(mCurrentPhotoPath);
-		Uri contentUri = Uri.fromFile(f);
-		mediaScanIntent.setData(contentUri);
-		this.sendBroadcast(mediaScanIntent);*/
-		
+		/*
+		 * Intent mediaScanIntent = new Intent(
+		 * "android.intent.action.MEDIA_SCANNER_SCAN_FILE"); File f = new
+		 * File(mCurrentPhotoPath); Uri contentUri = Uri.fromFile(f);
+		 * mediaScanIntent.setData(contentUri);
+		 * this.sendBroadcast(mediaScanIntent);
+		 */
+
 		// Resize image
 		try {
 			Bitmap bm = BitmapFactory.decodeFile(mCurrentPhotoPath);
@@ -333,10 +333,8 @@ public class HomeActivity extends AbstractActivity {
 			out.flush();
 			out.close();
 		} catch (Exception e) {
-		       e.printStackTrace();
+			e.printStackTrace();
 		}
-
-
 
 		// Store to db
 		NFCItem item = new NFCItem();

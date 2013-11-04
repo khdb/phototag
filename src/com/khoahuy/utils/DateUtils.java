@@ -13,6 +13,7 @@ public class DateUtils {
 	public static String getDate(Long timeStamp) {
 
 		try {
+			timeStamp = timeStamp*1000;
 			DateFormat sdf = new SimpleDateFormat("MM/dd/yyyy - HH:mm:ss");
 			Date netDate = (new Date(timeStamp));
 			return sdf.format(netDate);

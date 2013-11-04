@@ -1,4 +1,4 @@
-package com.khoahuy.phototag;
+package com.khoahuy.utils;
 
 import java.io.File;
 

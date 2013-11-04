@@ -8,6 +8,7 @@ import com.imagezoom.ImageAttacher.OnPhotoTapListener;
 import com.khoahuy.database.NFCItemProvider;
 import com.khoahuy.phototag.model.NFCItem;
 import com.khoahuy.utils.DateUtils;
+import com.khoahuy.utils.FileUtils;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -30,7 +31,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class ViewImageActivity extends AbstractActivity{
+public class ViewImageActivity extends AbstractActivity {
 
 	ImageView imgView;
 	TextView txtCheckin;
@@ -106,15 +107,24 @@ public class ViewImageActivity extends AbstractActivity{
 		if (nfcItem != null) {
 			if (nfcProvider.deleteWaitingItem(nfcid)) {
 				// Delete image file:
-				removeImageFile(nfcItem.getImage());
+				renameImageFileToTemp(nfcItem.getImage());
 				nfcProvider.addUsedItem(nfcItem);
 			}
 		}
 	}
 
-	private boolean removeImageFile(String filePath) {
-		File file = new File(filePath);
-		return file.delete();
+	private void renameImageFileToTemp(String filePath) {
+		try {
+			File file = new File(filePath);
+			File tempFile = FileUtils
+					.createImageFileTemp(getString(R.string.album_name));
+			if (tempFile.exists())
+				tempFile.delete();
+			file.renameTo(tempFile);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	private void getAndDisplayNFCITem() {

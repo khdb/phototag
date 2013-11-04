@@ -86,6 +86,28 @@ public class NFCItemProvider {
 		}
 		return item;
 	}
+	
+	public NFCItem getNewestUsedItem(){
+		String[] projection = { COLUMN_NFCID, COLUMN_CHECK_IN, COLUMN_CHECK_OUT };
+
+		String sort = COLUMN_CHECK_OUT + " DESC";
+
+		Cursor cursor = myCR.query(MyContentProvider.USED_CONTENT_URI,
+				projection, null, null, sort);
+
+		NFCItem item = new NFCItem();
+
+		if (cursor.moveToFirst()) {
+			cursor.moveToFirst();
+			item.setNfcid(cursor.getString(0));
+			item.setImage(cursor.getString(1));
+			item.setCheckIn(cursor.getLong(2));
+			cursor.close();
+		} else {
+			item = null;
+		}
+		return item;
+	}
 
 	public NFCItem getOldestWaitingItemOfToday() {
 		try {

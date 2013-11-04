@@ -53,12 +53,6 @@
             android:name="com.khoahuy.phototag.SetPreferenceActivity"
             android:label="@string/title_activity_setting" >
         </activity>
-        <activity
-            android:name="com.khoahuy.phototag.statistic.XYPlotActivity"
-            android:label="@string/title_activity_setting"
-            android:screenOrientation="landscape" >
-        </activity>
-
         <provider
             android:name="com.khoahuy.database.provider.MyContentProvider"
             android:authorities="com.khoahuy.database.provider.MyContentProvider" />

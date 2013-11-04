@@ -13,6 +13,7 @@ import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Paint.Align;
 import android.util.Log;
 
 public abstract class BarGraph {
@@ -37,6 +38,7 @@ public abstract class BarGraph {
 		// Main bar
 		List<String> xText = new ArrayList<String>();
 		CategorySeries series = new CategorySeries(seriesTitle);
+		series.add("0",0);
 		for (LinkedHashMap.Entry<String, Integer> entry : data.entrySet()) {
 			// myIntArray[Integer.parseInt(entry.getKey())] = entry.getValue();
 			series.add(entry.getKey(), entry.getValue());
@@ -53,14 +55,31 @@ public abstract class BarGraph {
 		mRenderer.setChartTitle(charTitle);
 		mRenderer.setXTitle(XTitle);
 		mRenderer.setYTitle(YTitle);
-		mRenderer.setAxisTitleTextSize(labelTextSize);
-		mRenderer.setLabelsTextSize(labelTextSize);
-		mRenderer.setChartTitleTextSize(labelTextSize);
+		mRenderer.setAxisTitleTextSize(20);
+		mRenderer.setLabelsTextSize(20);
+		mRenderer.setLegendTextSize(20);
+		
+		mRenderer.setChartTitleTextSize(20);
 		mRenderer.setAxesColor(axesColor);
+		//mRenderer.setMargins(new int[] { 20, 30, 0, 20 } );
 		mRenderer.setLabelsColor(labelColor);
+		
+		
+		//mRenderer.setXLabelsPadding(5);
 		mRenderer.setYAxisMax(maxValue * 1.5);
-		mRenderer.setLegendTextSize(labelTextSize);
-		mRenderer.setYLabelsPadding(10);
+		mRenderer.setYLabels(0);
+		//mRenderer.setYLabelsPadding(10);
+		
+		
+		
+		mRenderer.setShowGrid(true);
+		mRenderer.setZoomEnabled(false);
+		mRenderer.setPanEnabled(false);
+
+		
+		mRenderer.setBarSpacing(1.0f);
+		mRenderer.setBarWidth(50);
+		
 		// Load custom X Axis text
 		mRenderer.setXLabels(0);
 		for (int i = 0; i < xText.size(); i++) {

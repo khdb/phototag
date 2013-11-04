@@ -1,114 +1,310 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/main"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@color/main_bg" 
+    tools:context=".MainActivity" >
+
+
+        
+    <LinearLayout 
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_gravity="center"
+          android:baselineAligned="false"
+          android:layout_margin="8dp"
+          
+          >
+        
+        <LinearLayout 
+            android:layout_width="wrap_content"
+        	android:layout_height="@dimen/main_screen_stats_height"
+        	android:orientation="horizontal" 
+        	android:background="@color/bg_stats_in"
+        	android:gravity="center"
+        	>
+        	
+            <TextView
+                android:id="@+id/count_label_in"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:paddingLeft="@dimen/stats_label_left_margin"
+                android:text="Vào"
+                android:textColor="@color/title_in_out"
+                android:textSize="18dp"
+                android:textStyle="normal"
+                android:typeface="normal" />
+            
+            <TextView
+                android:id="@+id/txt_checkin_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:paddingLeft="@dimen/main_screen_vertical_margin"
+                android:paddingRight="@dimen/main_screen_vertical_margin"
+                android:text="@string/check_in_count"
+                android:textColor="@color/title_in_out"
+                android:textSize="24dp"
+                android:textStyle="bold"
+                android:typeface="normal" />
+                       
+        </LinearLayout>
+        
+        <LinearLayout 
+            android:layout_width="wrap_content"
+        	android:layout_height="@dimen/main_screen_stats_height"
+        	android:orientation="horizontal" 
+        	android:layout_weight=".4"
+        	android:background="@color/bg_stats_total"
+        	android:gravity="center"
+        	>
+        	
+            <TextView
+                android:id="@+id/count_label_total"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:paddingLeft="@dimen/stats_label_left_margin"
+                android:text="Tổng"
+                android:textColor="@color/title_in_out"
+                android:textSize="20dp"
+                android:textStyle="normal"
+                android:typeface="normal" />
+            
+            <TextView
+    		    android:id="@+id/txt_total_count"
+    		    android:layout_width="wrap_content"
+    		    android:layout_height="wrap_content"
+    		    android:layout_centerHorizontal="true"
+    		    android:layout_centerVertical="true"
+    		    android:paddingLeft="@dimen/main_screen_vertical_margin"
+    		    android:textColor="@color/title_in_out"
+    		    android:text="@string/total_count"
+    		    android:textSize="24dp"
+    		    android:textStyle="bold"
+    		    android:typeface="normal" />
+            
+        </LinearLayout>
+        
+         <LinearLayout 
+            android:layout_width="wrap_content"
+        	android:layout_height="@dimen/main_screen_stats_height"
+        	android:orientation="horizontal" 
+        	android:layout_weight=".3"
+        	android:background="@color/bg_stats_out"
+        	android:gravity="center"
+        	>
+        	
+            <TextView
+                android:id="@+id/count_label_out"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:paddingLeft="@dimen/stats_label_left_margin"
+                android:text="Ra"
+                android:textColor="@color/title_in_out"
+                android:textSize="20dp"
+                android:textStyle="normal"
+                android:typeface="normal" />
+            
+            <TextView
+    		    android:id="@+id/txt_checkout_count"
+    		    android:layout_width="wrap_content"
+    		    android:layout_height="wrap_content"
+    		    android:layout_centerHorizontal="true"
+    		    android:layout_centerVertical="true"
+    		    android:paddingLeft="@dimen/main_screen_vertical_margin"
+    		    android:textColor="@color/title_in_out"
+    		    android:text="@string/check_out_count"
+    		    android:textSize="24dp"
+    		    android:textStyle="bold"
+    		    android:typeface="normal" />
+            
+        </LinearLayout>
+        
+    </LinearLayout>
+        
    
+     
+<!-- The 2 images, one is to display newest checkin, one is to display newest checkout --> 
     <LinearLayout
+        android:id="@+id/plate_container_layout"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="10"
-        android:background="#a2add0"
-        android:orientation="horizontal" >
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_weight=".60"
+        android:showDividers="end" >
+        
+        <RelativeLayout
+            android:id="@+id/checkin"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            android:layout_weight=".5"
+             >
+            
+            <ImageView
+        		android:id="@+id/img_newest"
+        		android:layout_width="fill_parent"
+        		android:layout_height="wrap_content"
+        		android:adjustViewBounds="true"   
+        		android:maxHeight="240dp"  
+        		android:maxWidth="250dp"
+        		android:contentDescription="@string/thumbnail_desc"
+                android:scaleType="centerCrop"    
+        		android:src="@raw/noimage" />
 
-        <TextView
-            android:id="@+id/txt_checkin_count"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight=".30"
-            android:padding="6dp"
-            android:text="@string/check_in_count"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-
-        <TextView
-            android:id="@+id/txt_total_count"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight=".40"
-            android:padding="6dp"
-            android:text="@string/total_count"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-
-        <TextView
-            android:id="@+id/txt_checkout_count"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight=".30"
-            android:padding="6dp"
-            android:text="@string/check_out_count"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            <ImageView
+                android:id="@+id/label_in_out"
+                android:layout_width="fill_parent"
+                android:layout_height="35dp"
+                android:layout_alignParentTop="true"
+                android:adjustViewBounds="true"
+                android:maxHeight="35dp"
+                android:scaleType="fitXY"
+                android:src="@drawable/in_out_label" />
+            
+          <!--   <ImageView
+                android:id="@+id/gradient_date_in"
+                android:layout_width="fill_parent"
+                android:layout_height="45dp"
+                android:layout_alignParentBottom="true"
+                android:adjustViewBounds="true"
+                android:maxHeight="35dp"
+                android:scaleType="fitXY"
+                android:src="@drawable/khoa_background_gradient" /> -->
+         
+            <TextView
+    		    android:id="@+id/title_in"
+    		    android:layout_width="wrap_content"
+    		    android:layout_height="wrap_content"
+    		    android:layout_alignParentTop="true"
+    		    android:layout_alignParentLeft="true"
+    		    android:layout_marginLeft="16dp"
+    		    android:gravity="center_vertical"
+    		    android:text="Xe mới vào"
+    		    android:textColor="@color/title_in_out"
+    		    android:textSize="18dp"
+    		    android:textStyle="bold" />
+            
+    		<TextView
+    		    android:id="@+id/txt_time_newest"
+    		    android:layout_width="wrap_content"
+    		    android:layout_height="wrap_content"
+    		    android:layout_alignParentRight="true"
+    		    android:gravity="right"
+    		    android:layout_marginLeft="16dp"
+    		    android:text="@string/check_in_not_found"
+    		    android:textColor="@color/text_date_in_out"
+    		    android:textSize="16dp"
+    		    android:textStyle="normal" />
+    		
+        </RelativeLayout>       
+        
+        <RelativeLayout
+            android:id="@+id/checkout"
+            android:layout_width="match_parent"
+        	android:layout_height="0dp"
+        	android:layout_weight=".5"
+        	android:showDividers="end" >
+            
+            <ImageView
+        		android:id="@+id/img_oldest"
+        		android:layout_width="fill_parent"
+        		android:layout_height="wrap_content"
+        		android:adjustViewBounds="true"  
+        		android:maxHeight="240dp"  
+        		android:maxWidth="250dp"
+        		android:contentDescription="@string/thumbnail_desc"
+                android:scaleType="centerCrop"
+        		android:src="@raw/noimage" />  
+            
+            <ImageView
+                android:id="@+id/label_in_out"
+                android:layout_width="fill_parent"
+                android:layout_height="35dp"
+                android:layout_alignParentTop="true"
+                android:adjustViewBounds="true"
+                android:maxHeight="35dp"
+                android:scaleType="fitXY"
+                android:src="@drawable/in_out_label" />
+            
+         <!--     <ImageView
+        		android:id="@+id/gradient_date_out"
+        		android:layout_width="fill_parent"
+        		android:layout_height="45dp"
+        		android:adjustViewBounds="true"  
+        		android:layout_alignParentBottom="true"
+        		android:scaleType="fitXY"  
+        		android:maxHeight="35dp"  
+        		android:src="@drawable/khoa_background_gradient" /> -->
+             
+            <TextView
+    		    android:id="@+id/title_out"
+    		    android:layout_width="wrap_content"
+    		    android:layout_height="wrap_content"
+    		    android:layout_alignParentTop="true"
+    		    android:layout_alignParentLeft="true"
+    		    android:layout_marginLeft="16dp"
+    		    android:text="Xe mới ra"
+    		    android:textColor="@color/title_in_out"
+    		    android:textSize="18dp"
+    		    android:textStyle="bold" />
+             
+    		<TextView
+    		    android:id="@+id/txt_time_oldest"
+    		    android:layout_width="wrap_content"
+    		    android:layout_height="wrap_content"
+    		    android:layout_alignParentRight="true"
+    		    android:layout_marginLeft="16dp"
+    		    android:text="@string/check_in_not_found"
+    		    android:textColor="@color/text_date_in_out"
+    		    android:textSize="16dp"
+    		    android:textStyle="normal" />
+    		
+        </RelativeLayout>
+      
+        
     </LinearLayout>
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="35" >
+  <!-- Ready to scan notification -->
+    <LinearLayout
+        	android:id="@+id/layout_ready2scan"
+        	android:layout_width="match_parent"
+        	android:layout_height="wrap_content"
+        	android:orientation="vertical"
+        	android:layout_weight=".10"
+        	android:paddingLeft="@dimen/main_screen_vertical_margin"
+    		android:paddingRight="@dimen/main_screen_vertical_margin"
+    		android:background="@color/bg_ready2scan"
+        	android:showDividers="end" >
+    	        
+    		<TextView
+    		    android:id="@+id/text_ready2scan"
+    		    android:layout_width="match_parent"
+    		    android:layout_height="wrap_content"
+    		    android:layout_centerHorizontal="true"
+    		    android:layout_centerVertical="true"
+    		    android:layout_margin="8dp"
+    		    android:gravity="center"
+    		    android:text="sẵn sàng quẹt thẻ ..."
+    		    android:textSize="22dp"
+    		    android:textStyle="normal"
+    		    android:typeface="normal" 
+    		    android:textColor="@color/text_date_in_out" />
+    
+    </LinearLayout>
 
-        <ImageView
-            android:id="@+id/img_newest"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:adjustViewBounds="false"
-            android:contentDescription="@string/thumbnail_desc"
-            android:scaleType="centerCrop"
-            android:src="@raw/noimage" />
-
-        <TextView
-            android:id="@+id/txt_newest"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Newest" />
-
-        <TextView
-            android:id="@+id/txt_time_newest"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:text="@string/check_in_not_found" />
-    </FrameLayout>
-
-    <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="10"
-        android:background="#62CFC2" >
-
-        <TextView
-            android:id="@+id/ready_scan"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="[[ READY TO SCAN ]]"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-    </RelativeLayout>
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="35" >
-
-        <ImageView
-            android:id="@+id/img_oldest"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:adjustViewBounds="false"
-            android:contentDescription="@string/thumbnail_desc"
-            android:scaleType="centerCrop"
-            android:src="@raw/noimage" />
-
-        <TextView
-            android:id="@+id/txt_oldest"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Oldest" />
-
-        <TextView
-            android:id="@+id/txt_time_oldest"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:text="@string/check_in_not_found" />
-    </FrameLayout>
 
 </LinearLayout>

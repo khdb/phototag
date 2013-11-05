@@ -27,3 +27,9 @@ proguard/
 *.ipr
 *.iws
 .idea/
+
+
+*.DS_Store
+src/.DS_Store
+src/com/.DS_Store
+src/com/khoahuy/.DS_Store

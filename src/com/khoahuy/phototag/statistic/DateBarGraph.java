@@ -6,7 +6,7 @@ public class DateBarGraph extends BarGraph {
 
 	public DateBarGraph() {
 		seriesTitle = "Date chart";
-		charTitle = "Date statistic";
+		charTitle = "Thống kê ngay";
 		XTitle = "Hour";
 		YTitle = "Tag count";
 		axesColor = Color.GREEN;

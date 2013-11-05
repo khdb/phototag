@@ -41,7 +41,7 @@ public abstract class BarGraph {
 		series.add("0",0);
 		for (LinkedHashMap.Entry<String, Integer> entry : data.entrySet()) {
 			// myIntArray[Integer.parseInt(entry.getKey())] = entry.getValue();
-			series.add(entry.getKey(), entry.getValue());
+			series.add(entry.getValue());
 			xText.add(entry.getKey());
 			if (maxValue < entry.getValue())
 				maxValue = entry.getValue();
@@ -81,9 +81,11 @@ public abstract class BarGraph {
 		mRenderer.setBarWidth(50);
 		
 		// Load custom X Axis text
+		
 		mRenderer.setXLabels(0);
-		for (int i = 0; i < xText.size(); i++) {
-			mRenderer.addXTextLabel(i + 1, xText.get(i));
+		mRenderer.setXAxisMax(xText.size() + 2);
+		for (int i = 1; i <= xText.size(); i++) {
+			mRenderer.addXTextLabel(i + 1, xText.get(i-1));
 		}
 		
 		// Customize bar 1

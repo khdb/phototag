@@ -30,6 +30,10 @@ public class NFCItemProvider {
 		myCR = cr;
 	}
 
+	private String getStringOfNumber(String number) {
+		return String.valueOf(Integer.parseInt(number));
+	}
+
 	public void addWaitingItem(NFCItem item) {
 
 		ContentValues values = new ContentValues();
@@ -86,8 +90,8 @@ public class NFCItemProvider {
 		}
 		return item;
 	}
-	
-	public NFCItem getNewestUsedItem(){
+
+	public NFCItem getNewestUsedItem() {
 		String[] projection = { COLUMN_NFCID, COLUMN_CHECK_IN, COLUMN_CHECK_OUT };
 
 		String sort = COLUMN_CHECK_OUT + " DESC";
@@ -221,7 +225,7 @@ public class NFCItemProvider {
 		 */
 		try {
 			Long from = DateUtils.getTimestampBeginOfDate(date);
-			Long to = from + DateUtils.timestampOfDay;
+			Long to = from + DateUtils.TIMESTAMP_OF_DAY;
 			String[] projection = {
 					"strftime('%H', " + COLUMN_CHECK_IN + ", 'unixepoch')",
 					"count(*)" };
@@ -257,7 +261,9 @@ public class NFCItemProvider {
 		 */
 		try {
 			Long to = DateUtils.getTimestampEndOfDate(dateEndOfWeek);
-			Long from = to - DateUtils.timestampOfWeek;
+			Long from = to - DateUtils.TIMESTAMP_OF_WEEK + 1;
+			Log.i("Statistic", "Get Waiting Item Of Week " + dateEndOfWeek
+					+ ": From: " + from + " - To: " + to);
 			String[] projection = {
 					"strftime('%d', " + COLUMN_CHECK_IN + ", 'unixepoch')",
 					"count(*)" };
@@ -272,13 +278,13 @@ public class NFCItemProvider {
 			Map<String, Integer> result = new LinkedHashMap<String, Integer>();
 			if (cursor.moveToFirst())
 				do {
-					String date = String.valueOf(cursor.getInt(0));
+					String date = getStringOfNumber(cursor.getString(0));
 					int count = cursor.getInt(1);
 					result.put(date, count);
 				} while (cursor.moveToNext());
 			cursor.close();
-			result = StatisticUtils.normalizationWeekData(result,
-					DateUtils.getDateOfMonth(dateEndOfWeek));
+			result = StatisticUtils
+					.normalizationWeekData(result, dateEndOfWeek);
 			return result;
 		} catch (Exception ex) {
 			Log.e("Huy", ex.toString());
@@ -343,8 +349,11 @@ public class NFCItemProvider {
 		 * "1382979686400") GROUP BY (strftime('%m', checkin,'unixepoch'));
 		 */
 		try {
-			Long from = DateUtils.getTimestampFirstDateOfMonth(0, year);
-			Long to = DateUtils.getTimestampEndDateOfMonth(12, year);
+			Long from = DateUtils.getTimestamp(year, 1, 1, 0, 0, 0);
+			Long to = DateUtils.getTimestamp(year, 12, 31, 23, 59, 59);
+			// Log.i("Statistic", "Get Waiting Item Of Year " + year +
+			// ": From: " + from + " - To: " + to);
+
 			String[] projection = {
 					"strftime('%m', " + COLUMN_CHECK_IN + ", 'unixepoch')",
 					"count(*)" };
@@ -362,9 +371,9 @@ public class NFCItemProvider {
 			}
 			if (cursor.moveToFirst())
 				do {
-					String date = String.valueOf(cursor.getInt(0));
+					String month = getStringOfNumber(cursor.getString(0));
 					int count = cursor.getInt(1);
-					result.put(date, count);
+					result.put(month, count);
 				} while (cursor.moveToNext());
 			cursor.close();
 
@@ -404,7 +413,7 @@ public class NFCItemProvider {
 							break;
 						}
 						if (i == thresholdArray.length - 1)
-							qualityArray[i+1]++;
+							qualityArray[i + 1]++;
 					}
 				} while (cursor.moveToNext());
 			cursor.close();

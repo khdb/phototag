@@ -19,10 +19,11 @@ public class StatisticUtils {
 	}
 
 	public static Map<String, Integer> normalizationWeekData(
-			Map<String, Integer> data, int dateEndOfWeek) {
+			Map<String, Integer> data, Date dateEndOfWeek) throws Exception {
+		String[] dateArray = DateUtils.getDateName7DayAgo(dateEndOfWeek);
 		Map<String, Integer> result = new LinkedHashMap<String, Integer>();
-		for (int i = dateEndOfWeek - 6; i <= dateEndOfWeek; i++) {
-			result.put(String.valueOf(i), 0);
+		for (int i = dateArray.length - 1; i >= 0; i--) {
+			result.put(dateArray[i], 0);
 		}
 		for (LinkedHashMap.Entry<String, Integer> entry : data.entrySet()) {
 			result.put(entry.getKey(), entry.getValue());

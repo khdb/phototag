@@ -42,7 +42,8 @@ public class DateUtils {
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(date);
 			cal.add(Calendar.DATE, numberDay);
-			return cal.get(Calendar.DAY_OF_MONTH) + "/" + cal.get(Calendar.MONTH);
+			int month = cal.get(Calendar.MONTH) + 1;
+			return cal.get(Calendar.DAY_OF_MONTH) + "/" + month;
 		} catch (Exception ex) {
 			throw new Exception("Get time ago error");
 		}
@@ -130,22 +131,22 @@ public class DateUtils {
 
 	}
 
-	public static long getTimestampFirstDateOfMonth(int month, int year)
+	public static long getTimestampFirstDateOfMonth(int monthIndex, int year)
 			throws Exception {
 		try {
 			Calendar cal = Calendar.getInstance();
-			cal.set(year, month, 1, 0, 0, 0);
+			cal.set(year, monthIndex, 1, 0, 0, 0);
 			return cal.getTime().getTime() / 1000;
 		} catch (Exception ex) {
 			throw new Exception("Get time ago error");
 		}
 	}
 
-	public static long getTimestampEndDateOfMonth(int month, int year)
+	public static long getTimestampEndDateOfMonth(int monthIndex, int year)
 			throws Exception {
 		try {
 			Calendar cal = Calendar.getInstance();
-			cal.set(year, month + 1, 1, 23, 59, 59);
+			cal.set(year, monthIndex + 1, 1, 23, 59, 59);
 			cal.add(Calendar.DAY_OF_MONTH, -1);
 			return cal.getTime().getTime() / 1000;
 		} catch (Exception ex) {

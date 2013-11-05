@@ -226,8 +226,8 @@ public class DisplayKhoaStatsActivity extends FragmentActivity implements Action
             		try {
         				int[] thresholdArray = { 60, 120, 180, 240, 300, 360, 420, 480,
         						540, 600 };
-        				long from = DateUtils.getTimestampFirstDateOfMonth(0, 2013);
-        				long to = DateUtils.getTimestampEndDateOfMonth(11, 2013);
+        				long from = DateUtils.getTimestampFirstDateOfMonth(10, 2013);
+        				long to = DateUtils.getTimestampEndDateOfMonth(10, 2013);
         				Map<String, Integer> data4 = nfcProvider.getUsedItemStatistic(
         						from, to, thresholdArray);
         				PieGraph pie = new PieGraph();

@@ -15,23 +15,24 @@ import android.util.Log;
 import android.view.View;
 
 public class PieGraph {
-
-	public Intent getIntent(Context context, Map<String, Integer> data) {
-
-		CategorySeries series = new CategorySeries("Pie Graph");
-		DefaultRenderer renderer = new DefaultRenderer();
+	protected CategorySeries series;
+	protected DefaultRenderer renderer;
+	
+	public void createGraphic(Map<String, Integer> data) {
+		series = new CategorySeries("Pie Graph");
+		renderer = new DefaultRenderer();
 		int[] colors = new int[] { Color.BLUE, Color.DKGRAY, Color.MAGENTA,
-				Color.YELLOW, Color.GRAY, Color.CYAN, Color.RED, Color.GREEN,
-				Color.LTGRAY, Color.WHITE, Color.BLACK, Color.WHITE };
+				Color.GREEN, Color.CYAN, Color.RED, Color.YELLOW, Color.rgb(255,165,0),
+				Color.rgb(148,  0,  211), Color.rgb(0,100,10)}; //Orange, Puple, Darkgreen
 		int i = 0;
 		for (LinkedHashMap.Entry<String, Integer> entry : data.entrySet()) {
 			// myIntArray[Integer.parseInt(entry.getKey())] = entry.getValue();
 			if (entry.getValue() <= 0)
 				continue;
-
 			series.add(entry.getKey(), entry.getValue());
 			SimpleSeriesRenderer r = new SimpleSeriesRenderer();
-			r.setColor(colors[++i]);
+			r.setColor(colors[i]);
+			i++;
 			r.setShowLegendItem(true);
 			renderer.addSeriesRenderer(r);
 			Log.i("Huy", "Add: " + entry.getKey() + ": " + entry.getValue());
@@ -41,52 +42,30 @@ public class PieGraph {
 		renderer.setChartTitleTextSize(30);
 		renderer.setDisplayValues(true);
 		renderer.setChartTitleTextSize(30);
-		renderer.setPanEnabled(false);
-		renderer.setExternalZoomEnabled(false);
+		renderer.setAxesColor(Color.RED);
 		renderer.setLegendTextSize(30);
-		renderer.setZoomEnabled(false);
-		renderer.setLabelsTextSize(30);
+		renderer.setInScroll(true);
 
+		renderer.setZoomRate(2);
+		renderer.setPanEnabled(false);
+		renderer.setZoomEnabled(true);
+		
+		renderer.setFitLegend(true);
+	}
+
+	public Intent getIntent(Context context, Map<String, Integer> data) {
+		createGraphic(data);
 		Intent intent = ChartFactory.getPieChartIntent(context, series,
 				renderer, "Pie");
 		return intent;
 	}
-	
-	//Khoa
+
+	// Khoa
 	public View getView(Context context, Map<String, Integer> data) {
-		
-		CategorySeries series = new CategorySeries("Pie Graph");
-		DefaultRenderer renderer = new DefaultRenderer();
-		int[] colors = new int[] { Color.BLUE, Color.DKGRAY, Color.MAGENTA,
-				Color.YELLOW, Color.GRAY, Color.CYAN, Color.RED, Color.GREEN,
-				Color.LTGRAY, Color.WHITE, Color.BLACK, Color.WHITE };
-		int i = 0;
-		for (LinkedHashMap.Entry<String, Integer> entry : data.entrySet()) {
-			// myIntArray[Integer.parseInt(entry.getKey())] = entry.getValue();
-			if (entry.getValue() <= 0)
-				continue;
-
-			series.add(entry.getKey(), entry.getValue());
-			SimpleSeriesRenderer r = new SimpleSeriesRenderer();
-			r.setColor(colors[++i]);
-			r.setShowLegendItem(true);
-			renderer.addSeriesRenderer(r);
-			Log.i("Huy", "Add: " + entry.getKey() + ": " + entry.getValue());
-		}
-
-		renderer.setChartTitle("Thời gian gửi xe");
-		renderer.setChartTitleTextSize(60);
-		renderer.setDisplayValues(true);
-		//renderer.setChartTitleTextSize(30);
-		renderer.setPanEnabled(false);
-		renderer.setExternalZoomEnabled(false);
-		renderer.setLegendTextSize(50);
-		renderer.setZoomEnabled(false);
-		renderer.setLabelsTextSize(40);
-
+		createGraphic(data);
 		View view = ChartFactory.getPieChartView(context, series, renderer);
 		return view;
-		
+
 	}
-	
+
 }

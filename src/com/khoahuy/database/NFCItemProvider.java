@@ -292,7 +292,7 @@ public class NFCItemProvider {
 		}
 	}
 
-	public Map<String, Integer> getWaitingItemOfMonthStatistic(int month,
+	public Map<String, Integer> getWaitingItemOfMonthStatistic(int monthIndex,
 			int year) {
 		/*
 		 * SELECT strftime('%d', checkin, 'unixepoch'), count(*) FROM
@@ -300,8 +300,10 @@ public class NFCItemProvider {
 		 * "1382979686400") GROUP BY (strftime('%d', checkin,'unixepoch'));
 		 */
 		try {
-			Long from = DateUtils.getTimestampFirstDateOfMonth(month, year);
-			Long to = DateUtils.getTimestampEndDateOfMonth(month, year);
+			Long from = DateUtils.getTimestampFirstDateOfMonth(monthIndex, year);
+			Long to = DateUtils.getTimestampEndDateOfMonth(monthIndex, year);
+			Log.i("Statistic", "Get Waiting Item Of MonthIndex " + monthIndex +
+					 ": From: " + from + " - To: " + to);
 			String[] projection = {
 					"strftime('%d', " + COLUMN_CHECK_IN + ", 'unixepoch')",
 					"count(*)" };
@@ -398,7 +400,7 @@ public class NFCItemProvider {
 			String selection = COLUMN_CHECK_OUT + " >= \"" + from + "\" AND "
 					+ COLUMN_CHECK_OUT + " <= \"" + to + "\"";
 			Cursor cursor = myCR.query(MyContentProvider.USED_CONTENT_URI,
-					projection, null, null, null);
+					projection, selection, null, null);
 
 			thresholdArray = StatisticUtils.convertToTimestamp(thresholdArray);
 

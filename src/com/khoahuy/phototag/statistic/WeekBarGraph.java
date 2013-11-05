@@ -13,7 +13,7 @@ public class WeekBarGraph extends BarGraph {
 			data = nfcProvider.getWaitingItemOfWeekStatistic(date);
 			seriesTitle = "Week chart";
 			charTitle = "Thống kê tuần từ "
-					+ DateUtils.getDateMonthString(date, -7) + " đến "
+					+ DateUtils.getDateMonthString(date, -6) + " đến "
 					+ DateUtils.getDateMonthString(date, 0);
 			XTitle = "Ngày";
 			YTitle = "Số lượng";

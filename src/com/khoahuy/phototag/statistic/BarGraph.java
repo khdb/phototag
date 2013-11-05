@@ -13,6 +13,7 @@ import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.View;
 
@@ -46,7 +47,6 @@ public abstract class BarGraph {
 			xText.add(entry.getKey());
 			if (maxValue < entry.getValue())
 				maxValue = entry.getValue();
-			Log.i("Huy", "Add: " + entry.getKey() + ": " + entry.getValue());
 		}
 
 		dataset = new XYMultipleSeriesDataset();
@@ -58,28 +58,31 @@ public abstract class BarGraph {
 		mRenderer.setXTitle(XTitle);
 		mRenderer.setYTitle(YTitle);
 		mRenderer.setAxisTitleTextSize(20);
-		mRenderer.setLabelsTextSize(20);
+		mRenderer.setLabelsTextSize(25);
 		mRenderer.setLegendTextSize(20);
 
-		mRenderer.setChartTitleTextSize(20);
-		mRenderer.setAxesColor(axesColor);
+		mRenderer.setChartTitleTextSize(40);
+		mRenderer.setAxesColor(Color.BLACK);
 		// mRenderer.setMargins(new int[] { 20, 30, 0, 20 } );
 		mRenderer.setLabelsColor(labelColor);
+		
+		mRenderer.setApplyBackgroundColor(true);
+		mRenderer.setBackgroundColor(Color.WHITE);
+		mRenderer.setMarginsColor(Color.WHITE);
 
 		// mRenderer.setXLabelsPadding(5);
 		mRenderer.setYAxisMax(maxValue * 1.5);
 		mRenderer.setYLabels(0);
-		// mRenderer.setYLabelsPadding(10);
 
 		mRenderer.setShowGrid(true);
 		mRenderer.setZoomEnabled(false);
 		mRenderer.setPanEnabled(false);
 
-		mRenderer.setBarSpacing(1.0f);
-		mRenderer.setBarWidth(50);
+		mRenderer.setBarSpacing(2.0f);
+		mRenderer.setBarWidth(30);
 
 		// Load custom X Axis text
-
+		mRenderer.setXAxisColor(Color.BLACK);
 		mRenderer.setXLabels(0);
 		mRenderer.setXAxisMax(xText.size() + 2);
 		for (int i = 1; i <= xText.size(); i++) {
@@ -103,62 +106,7 @@ public abstract class BarGraph {
 
 	public View getView(Context context) {
 		// TODO Auto-generated method stub
-		// Main bar
-		List<String> xText = new ArrayList<String>();
-		CategorySeries series = new CategorySeries(seriesTitle);
-		series.add("0", 0);
-		for (LinkedHashMap.Entry<String, Integer> entry : data.entrySet()) {
-			// myIntArray[Integer.parseInt(entry.getKey())] = entry.getValue();
-			series.add(entry.getValue());
-			xText.add(entry.getKey());
-			if (maxValue < entry.getValue())
-				maxValue = entry.getValue();
-			Log.i("Huy", "Add: " + entry.getKey() + ": " + entry.getValue());
-		}
-
-		dataset = new XYMultipleSeriesDataset();
-		dataset.addSeries(series.toXYSeries());
-
-		// This is how the "Graph" itself will look like
-		mRenderer = new XYMultipleSeriesRenderer();
-		mRenderer.setChartTitle(charTitle);
-		mRenderer.setXTitle(XTitle);
-		mRenderer.setYTitle(YTitle);
-		mRenderer.setAxisTitleTextSize(20);
-		mRenderer.setLabelsTextSize(20);
-		mRenderer.setLegendTextSize(20);
-
-		mRenderer.setChartTitleTextSize(20);
-		mRenderer.setAxesColor(axesColor);
-		// mRenderer.setMargins(new int[] { 20, 30, 0, 20 } );
-		mRenderer.setLabelsColor(labelColor);
-
-		// mRenderer.setXLabelsPadding(5);
-		mRenderer.setYAxisMax(maxValue * 1.5);
-		mRenderer.setYLabels(0);
-		// mRenderer.setYLabelsPadding(10);
-
-		mRenderer.setShowGrid(true);
-		mRenderer.setZoomEnabled(false);
-		mRenderer.setPanEnabled(false);
-
-		mRenderer.setBarSpacing(1.0f);
-		mRenderer.setBarWidth(50);
-
-		// Load custom X Axis text
-
-		mRenderer.setXLabels(0);
-		mRenderer.setXAxisMax(xText.size() + 2);
-		for (int i = 1; i <= xText.size(); i++) {
-			mRenderer.addXTextLabel(i + 1, xText.get(i - 1));
-		}
-
-		// Customize bar 1
-		XYSeriesRenderer renderer = new XYSeriesRenderer();
-		renderer.setDisplayChartValues(true);
-		renderer.setChartValuesSpacing((float) 0.5);
-		renderer.setChartValuesTextSize(30);
-		mRenderer.addSeriesRenderer(renderer);
+		createGraph();
 		View view = ChartFactory.getBarChartView(context, dataset, mRenderer,
 				Type.DEFAULT);
 		return view;

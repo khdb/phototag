@@ -235,10 +235,8 @@ public class DisplayKhoaStatsActivity extends FragmentActivity implements Action
         						540, 600 };
         				long from = DateUtils.getTimestampFirstDateOfMonth(10, 2013);
         				long to = DateUtils.getTimestampEndDateOfMonth(10, 2013);
-        				Map<String, Integer> data4 = nfcProvider.getUsedItemStatistic(
-        						from, to, thresholdArray);
-        				PieGraph pie = new PieGraph();
-        				View view = pie.getView(getActivity(), data4);
+        				PieGraph pie = new PieGraph(from, to, thresholdArray, nfcProvider);
+        				View view = pie.getView(getActivity());
         				//return view;
         				rootView = view;
         				break;

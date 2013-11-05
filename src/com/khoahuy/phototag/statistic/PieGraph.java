@@ -8,6 +8,8 @@ import org.achartengine.model.CategorySeries;
 import org.achartengine.renderer.DefaultRenderer;
 import org.achartengine.renderer.SimpleSeriesRenderer;
 
+import com.khoahuy.database.NFCItemProvider;
+
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -17,8 +19,14 @@ import android.view.View;
 public class PieGraph {
 	protected CategorySeries series;
 	protected DefaultRenderer renderer;
+	protected Map<String, Integer> data;
 	
-	public void createGraphic(Map<String, Integer> data) {
+	public PieGraph(long from, long to, int[] thresholdArray, NFCItemProvider nfcProvider){
+		data = nfcProvider.getUsedItemStatistic(
+				from, to, thresholdArray);
+	}
+	
+	public void createGraphic() {
 		series = new CategorySeries("Pie Graph");
 		renderer = new DefaultRenderer();
 		int[] colors = new int[] { Color.BLUE, Color.DKGRAY, Color.MAGENTA,
@@ -35,7 +43,7 @@ public class PieGraph {
 			i++;
 			r.setShowLegendItem(true);
 			renderer.addSeriesRenderer(r);
-			Log.i("Huy", "Add: " + entry.getKey() + ": " + entry.getValue());
+			//Log.i("Huy", "Add: " + entry.getKey() + ": " + entry.getValue());
 		}
 
 		renderer.setChartTitle("Pie Chart Demo");
@@ -44,25 +52,23 @@ public class PieGraph {
 		renderer.setChartTitleTextSize(30);
 		renderer.setAxesColor(Color.RED);
 		renderer.setLegendTextSize(30);
-		renderer.setInScroll(true);
 
-		renderer.setZoomRate(2);
 		renderer.setPanEnabled(false);
-		renderer.setZoomEnabled(true);
+		renderer.setZoomEnabled(false);
 		
 		renderer.setFitLegend(true);
 	}
 
-	public Intent getIntent(Context context, Map<String, Integer> data) {
-		createGraphic(data);
+	public Intent getIntent(Context context) {
+		createGraphic();
 		Intent intent = ChartFactory.getPieChartIntent(context, series,
 				renderer, "Pie");
 		return intent;
 	}
 
 	// Khoa
-	public View getView(Context context, Map<String, Integer> data) {
-		createGraphic(data);
+	public View getView(Context context) {
+		createGraphic();
 		View view = ChartFactory.getPieChartView(context, series, renderer);
 		return view;
 

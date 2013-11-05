@@ -129,15 +129,6 @@ public abstract class AbstractActivity extends Activity {
 			return true;
 		case R.id.action_test:
 			try {
-				int[] thresholdArray = { 60, 120, 180, 240, 300, 360, 420, 480,
-						540, 600 };
-				long from = DateUtils.getTimestampFirstDateOfMonth(0, 2013);
-				long to = DateUtils.getTimestampEndDateOfMonth(11, 2013);
-				Map<String, Integer> data4 = nfcProvider.getUsedItemStatistic(
-						from, to, thresholdArray);
-				PieGraph pie = new PieGraph();
-				Intent pieIntent = pie.getIntent(this, data4);
-				startActivity(pieIntent);
 			} catch (Exception ex) {
 				Log.e("Huy", ex.toString());
 			}

@@ -32,10 +32,13 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 public class DisplayKhoaStatsActivity extends FragmentActivity implements ActionBar.TabListener {
@@ -102,6 +105,35 @@ public class DisplayKhoaStatsActivity extends FragmentActivity implements Action
                             .setTabListener(this));
         }
     }
+    
+    @Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.reports, menu);
+		return true;
+	}
+    
+    @Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle item selection
+		switch (item.getItemId()) {
+		case R.id.share_reports:
+			try {
+				Toast.makeText(this, "Share reports selected", Toast.LENGTH_SHORT)
+	            .show();
+				//Intent shareIntent = new Intent(this, shareIntent.class);
+				//startActivity(shareIntent);
+				
+			} catch (Exception ex) {
+				
+			}
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);	
+		}
+		
+    }
+    
 
     @Override
     public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {

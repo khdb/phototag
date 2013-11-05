@@ -36,6 +36,8 @@
     <string name="dummy_section_text">Section %1d is just a dummy section.</string>
     <string name="title_activity_about">Giới thiệu</string>
     <string name="label_ready2scan">sẵn sàng quẹt thẻ ...</string>
+    <string name="label_share_reports"> Share reports </string>
+    
     
     
     <string name="about_body_text">

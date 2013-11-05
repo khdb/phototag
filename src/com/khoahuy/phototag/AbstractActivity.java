@@ -118,30 +118,22 @@ public abstract class AbstractActivity extends Activity {
 			startActivity(barIntent2);
 			return true;
 		case R.id.action_statistic:
-			BarGraph bar = new WeekBarGraph();
-			Calendar cal = Calendar.getInstance();
-			// cal.add(Calendar.DATE, -1);
-			Map<String, Integer> data = nfcProvider
-					.getWaitingItemOfWeekStatistic(cal.getTime());
-			Intent barIntent = bar.getIntent(this, data);
-			startActivity(barIntent);
+			try {
+				Intent khdIntent = new Intent(this, DisplayKhoaStatsActivity.class);
+				startActivity(khdIntent);
+				
+			} catch (Exception ex) {
+				
+			}
 			return true;
 		case R.id.action_about:
-			/*
-			BarGraph bar1 = new DateBarGraph();
-			Calendar cal1 = Calendar.getInstance();
-			cal1.add(Calendar.DATE, -1);
-			Map<String, Integer> data1 = nfcProvider
-					.getWaitingItemOfDayStatistic(cal1.getTime());
-			Intent barIntent1 = bar1.getIntent(this, data1);
-			startActivity(barIntent1);*/
-			BarGraph bar1 = new YearBarGraph();
-			Calendar cal1 = Calendar.getInstance();
-			cal1.add(Calendar.DATE, -1);
-			Map<String, Integer> data1 = nfcProvider
-					.getWaitingItemOfYearStatistic(2013);
-			Intent barIntent1 = bar1.getIntent(this, data1);
-			startActivity(barIntent1);
+			try {
+				Intent aboutIntent = new Intent(this, AboutActivity.class);
+				startActivity(aboutIntent);
+				
+			} catch (Exception ex) {
+				
+			}
 			return true;
 		case R.id.action_test:
 			try {

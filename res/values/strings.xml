@@ -28,13 +28,23 @@
     <string name="check_out_count">0</string>
     <string name="total_count">0</string>
     <string name="title_activity_display_khoa_stats">Thống kê</string>
-
     <string name="stats_label_day"> Ngày </string>
     <string name="stats_label_week"> Tuần </string>
     <string name="stats_label_month"> Tháng </string>
     <string name="stats_label_year"> Năm </string>
     <string name="stats_label_others"> Khác </string>
-    
     <string name="dummy_section_text">Section %1d is just a dummy section.</string>
+    <string name="title_activity_about">Giới thiệu</string>
+    <string name="label_ready2scan">sẵn sàng quẹt thẻ ...</string>
     
+    
+    <string name="about_body_text">
+        Trải qua hơn 6 năm hình thành và phát triển công ty cổ phần công nghệ 
+        đa truyền thông TNET nay là Công Ty Cổ Phần Truyền Thông VOC đã có những 
+        bước phát triển không ngừng trong việc thiết kế, hỗ trợ và phát triển 
+        website cho doanh nghiệp. Công ty cổ phần truyền thông VOC được thành lập 
+        theo quyết định số 0103018471 do sở kế hoạch và đầu tư thành phố Hà Nội cấp.
+        
+    </string>
+
 </resources>

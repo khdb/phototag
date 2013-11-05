@@ -285,22 +285,21 @@
         	android:layout_height="wrap_content"
         	android:orientation="vertical"
         	android:layout_gravity="bottom"
+        	android:baselineAligned="false"
         	android:layout_weight=".10"
         	android:paddingLeft="@dimen/main_screen_vertical_margin"
     		android:paddingRight="@dimen/main_screen_vertical_margin"
     		android:background="@color/bg_ready2scan"
-        	android:showDividers="end" >
+        	>
     	        
     		<TextView
     		    android:id="@+id/text_ready2scan"
     		    android:layout_width="match_parent"
     		    android:layout_height="wrap_content"
-    		    android:layout_centerHorizontal="true"
-    		    android:layout_centerVertical="true"
     		    android:layout_margin="8dp"
     		    android:gravity="center"
-    		    android:text="sẵn sàng quẹt thẻ ..."
-    		    android:textSize="22dp"
+    		    android:text="@string/label_ready2scan"
+    		    android:textSize="23sp"
     		    android:textStyle="normal"
     		    android:typeface="normal" 
     		    android:textColor="@color/text_date_in_out" />

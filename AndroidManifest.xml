@@ -70,13 +70,23 @@
             android:name="com.khoahuy.phototag.DisplayKhoaStatsActivity"
             android:label="@string/title_activity_display_khoa_stats"
             android:parentActivityName="com.khoahuy.phototag.HomeActivity"
-            android:screenOrientation="landscape"
-             >
+            android:screenOrientation="landscape" >
+
             <!-- android:theme="@android:style/Theme.NoTitleBar.Fullscreen" -->
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.khoahuy.phototag.HomeActivity" />
+        </activity>
+        <activity
+            android:name="com.khoahuy.phototag.AboutActivity"
+            android:label="@string/title_activity_about" 
+            android:parentActivityName="com.khoahuy.phototag.HomeActivity" >
             
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.khoahuy.phototag.HomeActivity" />
+            
         </activity>
     </application>
 

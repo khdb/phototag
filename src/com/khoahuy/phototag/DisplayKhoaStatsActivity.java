@@ -34,6 +34,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 
@@ -205,7 +206,13 @@ public class DisplayKhoaStatsActivity extends FragmentActivity implements Action
             	case 0: 
             		BarGraph barD = new DateBarGraph(cal.getTime(), nfcProvider);
         			View dayView = barD.getView(getActivity());
-        			rootView = dayView;
+        			        			
+        			//ScrollView scrollView = new ScrollView(getActivity());
+        			//scrollView.addView(dayView);
+        			//rootView = scrollView;
+        			
+        			rootView = dayView;		
+        			
         			break;
             	case 1:
             		BarGraph barW = new WeekBarGraph(cal.getTime(), nfcProvider);
@@ -243,8 +250,7 @@ public class DisplayKhoaStatsActivity extends FragmentActivity implements Action
                             getString(R.string.dummy_section_text, args.getInt(ARG_SECTION_NUMBER)));
             }
             
-           
-    		//end test
+			//end test
             
             return rootView;
         }

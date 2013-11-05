@@ -110,10 +110,22 @@ public abstract class AbstractActivity extends Activity {
 			
 			return true;
 		case R.id.action_statistic:
-			
+			try {
+				Intent khdIntent = new Intent(this, DisplayKhoaStatsActivity.class);
+				startActivity(khdIntent);
+				
+			} catch (Exception ex) {
+				
+			}
 			return true;
 		case R.id.action_about:
-			
+			try {
+				Intent aboutIntent = new Intent(this, AboutActivity.class);
+				startActivity(aboutIntent);
+				
+			} catch (Exception ex) {
+				
+			}
 			return true;
 		case R.id.action_test:
 			try {

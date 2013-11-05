@@ -4,7 +4,7 @@
     <string name="app_name">PhotoTag</string>
     <string name="action_settings">Cài đặt</string>
     <string name="action_statistics">Thống kê</string>
-    <string name="action_about">About</string>
+    <string name="action_about"> Giới thiệu </string>
     <string name="action_khoa_stats">Khoa Stats</string>
     <string name="hello_world">Hello world!</string>
     <string name="hello">Hello World, PhotoIntentActivity!</string>
@@ -22,16 +22,18 @@
     <string name="title_activity_view_image">Kiểm tra biến số xe</string>
     <string name="title_activity_setting">Setting</string>
     <string name="btn_checkout"> Lấy xe ra </string>
-    <string name="btn_new"> Chụp hình mới </string>
+    <string name="btn_new"> Chụp hình xe mới vào</string>
     <string name="detect_nfc_fail">Fail detect your tag</string>
     <string name="check_in_count">0</string>
     <string name="check_out_count">0</string>
     <string name="total_count">0</string>
     <string name="title_activity_display_khoa_stats">Thống kê</string>
 
-    <string name="stats_label_day"> Day </string>
-    <string name="stats_label_month"> Month </string>
-    <string name="stats_label_year"> Year </string>
+    <string name="stats_label_day"> Ngày </string>
+    <string name="stats_label_week"> Tuần </string>
+    <string name="stats_label_month"> Tháng </string>
+    <string name="stats_label_year"> Năm </string>
+    <string name="stats_label_others"> Khác </string>
     
     <string name="dummy_section_text">Section %1d is just a dummy section.</string>
     

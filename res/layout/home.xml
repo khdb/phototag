@@ -284,6 +284,7 @@
         	android:layout_width="match_parent"
         	android:layout_height="wrap_content"
         	android:orientation="vertical"
+        	android:layout_gravity="bottom"
         	android:layout_weight=".10"
         	android:paddingLeft="@dimen/main_screen_vertical_margin"
     		android:paddingRight="@dimen/main_screen_vertical_margin"

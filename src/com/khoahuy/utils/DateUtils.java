@@ -158,7 +158,7 @@ public class DateUtils {
 		int second = ((int) delta - (day * 3600 * 24) - hour * 3600 - minute * 60);
 
 		if (delta < 1) {
-			return "chưa có";
+			return "tức thì";
 		}
 		if (delta < 1 * MINUTE) {
 			return second == 1 ? "một giây trước" : second + " giây trước";

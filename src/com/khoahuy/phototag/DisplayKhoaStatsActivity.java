@@ -1,8 +1,27 @@
 package com.khoahuy.phototag;
 
+import java.util.Calendar;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import org.achartengine.ChartFactory;
+import org.achartengine.model.CategorySeries;
+import org.achartengine.renderer.DefaultRenderer;
+import org.achartengine.renderer.SimpleSeriesRenderer;
+
+import com.khoahuy.database.NFCItemProvider;
+import com.khoahuy.phototag.statistic.BarGraph;
+import com.khoahuy.phototag.statistic.DateBarGraph;
+import com.khoahuy.phototag.statistic.MonthBarGraph;
+import com.khoahuy.phototag.statistic.PieGraph;
+import com.khoahuy.phototag.statistic.WeekBarGraph;
+import com.khoahuy.phototag.statistic.YearBarGraph;
+import com.khoahuy.utils.DateUtils;
+
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,6 +29,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -115,17 +135,20 @@ public class DisplayKhoaStatsActivity extends FragmentActivity implements Action
 
                 default:
                     // The other sections of the app are dummy placeholders.
-                    Fragment fragment = new DummySectionFragment();
+                    Fragment fragment = new ReportSectionFragment();
                     Bundle args = new Bundle();
-                    args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, i + 1);
+                    args.putInt(ReportSectionFragment.ARG_SECTION_NUMBER, i + 1);
+                    args.putInt(ReportSectionFragment.ARG_REPORT_TYPE, i);
                     fragment.setArguments(args);
+                    
+                   
                     return fragment;
             }
         }
 
         @Override
         public int getCount() {
-            return 4;
+            return 5;
         }
 
         @Override
@@ -133,13 +156,15 @@ public class DisplayKhoaStatsActivity extends FragmentActivity implements Action
             //return "Section " + (position + 1);
             switch (position) {
             	case 0:
-            		return "Day";
+            		return "Ngày";
             	case 1:
-            		return "Week";
+            		return "Tuần";
             	case 2:
-            		return "Month";
+            		return "Tháng";
             	case 3:
-            		return "Year";
+            		return "Năm"; 
+            	case 4:
+            		return "Khác";	
             	default:
             		return "Error";
             }
@@ -147,23 +172,93 @@ public class DisplayKhoaStatsActivity extends FragmentActivity implements Action
 			
         }
     }
-
-   
+    
+    
 
     /**
      * A dummy fragment representing a section of the app, but that simply displays dummy text.
      */
-    public static class DummySectionFragment extends Fragment {
+    public static class ReportSectionFragment extends Fragment {
 
         public static final String ARG_SECTION_NUMBER = "section_number";
+        public static final String ARG_REPORT_TYPE = "report_type"; //Day|Week|Month|Year 
+        
+        protected NFCItemProvider nfcProvider;
+        
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_section_reports, container, false);
             Bundle args = getArguments();
-            ((TextView) rootView.findViewById(android.R.id.text1)).setText(
-                    getString(R.string.dummy_section_text, args.getInt(ARG_SECTION_NUMBER)));
+//            ((TextView) rootView.findViewById(android.R.id.text1)).setText(
+//                    getString(R.string.dummy_section_text, args.getInt(ARG_SECTION_NUMBER)));
+//            
+            
+            //test
+            nfcProvider = new NFCItemProvider(getActivity().getContentResolver());
+            //args.getInt(ARG_REPORT_TYPE);
+            
+            switch (args.getInt(ARG_REPORT_TYPE)) {
+            	case 0: 
+            		BarGraph barD = new DateBarGraph();
+        			Calendar calD = Calendar.getInstance();
+        			// cal.add(Calendar.DATE, -1);
+        			Map<String, Integer> dataD = nfcProvider
+        					.getWaitingItemOfWeekStatistic(calD.getTime());
+        			View dayView = barD.getView(getActivity(), dataD);
+        			rootView = dayView;
+        			break;
+            	case 1:
+            		BarGraph barW = new WeekBarGraph();
+        			Calendar cal = Calendar.getInstance();
+        			// cal.add(Calendar.DATE, -1);
+        			Map<String, Integer> data = nfcProvider
+        					.getWaitingItemOfWeekStatistic(cal.getTime());
+        			View weekView = barW.getView(getActivity(), data);
+        			rootView = weekView;
+        			break;
+            	case 2:
+            		BarGraph barM = new MonthBarGraph();
+        			Calendar cal2 = Calendar.getInstance();
+        			Map<String, Integer> data2 = nfcProvider
+        					.getWaitingItemOfMonthStatistic(9, cal2.get(Calendar.YEAR));
+        			View monthView = barM.getView(getActivity(), data2);
+        			rootView = monthView;
+        			break;
+            	case 3:
+            		BarGraph barY = new YearBarGraph();
+        			Calendar cal1 = Calendar.getInstance();
+        			cal1.add(Calendar.DATE, -1);
+        			Map<String, Integer> data1 = nfcProvider
+        					.getWaitingItemOfYearStatistic(2013);
+        			View yearView = barY.getView(getActivity(), data1);
+        			rootView = yearView;
+        			break;
+            	case 4:
+            		try {
+        				int[] thresholdArray = { 60, 120, 180, 240, 300, 360, 420, 480,
+        						540, 600 };
+        				long from = DateUtils.getTimestampFirstDateOfMonth(0, 2013);
+        				long to = DateUtils.getTimestampEndDateOfMonth(11, 2013);
+        				Map<String, Integer> data4 = nfcProvider.getUsedItemStatistic(
+        						from, to, thresholdArray);
+        				PieGraph pie = new PieGraph();
+        				View view = pie.getView(getActivity(), data4);
+        				//return view;
+        				rootView = view;
+        				break;
+        			} catch (Exception ex) {
+        				Log.e("Huy", ex.toString());
+        			}
+            	default:
+            		((TextView) rootView.findViewById(android.R.id.text1)).setText(
+                            getString(R.string.dummy_section_text, args.getInt(ARG_SECTION_NUMBER)));
+            }
+            
+           
+    		//end test
+            
             return rootView;
         }
     }

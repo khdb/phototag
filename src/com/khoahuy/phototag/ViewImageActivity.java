@@ -101,7 +101,7 @@ public class ViewImageActivity extends AbstractActivity {
 		Log.i("ViewImageActivity", "img = " + nfcItem.getImage());
 		imgView.setImageBitmap(bmp);
 		if (nfcItem.getCheckIn() != null)
-			txtCheckin.setText(DateUtils.getDate(nfcItem.getCheckIn()));
+			txtCheckin.setText(DateUtils.getDateString(nfcItem.getCheckIn()));
 
 		// usingSimpleImage(imgView);
 	}

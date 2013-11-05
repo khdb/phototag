@@ -89,7 +89,7 @@ public class HomeActivity extends AbstractActivity {
 			Bitmap bmp = BitmapFactory.decodeFile(nfcItem.getImage());
 			img1.setImageBitmap(bmp);
 			if (nfcItem.getCheckIn() != null)
-				text1.setText(DateUtils.getDate(nfcItem.getCheckIn()) + " - " +  DateUtils.getRelativeTime(nfcItem.getCheckIn()));
+				text1.setText(DateUtils.getDateString(nfcItem.getCheckIn()) + " - " +  DateUtils.getRelativeTime(nfcItem.getCheckIn()));
 		} else {
 			img1.setImageResource(R.raw.noimage);
 			text1.setText(R.string.check_in_not_found);
@@ -105,7 +105,7 @@ public class HomeActivity extends AbstractActivity {
 			} else
 				img2.setImageResource(R.raw.noimage);
 			if (nfcItem.getCheckIn() != null)
-				text2.setText(DateUtils.getDate(nfcItem.getCheckIn()) + " - " + DateUtils.getRelativeTime(nfcItem.getCheckIn()));
+				text2.setText(DateUtils.getDateString(nfcItem.getCheckIn()) + " - " + DateUtils.getRelativeTime(nfcItem.getCheckIn()));
 		} else {
 			img2.setImageResource(R.raw.noimage);
 			text2.setText(R.string.check_in_not_found);

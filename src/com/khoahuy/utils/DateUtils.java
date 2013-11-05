@@ -15,8 +15,7 @@ public class DateUtils {
 	public static final int DAY = 24 * HOUR;
 	public static final int MONTH = 30 * DAY;
 
-	public static String getDate(Long timeStamp) {
-
+	public static String getDateString(Long timeStamp) {
 		try {
 			timeStamp = timeStamp * 1000;
 			DateFormat sdf = new SimpleDateFormat("MM/dd/yyyy - HH:mm:ss");
@@ -24,6 +23,28 @@ public class DateUtils {
 			return sdf.format(netDate);
 		} catch (Exception ex) {
 			return "Parse time Error";
+		}
+	}
+
+	public static String getDateString(Date date, String format) {
+		try {
+			DateFormat sdf = new SimpleDateFormat(format);
+			Date netDate = (date);
+			return sdf.format(netDate);
+		} catch (Exception ex) {
+			return "Parse time Error";
+		}
+	}
+
+	public static String getDateMonthString(Date date, int numberDay)
+			throws Exception {
+		try {
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(date);
+			cal.add(Calendar.DATE, numberDay);
+			return cal.get(Calendar.DAY_OF_MONTH) + "/" + cal.get(Calendar.MONTH);
+		} catch (Exception ex) {
+			throw new Exception("Get time ago error");
 		}
 	}
 

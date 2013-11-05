@@ -107,37 +107,13 @@ public abstract class AbstractActivity extends Activity {
 		// Handle item selection
 		switch (item.getItemId()) {
 		case R.id.action_settings:
-			// Intent intent = new Intent(this, SetPreferenceActivity.class);
-			// startActivityForResult(intent, ACTION_PREFS);
-			BarGraph bar2 = new MonthBarGraph();
-			Calendar cal2 = Calendar.getInstance();
-			Map<String, Integer> data2 = nfcProvider
-					.getWaitingItemOfMonthStatistic(9, cal2.get(Calendar.YEAR));
-			// data2 = StatisticUtils.normalizationDateData(data2);
-			Intent barIntent2 = bar2.getIntent(this, data2);
-			startActivity(barIntent2);
+			
 			return true;
 		case R.id.action_statistic:
-			BarGraph bar = new WeekBarGraph();
-			Calendar cal = Calendar.getInstance();
-			Map<String, Integer> data = nfcProvider
-					.getWaitingItemOfWeekStatistic(cal.getTime());
-			Intent barIntent = bar.getIntent(this, data);
-			startActivity(barIntent);
+			
 			return true;
 		case R.id.action_about:
 			
-			BarGraph bar1 = new DateBarGraph();
-			Calendar cal1 = Calendar.getInstance();
-			Map<String, Integer> data1 = nfcProvider
-					.getWaitingItemOfDayStatistic(cal1.getTime());
-			Intent barIntent1 = bar1.getIntent(this, data1);
-			startActivity(barIntent1);
-			/*BarGraph bar1 = new YearBarGraph();
-			Map<String, Integer> data1 = nfcProvider
-					.getWaitingItemOfYearStatistic(2013);
-			Intent barIntent1 = bar1.getIntent(this, data1);
-			startActivity(barIntent1);*/
 			return true;
 		case R.id.action_test:
 			try {

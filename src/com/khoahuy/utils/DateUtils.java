@@ -7,16 +7,15 @@ import java.util.Date;
 
 public class DateUtils {
 
-	public static final long timestampOfDay = 86400L;
-	public static final long timestampOfWeek = 86400L * 7;
+	public static final long TIMESTAMP_OF_DAY = 86400L;
+	public static final long TIMESTAMP_OF_WEEK = 86400L * 7;
 	public static final int SECOND = 1;
 	public static final int MINUTE = 60 * SECOND;
 	public static final int HOUR = 60 * MINUTE;
 	public static final int DAY = 24 * HOUR;
 	public static final int MONTH = 30 * DAY;
 
-	public static String getDate(Long timeStamp) {
-
+	public static String getDateString(Long timeStamp) {
 		try {
 			timeStamp = timeStamp * 1000;
 			DateFormat sdf = new SimpleDateFormat("MM/dd/yyyy - HH:mm:ss");
@@ -24,6 +23,28 @@ public class DateUtils {
 			return sdf.format(netDate);
 		} catch (Exception ex) {
 			return "Parse time Error";
+		}
+	}
+
+	public static String getDateString(Date date, String format) {
+		try {
+			DateFormat sdf = new SimpleDateFormat(format);
+			Date netDate = (date);
+			return sdf.format(netDate);
+		} catch (Exception ex) {
+			return "Parse time Error";
+		}
+	}
+
+	public static String getDateMonthString(Date date, int numberDay)
+			throws Exception {
+		try {
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(date);
+			cal.add(Calendar.DATE, numberDay);
+			return cal.get(Calendar.DAY_OF_MONTH) + "/" + cal.get(Calendar.MONTH);
+		} catch (Exception ex) {
+			throw new Exception("Get time ago error");
 		}
 	}
 
@@ -42,6 +63,22 @@ public class DateUtils {
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(date);
 			return cal.get(Calendar.DAY_OF_MONTH);
+		} catch (Exception ex) {
+			throw new Exception("Get time ago error");
+		}
+	}
+
+	public static String[] getDateName7DayAgo(Date date) throws Exception {
+		try {
+			String[] result = new String[7];
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(date);
+			result[0] = String.valueOf(cal.get(Calendar.DAY_OF_MONTH));
+			for (int i = 1; i < result.length; i++) {
+				cal.add(Calendar.DATE, -1);
+				result[i] = String.valueOf(cal.get(Calendar.DAY_OF_MONTH));
+			}
+			return result;
 		} catch (Exception ex) {
 			throw new Exception("Get time ago error");
 		}
@@ -85,9 +122,7 @@ public class DateUtils {
 			cal.setTime(date);
 			cal.set(Calendar.MINUTE, 59);
 			cal.set(Calendar.SECOND, 59);
-			cal.set(Calendar.MILLISECOND, 0);
 			cal.set(Calendar.HOUR_OF_DAY, 23);
-
 			return cal.getTime().getTime() / 1000;
 		} catch (Exception ex) {
 			throw new Exception("Get time ago error");
@@ -110,8 +145,19 @@ public class DateUtils {
 			throws Exception {
 		try {
 			Calendar cal = Calendar.getInstance();
-			cal.set(year, month + 1, 1, 0, 0, 0);
+			cal.set(year, month + 1, 1, 23, 59, 59);
 			cal.add(Calendar.DAY_OF_MONTH, -1);
+			return cal.getTime().getTime() / 1000;
+		} catch (Exception ex) {
+			throw new Exception("Get time ago error");
+		}
+	}
+
+	public static long getTimestamp(int year, int month, int dateOfMonth,
+			int hourOfDate, int minute, int second) throws Exception {
+		try {
+			Calendar cal = Calendar.getInstance();
+			cal.set(year, month - 1, dateOfMonth, hourOfDate, minute, second);
 			return cal.getTime().getTime() / 1000;
 		} catch (Exception ex) {
 			throw new Exception("Get time ago error");
@@ -131,7 +177,7 @@ public class DateUtils {
 		int hour = ((int) delta - (day * 3600 * 24)) / 3600;
 		int minute = ((int) delta - (day * 3600 * 24) - hour * 3600) / 60;
 		int second = ((int) delta - (day * 3600 * 24) - hour * 3600 - minute * 60);
-		
+
 		if (delta < 1) {
 			return "tức thì";
 		}
@@ -146,7 +192,7 @@ public class DateUtils {
 		}
 		if (delta < 60 * MINUTE) {
 			return "gần một giờ trước";
-		}		
+		}
 		if (delta < 75 * MINUTE) {
 			return "hơn một giờ trước";
 		}

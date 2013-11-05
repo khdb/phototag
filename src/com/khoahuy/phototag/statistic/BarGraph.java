@@ -13,8 +13,6 @@ import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Paint.Align;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 
@@ -27,33 +25,35 @@ public abstract class BarGraph {
 	protected int axesColor;
 	protected int labelColor;
 	protected int labelTextSize;
+	protected Map<String, Integer> data;
+	protected XYMultipleSeriesDataset dataset;
 	protected XYMultipleSeriesRenderer mRenderer;
 
 	private float maxValue;
 
 	public BarGraph() {
-		mRenderer = new XYMultipleSeriesRenderer();
-		maxValue = 0;
+
 	}
 
-	public Intent getIntent(Context context, Map<String, Integer> data) {
+	public void createGraph() {
 		// Main bar
 		List<String> xText = new ArrayList<String>();
 		CategorySeries series = new CategorySeries(seriesTitle);
 		series.add("0", 0);
 		for (LinkedHashMap.Entry<String, Integer> entry : data.entrySet()) {
 			// myIntArray[Integer.parseInt(entry.getKey())] = entry.getValue();
-			series.add(entry.getKey(), entry.getValue());
+			series.add(entry.getValue());
 			xText.add(entry.getKey());
 			if (maxValue < entry.getValue())
 				maxValue = entry.getValue();
 			Log.i("Huy", "Add: " + entry.getKey() + ": " + entry.getValue());
 		}
 
-		XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
+		dataset = new XYMultipleSeriesDataset();
 		dataset.addSeries(series.toXYSeries());
 
 		// This is how the "Graph" itself will look like
+		mRenderer = new XYMultipleSeriesRenderer();
 		mRenderer.setChartTitle(charTitle);
 		mRenderer.setXTitle(XTitle);
 		mRenderer.setYTitle(YTitle);
@@ -79,9 +79,11 @@ public abstract class BarGraph {
 		mRenderer.setBarWidth(50);
 
 		// Load custom X Axis text
+
 		mRenderer.setXLabels(0);
-		for (int i = 0; i < xText.size(); i++) {
-			mRenderer.addXTextLabel(i + 1, xText.get(i));
+		mRenderer.setXAxisMax(xText.size() + 2);
+		for (int i = 1; i <= xText.size(); i++) {
+			mRenderer.addXTextLabel(i + 1, xText.get(i - 1));
 		}
 
 		// Customize bar 1
@@ -90,13 +92,16 @@ public abstract class BarGraph {
 		renderer.setChartValuesSpacing((float) 0.5);
 		renderer.setChartValuesTextSize(30);
 		mRenderer.addSeriesRenderer(renderer);
+	}
 
+	public Intent getIntent(Context context) {
+		createGraph();
 		Intent intent = ChartFactory.getBarChartIntent(context, dataset,
 				mRenderer, Type.DEFAULT);
 		return intent;
 	}
 
-	public View getView(Context context, Map<String, Integer> data) {
+	public View getView(Context context) {
 		// TODO Auto-generated method stub
 		// Main bar
 		List<String> xText = new ArrayList<String>();
@@ -104,17 +109,18 @@ public abstract class BarGraph {
 		series.add("0", 0);
 		for (LinkedHashMap.Entry<String, Integer> entry : data.entrySet()) {
 			// myIntArray[Integer.parseInt(entry.getKey())] = entry.getValue();
-			series.add(entry.getKey(), entry.getValue());
+			series.add(entry.getValue());
 			xText.add(entry.getKey());
 			if (maxValue < entry.getValue())
 				maxValue = entry.getValue();
 			Log.i("Huy", "Add: " + entry.getKey() + ": " + entry.getValue());
 		}
 
-		XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
+		dataset = new XYMultipleSeriesDataset();
 		dataset.addSeries(series.toXYSeries());
 
 		// This is how the "Graph" itself will look like
+		mRenderer = new XYMultipleSeriesRenderer();
 		mRenderer.setChartTitle(charTitle);
 		mRenderer.setXTitle(XTitle);
 		mRenderer.setYTitle(YTitle);
@@ -140,9 +146,11 @@ public abstract class BarGraph {
 		mRenderer.setBarWidth(50);
 
 		// Load custom X Axis text
+
 		mRenderer.setXLabels(0);
-		for (int i = 0; i < xText.size(); i++) {
-			mRenderer.addXTextLabel(i + 1, xText.get(i));
+		mRenderer.setXAxisMax(xText.size() + 2);
+		for (int i = 1; i <= xText.size(); i++) {
+			mRenderer.addXTextLabel(i + 1, xText.get(i - 1));
 		}
 
 		// Customize bar 1
@@ -151,10 +159,8 @@ public abstract class BarGraph {
 		renderer.setChartValuesSpacing((float) 0.5);
 		renderer.setChartValuesTextSize(30);
 		mRenderer.addSeriesRenderer(renderer);
-
-		View view = ChartFactory.getBarChartView(context, dataset,
-				mRenderer, Type.DEFAULT);
-
+		View view = ChartFactory.getBarChartView(context, dataset, mRenderer,
+				Type.DEFAULT);
 		return view;
 	}
 }

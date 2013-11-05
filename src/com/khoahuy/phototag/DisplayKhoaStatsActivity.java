@@ -1,6 +1,7 @@
 package com.khoahuy.phototag;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -197,42 +198,28 @@ public class DisplayKhoaStatsActivity extends FragmentActivity implements Action
             
             //test
             nfcProvider = new NFCItemProvider(getActivity().getContentResolver());
+            Calendar cal = Calendar.getInstance();
             //args.getInt(ARG_REPORT_TYPE);
             
             switch (args.getInt(ARG_REPORT_TYPE)) {
             	case 0: 
-            		BarGraph barD = new DateBarGraph();
-        			Calendar calD = Calendar.getInstance();
-        			// cal.add(Calendar.DATE, -1);
-        			Map<String, Integer> dataD = nfcProvider
-        					.getWaitingItemOfWeekStatistic(calD.getTime());
-        			View dayView = barD.getView(getActivity(), dataD);
+            		BarGraph barD = new DateBarGraph(cal.getTime(), nfcProvider);
+        			View dayView = barD.getView(getActivity());
         			rootView = dayView;
         			break;
             	case 1:
-            		BarGraph barW = new WeekBarGraph();
-        			Calendar cal = Calendar.getInstance();
-        			// cal.add(Calendar.DATE, -1);
-        			Map<String, Integer> data = nfcProvider
-        					.getWaitingItemOfWeekStatistic(cal.getTime());
-        			View weekView = barW.getView(getActivity(), data);
+            		BarGraph barW = new WeekBarGraph(cal.getTime(), nfcProvider);
+        			View weekView = barW.getView(getActivity());
         			rootView = weekView;
         			break;
             	case 2:
-            		BarGraph barM = new MonthBarGraph();
-        			Calendar cal2 = Calendar.getInstance();
-        			Map<String, Integer> data2 = nfcProvider
-        					.getWaitingItemOfMonthStatistic(9, cal2.get(Calendar.YEAR));
-        			View monthView = barM.getView(getActivity(), data2);
+        			BarGraph barM = new MonthBarGraph(cal.get(Calendar.MONTH), cal.get(Calendar.YEAR), nfcProvider);
+        			View monthView = barM.getView(getActivity());
         			rootView = monthView;
         			break;
             	case 3:
-            		BarGraph barY = new YearBarGraph();
-        			Calendar cal1 = Calendar.getInstance();
-        			cal1.add(Calendar.DATE, -1);
-        			Map<String, Integer> data1 = nfcProvider
-        					.getWaitingItemOfYearStatistic(2013);
-        			View yearView = barY.getView(getActivity(), data1);
+            		BarGraph barY = new YearBarGraph(cal.get(Calendar.YEAR), nfcProvider);
+        			View yearView = barY.getView(getActivity());
         			rootView = yearView;
         			break;
             	case 4:

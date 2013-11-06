@@ -112,7 +112,7 @@ public class DisplayKhoaStatsActivity extends FragmentActivity implements Action
 		getMenuInflater().inflate(R.menu.reports, menu);
 		return true;
 	}
-    
+       
     @Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle item selection
@@ -121,8 +121,14 @@ public class DisplayKhoaStatsActivity extends FragmentActivity implements Action
 			try {
 				Toast.makeText(this, "Share reports selected", Toast.LENGTH_SHORT)
 	            .show();
-				//Intent shareIntent = new Intent(this, shareIntent.class);
-				//startActivity(shareIntent);
+				saveChartsToFile();
+				Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND); 
+				emailIntent.setType("application/image");
+				//emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{"thanhhuy89vn@gmail.com", "kk.a@gmail.com"}); 
+				emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,"Test Subject"); 
+				emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, "Hello sir"); 
+				//emailIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file:///mnt/sdcard/Myimage.jpeg"));
+				startActivity(Intent.createChooser(emailIntent, "Send mail..."));
 				
 			} catch (Exception ex) {
 				
@@ -131,9 +137,13 @@ public class DisplayKhoaStatsActivity extends FragmentActivity implements Action
 		default:
 			return super.onOptionsItemSelected(item);	
 		}
-		
     }
     
+    public void saveChartsToFile(){
+    	view.setDrawingCacheEnabled(true);
+    	Bitmap b = view.getDrawingCache();
+    	b.compress(CompressFormat.JPEG, 95, new FileOutputStream("/some/location/image.jpg"));
+    }
 
     @Override
     public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
@@ -217,6 +227,12 @@ public class DisplayKhoaStatsActivity extends FragmentActivity implements Action
         public static final String ARG_SECTION_NUMBER = "section_number";
         public static final String ARG_REPORT_TYPE = "report_type"; //Day|Week|Month|Year 
         
+        private View dayView;
+        private View weekView;
+        private View monthView;
+        private View yearView;
+        private View otherView;
+        
         protected NFCItemProvider nfcProvider;
         
 
@@ -237,7 +253,7 @@ public class DisplayKhoaStatsActivity extends FragmentActivity implements Action
             switch (args.getInt(ARG_REPORT_TYPE)) {
             	case 0: 
             		BarGraph barD = new DateBarGraph(cal.getTime(), nfcProvider);
-        			View dayView = barD.getView(getActivity());
+            		dayView = barD.getView(getActivity());
         			        			
         			//ScrollView scrollView = new ScrollView(getActivity());
         			//scrollView.addView(dayView);
@@ -248,17 +264,17 @@ public class DisplayKhoaStatsActivity extends FragmentActivity implements Action
         			break;
             	case 1:
             		BarGraph barW = new WeekBarGraph(cal.getTime(), nfcProvider);
-        			View weekView = barW.getView(getActivity());
+        			weekView = barW.getView(getActivity());
         			rootView = weekView;
         			break;
             	case 2:
         			BarGraph barM = new MonthBarGraph(cal.get(Calendar.MONTH), cal.get(Calendar.YEAR), nfcProvider);
-        			View monthView = barM.getView(getActivity());
+        			monthView = barM.getView(getActivity());
         			rootView = monthView;
         			break;
             	case 3:
             		BarGraph barY = new YearBarGraph(cal.get(Calendar.YEAR), nfcProvider);
-        			View yearView = barY.getView(getActivity());
+        			yearView = barY.getView(getActivity());
         			rootView = yearView;
         			break;
             	case 4:
@@ -268,9 +284,9 @@ public class DisplayKhoaStatsActivity extends FragmentActivity implements Action
         				long from = DateUtils.getTimestampFirstDateOfMonth(10, 2013);
         				long to = DateUtils.getTimestampEndDateOfMonth(10, 2013);
         				PieGraph pie = new PieGraph(from, to, thresholdArray, nfcProvider);
-        				View view = pie.getView(getActivity());
+        				otherView = pie.getView(getActivity());
         				//return view;
-        				rootView = view;
+        				rootView = otherView;
         				break;
         			} catch (Exception ex) {
         				Log.e("Huy", ex.toString());

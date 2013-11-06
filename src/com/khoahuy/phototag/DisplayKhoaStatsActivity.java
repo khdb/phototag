@@ -158,9 +158,9 @@ public class DisplayKhoaStatsActivity extends FragmentActivity implements Action
     }
     
     public void saveChartsToFile(){
-    	view.setDrawingCacheEnabled(true);
-    	Bitmap b = view.getDrawingCache();
-    	b.compress(CompressFormat.JPEG, 95, new FileOutputStream("/some/location/image.jpg"));
+    	//view.setDrawingCacheEnabled(true);
+    	//Bitmap b = view.getDrawingCache();
+    	//b.compress(CompressFormat.JPEG, 95, new FileOutputStream("/some/location/image.jpg"));
     }
 
     @Override

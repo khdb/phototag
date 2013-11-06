@@ -21,6 +21,7 @@ import com.khoahuy.utils.DateUtils;
 
 import android.app.ActionBar;
 import android.app.DatePickerDialog;
+import android.app.DatePickerDialog.OnDateSetListener;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.FragmentTransaction;
@@ -60,6 +61,11 @@ public class DisplayKhoaStatsActivity extends FragmentActivity implements Action
      * time.
      */
     ViewPager mViewPager;
+    
+    //used for datepicker
+    static int year;
+	static int month;
+	static int day;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -123,11 +129,18 @@ public class DisplayKhoaStatsActivity extends FragmentActivity implements Action
 		switch (item.getItemId()) {
 		case R.id.action_date_select:
 			try {
-				Toast.makeText(this, "Date pcicker selected", Toast.LENGTH_SHORT)
-	            .show();
-				DialogFragment newFragment = new DatePickerFragment();
-				//this.getFragmentManager().findFragmentByTag(arg0)
-			    //newFragment.show(getSupportFragmentManager(), "datePicker");
+				//Toast.makeText(this, "Date pcicker selected", Toast.LENGTH_SHORT)
+	            //.show();
+				//DialogFragment newFragment = new DatePickerFragment();
+				//newFragment.show(this.getFragmentManager(), "datePicker");
+				
+				//showDatePickerDialog(this.getCurrentFocus());
+				
+				showDatePicker();
+				
+				//Toast.makeText(getApplicationContext(), "Date selected is:"+ day 
+				//		+"-"+ month+"-"+ year, Toast.LENGTH_LONG).show();
+								
 				//Intent shareIntent = new Intent(this, shareIntent.class);
 				//startActivity(shareIntent);
 				
@@ -226,6 +239,39 @@ public class DisplayKhoaStatsActivity extends FragmentActivity implements Action
     }
     
     
+    public void showDatePickerDialog(View v) {
+        DialogFragment newFragment = new DatePickerFragment();
+        newFragment.show(getFragmentManager(), "datePicker");
+    }
+    
+    private void showDatePicker() {
+    	  DatePickerFragment date = new DatePickerFragment();
+    	  
+    	  /**
+    	   * Set Call back to capture selected date
+    	   */
+    	  date.setCallBack(ondate);
+    	  date.show(getFragmentManager(), "Date Picker");
+    }
+    
+    OnDateSetListener ondate = new OnDateSetListener() {
+    	  @Override
+    	  public void onDateSet(DatePicker view, int selectedYear, int selectedMonth, int selectedDay) {
+    	   Toast.makeText( DisplayKhoaStatsActivity.this,
+    		String.valueOf(selectedYear) + "-" + String.valueOf(selectedMonth)
+    	       + "-" + String.valueOf(selectedDay),
+    	     Toast.LENGTH_LONG).show();
+    	   
+    	   year = selectedYear;
+    	   month = selectedMonth;
+    	   day = selectedDay;	
+    	   
+    	  }
+    	  
+    	  
+    };
+    
+
 
     /**
      * A dummy fragment representing a section of the app, but that simply displays dummy text.
@@ -305,9 +351,30 @@ public class DisplayKhoaStatsActivity extends FragmentActivity implements Action
     }
     
     //khoa
-    public static class DatePickerFragment extends DialogFragment
-    	implements DatePickerDialog.OnDateSetListener {
-
+    public static class DatePickerFragment extends DialogFragment {
+    	//implements DatePickerDialog.OnDateSetListener {
+    	//implements DatePickerDialog.OnDateSetListener
+    	OnDateSetListener ondateSet;
+    	
+    	//constructor
+    	public DatePickerFragment() {
+    	}
+    	
+    	//Callback to be set in parent activity class
+    	public void setCallBack(OnDateSetListener ondate) {
+    		ondateSet = ondate;
+    	}
+    	
+    	private int year, month, day;
+    	
+    	@Override
+    	 public void setArguments(Bundle args) {
+    	  super.setArguments(args);
+    	  year = args.getInt("year");
+    	  month = args.getInt("month");
+    	  day = args.getInt("day");
+    	 }
+    	
     	@Override
     	public Dialog onCreateDialog(Bundle savedInstanceState) {
     		// Use the current date as the default date in the picker
@@ -317,12 +384,21 @@ public class DisplayKhoaStatsActivity extends FragmentActivity implements Action
     		int day = c.get(Calendar.DAY_OF_MONTH);
 
     		// Create a new instance of DatePickerDialog and return it
-    		return new DatePickerDialog(getActivity(), this, year, month, day);
+    		//return new DatePickerDialog(getActivity(), this, year, month, day);
+    		return new DatePickerDialog(getActivity(), ondateSet, year, month, day);
+    		//return new DatePickerDialog(getActivity(), (OnDateSetListener) this, year, month, day);
     	}
 
-    	public void onDateSet(DatePicker view, int year, int month, int day) {
-    		// Do something with the date chosen by the user
-    	}
+    	//not needed to be implemented here since it will be set in the parent activity class
+//    	public void onDateSet(DatePicker view, int selectedYear, int selectedMonth, int selectedDay) {
+//    		// Do something with the date chosen by the user
+//    		year = selectedYear;
+//			month = selectedMonth;
+//			day = selectedDay;	
+//			
+//    	}
+    	
+
     }
     
 }

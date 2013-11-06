@@ -5,14 +5,18 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.khoahuy.database.NFCItemProvider;
+import com.khoahuy.database.provider.MyContentProvider;
 import com.khoahuy.utils.DateUtils;
+import com.khoahuy.utils.StatisticUtils;
 
 import android.graphics.Color;
 
 public class DateBarGraph extends BarGraph {
 
 	public DateBarGraph(Date date, NFCItemProvider nfcProvider) {
-		data = nfcProvider.getWaitingItemOfDayStatistic(date);
+		Map<String, Integer> waitingData = nfcProvider.getCheckinItemOfDayStatistic(date, MyContentProvider.WAITING_CONTENT_URI);
+		Map<String, Integer> usedData = nfcProvider.getCheckinItemOfDayStatistic(date, MyContentProvider.USED_CONTENT_URI);
+		data = StatisticUtils.mergeWaitingAndUsedItem(waitingData, usedData);
 		seriesTitle = "Date chart";
 		timeDisplay = DateUtils.getDateString(date,"dd/MM/yyyy");
 		charTitle = "Thống kê ngày " + timeDisplay;

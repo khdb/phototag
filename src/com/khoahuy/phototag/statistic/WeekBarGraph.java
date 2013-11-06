@@ -2,16 +2,21 @@ package com.khoahuy.phototag.statistic;
 
 import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 import com.khoahuy.database.NFCItemProvider;
+import com.khoahuy.database.provider.MyContentProvider;
 import com.khoahuy.utils.DateUtils;
+import com.khoahuy.utils.StatisticUtils;
 
 import android.graphics.Color;
 
 public class WeekBarGraph extends BarGraph {
 	public WeekBarGraph(Date date, NFCItemProvider nfcProvider) {
 		try {
-			data = nfcProvider.getWaitingItemOfWeekStatistic(date);
+			Map<String, Integer> waitingData = nfcProvider.getCheckinItemOfWeekStatistic(date, MyContentProvider.WAITING_CONTENT_URI);
+			Map<String, Integer> usedData = nfcProvider.getCheckinItemOfWeekStatistic(date, MyContentProvider.USED_CONTENT_URI);
+			data = StatisticUtils.mergeWaitingAndUsedItem(waitingData, usedData);
 			seriesTitle = "Week chart";
 			timeDisplay = DateUtils.getDateMonthString(date, -6) + " đến "
 					+ DateUtils.getDateMonthString(date, 0);

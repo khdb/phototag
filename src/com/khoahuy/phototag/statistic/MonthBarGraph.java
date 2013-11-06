@@ -1,15 +1,20 @@
 package com.khoahuy.phototag.statistic;
 
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 import com.khoahuy.database.NFCItemProvider;
+import com.khoahuy.database.provider.MyContentProvider;
+import com.khoahuy.utils.StatisticUtils;
 
 import android.graphics.Color;
 
 public class MonthBarGraph extends BarGraph {
 
 	public MonthBarGraph(int monthIndex, int year, NFCItemProvider nfcProvider) {
-		data = nfcProvider.getWaitingItemOfMonthStatistic(monthIndex, year);
+		Map<String, Integer> waitingData = nfcProvider.getCheckinItemOfMonthStatistic(monthIndex, year, MyContentProvider.WAITING_CONTENT_URI);
+		Map<String, Integer> usedData = nfcProvider.getCheckinItemOfMonthStatistic(monthIndex, year, MyContentProvider.USED_CONTENT_URI);
+		data = StatisticUtils.mergeWaitingAndUsedItem(waitingData, usedData);
 		seriesTitle = "Month chart";
 		timeDisplay = (monthIndex + 1) + "/" + year;
 		charTitle = "Thống kê tháng " + timeDisplay;

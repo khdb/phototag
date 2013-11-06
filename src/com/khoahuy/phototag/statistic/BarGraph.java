@@ -19,6 +19,7 @@ import android.view.View;
 
 public abstract class BarGraph {
 
+	protected String timeDisplay;
 	protected String seriesTitle;
 	protected String charTitle;
 	protected String XTitle;
@@ -34,6 +35,10 @@ public abstract class BarGraph {
 
 	public BarGraph() {
 
+	}
+	
+	public String getTextStatistic(){
+		return "";
 	}
 
 	public void createGraph() {

@@ -9,6 +9,7 @@ import org.achartengine.renderer.DefaultRenderer;
 import org.achartengine.renderer.SimpleSeriesRenderer;
 
 import com.khoahuy.database.NFCItemProvider;
+import com.khoahuy.utils.DateUtils;
 
 import android.content.Context;
 import android.content.Intent;
@@ -19,11 +20,13 @@ import android.view.View;
 public class PieGraph {
 	protected CategorySeries series;
 	protected DefaultRenderer renderer;
+	protected String timeDisplay;	
 	protected Map<String, Integer> data;
 	
 	public PieGraph(long from, long to, int[] thresholdArray, NFCItemProvider nfcProvider){
 		data = nfcProvider.getUsedItemStatistic(
 				from, to, thresholdArray);
+		timeDisplay = " từ " + DateUtils.getDateString(from) + " tới " + DateUtils.getDateString(to);
 	}
 	
 	public void createGraphic() {
@@ -46,7 +49,7 @@ public class PieGraph {
 			//Log.i("Huy", "Add: " + entry.getKey() + ": " + entry.getValue());
 		}
 
-		renderer.setChartTitle("Pie Chart Demo");
+		renderer.setChartTitle("Thống kê thời gian vào - ra " + timeDisplay);
 		renderer.setChartTitleTextSize(30);
 		renderer.setDisplayValues(true);
 		renderer.setChartTitleTextSize(30);
@@ -57,6 +60,15 @@ public class PieGraph {
 		renderer.setZoomEnabled(false);
 		
 		renderer.setFitLegend(true);
+	}
+
+	public String getTextStatistic() {
+		// TODO Auto-generated method stub
+		String result = "Thống kê thời gian vào - ra " + timeDisplay + ": \n";
+		for (LinkedHashMap.Entry<String, Integer> entry : data.entrySet()) {
+			result += "\t" + entry.getKey() + ": " +  entry.getValue() + " xe.\n";
+		}
+		return result;
 	}
 
 	public Intent getIntent(Context context) {

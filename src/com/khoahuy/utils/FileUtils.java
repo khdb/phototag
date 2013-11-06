@@ -36,6 +36,14 @@ public class FileUtils {
 		return imageF;
 	}
 	
+	public static File createImageFile(String albumName, String name) throws IOException {
+		// Create an image file name
+		String imageFileName = JPEG_FILE_PREFIX + name + JPEG_FILE_SUFFIX;
+		File albumF = getAlbumDir(albumName);
+		File imageF = new File(albumF, imageFileName);
+		return imageF;
+	}
+	
 	private static File getAlbumDir(String albumName) {
 		File storageDir = null;
 

@@ -25,6 +25,8 @@ import android.app.DatePickerDialog.OnDateSetListener;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.FragmentTransaction;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
@@ -401,7 +403,27 @@ public class DisplayKhoaStatsActivity extends FragmentActivity implements Action
 
     		// Create a new instance of DatePickerDialog and return it
     		//return new DatePickerDialog(getActivity(), this, year, month, day);
-    		return new DatePickerDialog(getActivity(), ondateSet, year, month, day);
+    		//return new DatePickerDialog(getActivity(), ondateSet, year, month, day);
+    		DatePickerDialog dpd = new DatePickerDialog(getActivity(), ondateSet, year, month, day);
+    		
+    		//this part is need to fix the bug of now showing cancel button.
+    		final DatePicker picker = (DatePicker) dpd.getDatePicker();
+    		dpd.setCancelable(true);
+    		dpd.setCanceledOnTouchOutside(isCancelable());	
+    		dpd.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", (OnClickListener) null);
+    		dpd.setButton(DialogInterface.BUTTON_POSITIVE, "Ok",
+    		          new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                  picker.clearFocus(); //Focus must be cleared so the value change listener is called
+                  ondateSet.onDateSet(picker, picker.getYear(), picker.getMonth(), picker.getDayOfMonth());
+                }
+            });
+    		
+    		return dpd;
+    		//this.setButton(DatePickerDialog.BUTTON_POSITIVE, "OK",this);
+    	    //this.setButton(DatePickerDialog.BUTTON_NEGATIVE, "",this);  
+    	    
     		//return new DatePickerDialog(getActivity(), (OnDateSetListener) this, year, month, day);
     	}
 

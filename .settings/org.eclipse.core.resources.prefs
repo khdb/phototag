@@ -1,4 +1,8 @@
 eclipse.preferences.version=1
 encoding//src/com/khoahuy/phototag/DisplayKhoaStatsActivity.java=UTF-8
+encoding//src/com/khoahuy/phototag/statistic/DateBarGraph.java=UTF-8
+encoding//src/com/khoahuy/phototag/statistic/MonthBarGraph.java=UTF-8
 encoding//src/com/khoahuy/phototag/statistic/PieGraph.java=UTF-8
+encoding//src/com/khoahuy/phototag/statistic/WeekBarGraph.java=UTF-8
+encoding//src/com/khoahuy/phototag/statistic/YearBarGraph.java=UTF-8
 encoding//src/com/khoahuy/utils/DateUtils.java=UTF-8

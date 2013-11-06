@@ -4,16 +4,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-
-import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
-import org.achartengine.model.CategorySeries;
-import org.achartengine.renderer.DefaultRenderer;
-import org.achartengine.renderer.SimpleSeriesRenderer;
 
 import com.khoahuy.database.NFCItemProvider;
 import com.khoahuy.phototag.statistic.BarGraph;
@@ -24,6 +16,8 @@ import com.khoahuy.phototag.statistic.WeekBarGraph;
 import com.khoahuy.phototag.statistic.YearBarGraph;
 import com.khoahuy.utils.DateUtils;
 import com.khoahuy.utils.FileUtils;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 
 import android.app.ActionBar;
 import android.app.DatePickerDialog;
@@ -31,12 +25,9 @@ import android.app.DatePickerDialog.OnDateSetListener;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.FragmentTransaction;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -50,7 +41,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -198,15 +188,22 @@ public class DisplayKhoaStatsActivity extends FragmentActivity implements
 
 		int[] thresholdArray = { 60, 120, 180, 240, 300, 360, 420, 480, 540,
 				600 };
-		long from = DateUtils.getTimestampFirstDateOfMonth(cal.get(Calendar.MONTH), 2013);
-		long to = DateUtils.getTimestampEndDateOfMonth(cal.get(Calendar.MONTH), 2013);
+		long from = DateUtils.getTimestampFirstDateOfMonth(
+				cal.get(Calendar.MONTH), 2013);
+		long to = DateUtils.getTimestampEndDateOfMonth(cal.get(Calendar.MONTH),
+				2013);
 		PieGraph pie = new PieGraph(from, to, thresholdArray, nfcProvider);
 
-		attachments.add(saveBarGraphToFile((GraphicalView) barD.getView(this), "DayStats"));
-		attachments.add(saveBarGraphToFile((GraphicalView) barW.getView(this), "WeekStats"));
-		attachments.add(saveBarGraphToFile((GraphicalView) barM.getView(this), "MonthStats"));
-		attachments.add(saveBarGraphToFile((GraphicalView) barY.getView(this), "YearStats"));
-		attachments.add(saveBarGraphToFile((GraphicalView) pie.getView(this), "OtherStats"));
+		attachments.add(saveBarGraphToFile((GraphicalView) barD.getView(this),
+				"DayStats"));
+		attachments.add(saveBarGraphToFile((GraphicalView) barW.getView(this),
+				"WeekStats"));
+		attachments.add(saveBarGraphToFile((GraphicalView) barM.getView(this),
+				"MonthStats"));
+		attachments.add(saveBarGraphToFile((GraphicalView) barY.getView(this),
+				"YearStats"));
+		attachments.add(saveBarGraphToFile((GraphicalView) pie.getView(this),
+				"OtherStats"));
 
 		String content = "Hello sir, \n\n";
 		content += "Thống kê số lượng: \n";
@@ -483,10 +480,33 @@ public class DisplayKhoaStatsActivity extends FragmentActivity implements
 			// Create a new instance of DatePickerDialog and return it
 			// return new DatePickerDialog(getActivity(), this, year, month,
 			// day);
-			return new DatePickerDialog(getActivity(), ondateSet, year, month,
-					day);
+
 			// return new DatePickerDialog(getActivity(), (OnDateSetListener)
 			// this, year, month, day);
+			DatePickerDialog dpd = new DatePickerDialog(getActivity(),
+					ondateSet, year, month, day);
+			// this part is need to fix the bug of now showing cancel button.
+			final DatePicker picker = (DatePicker) dpd.getDatePicker();
+			dpd.setCancelable(true);
+			dpd.setCanceledOnTouchOutside(isCancelable());
+			dpd.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel",
+					(OnClickListener) null);
+			dpd.setButton(DialogInterface.BUTTON_POSITIVE, "Ok",
+			new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					picker.clearFocus(); // Focus must be cleared so the value
+											// change listener is called
+					ondateSet.onDateSet(picker, picker.getYear(),
+							picker.getMonth(), picker.getDayOfMonth());
+				}
+			});
+
+			return dpd;
+
+			// this.setButton(DatePickerDialog.BUTTON_POSITIVE, "OK",this);
+
+			// this.setButton(DatePickerDialog.BUTTON_NEGATIVE, "",this);
 		}
 
 		// not needed to be implemented here since it will be set in the parent

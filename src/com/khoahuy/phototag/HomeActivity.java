@@ -355,9 +355,9 @@ public class HomeActivity extends AbstractActivity {
 	      
 	      TextView myText = (TextView) findViewById(R.id.text_ready2scan );
 
-	      Animation anim = new AlphaAnimation(0.0f, 1.0f);
-	      anim.setDuration(550); //You can manage the time of the blink with this parameter
-	      anim.setStartOffset(1000);
+	      Animation anim = new AlphaAnimation(0.4f, 1.0f);
+	      anim.setDuration(200); //You can manage the time of the blink with this parameter
+	      anim.setStartOffset(800);
 	      anim.setRepeatMode(Animation.REVERSE);
 	      anim.setRepeatCount(Animation.INFINITE);
 	      myText.startAnimation(anim);

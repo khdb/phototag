@@ -7,6 +7,7 @@ import java.util.Map;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.net.Uri;
 import android.util.Log;
 
 import com.khoahuy.utils.DateUtils;
@@ -217,25 +218,25 @@ public class NFCItemProvider {
 
 	// Bar graphic Statistic region
 
-	public Map<String, Integer> getWaitingItemOfDayStatistic(Date date) {
+	public Map<String, Integer> getCheckinItemOfDayStatistic(Date date, Uri uri) {
 		/*
-		 * SELECT strftime('%H', checkin, 'unixepoch', 'localtime'), count(*) FROM
-		 * waiting_items WHERE(checkin >= "1382979600000" AND checkin <=
-		 * "1382979686400") GROUP BY (strftime('%H', checkin,'unixepoch', 'localtime'));
+		 * SELECT strftime('%H', checkin, 'unixepoch', 'localtime'), count(*)
+		 * FROM waiting_items WHERE(checkin >= "1382979600000" AND checkin <=
+		 * "1382979686400") GROUP BY (strftime('%H', checkin,'unixepoch',
+		 * 'localtime'));
 		 */
 		try {
 			Long from = DateUtils.getTimestampBeginOfDate(date);
 			Long to = from + DateUtils.TIMESTAMP_OF_DAY;
 			String[] projection = {
-					"strftime('%H', " + COLUMN_CHECK_IN + ", 'unixepoch', 'localtime')",
-					"count(*)" };
+					"strftime('%H', " + COLUMN_CHECK_IN
+							+ ", 'unixepoch', 'localtime')", "count(*)" };
 			String selection = COLUMN_CHECK_IN + " >= \"" + from + "\" AND "
 					+ COLUMN_CHECK_IN + " <= \"" + to + "\""
 					+ ") GROUP BY (strftime('%H', " + COLUMN_CHECK_IN
 					+ ",'unixepoch', 'localtime')";
 			String sort = COLUMN_CHECK_IN + " ASC";
-			Cursor cursor = myCR.query(MyContentProvider.WAITING_CONTENT_URI,
-					projection, selection, null, sort);
+			Cursor cursor = myCR.query(uri, projection, selection, null, sort);
 
 			Map<String, Integer> result = new LinkedHashMap<String, Integer>();
 			if (cursor.moveToFirst())
@@ -253,11 +254,13 @@ public class NFCItemProvider {
 		}
 	}
 
-	public Map<String, Integer> getWaitingItemOfWeekStatistic(Date dateEndOfWeek) {
+	public Map<String, Integer> getCheckinItemOfWeekStatistic(
+			Date dateEndOfWeek, Uri uri) {
 		/*
-		 * SELECT strftime('%d', checkin, 'unixepoch', 'localtime'), count(*) FROM
-		 * waiting_items WHERE(checkin >= "1382979600000" AND checkin <=
-		 * "1382979686400") GROUP BY (strftime('%d', checkin,'unixepoch', 'localtime'));
+		 * SELECT strftime('%d', checkin, 'unixepoch', 'localtime'), count(*)
+		 * FROM waiting_items WHERE(checkin >= "1382979600000" AND checkin <=
+		 * "1382979686400") GROUP BY (strftime('%d', checkin,'unixepoch',
+		 * 'localtime'));
 		 */
 		try {
 			Long to = DateUtils.getTimestampEndOfDate(dateEndOfWeek);
@@ -265,15 +268,14 @@ public class NFCItemProvider {
 			Log.i("Statistic", "Get Waiting Item Of Week " + dateEndOfWeek
 					+ ": From: " + from + " - To: " + to);
 			String[] projection = {
-					"strftime('%d', " + COLUMN_CHECK_IN + ", 'unixepoch', 'localtime')",
-					"count(*)" };
+					"strftime('%d', " + COLUMN_CHECK_IN
+							+ ", 'unixepoch', 'localtime')", "count(*)" };
 			String selection = COLUMN_CHECK_IN + " >= \"" + from + "\" AND "
 					+ COLUMN_CHECK_IN + " <= \"" + to + "\""
 					+ ") GROUP BY (strftime('%d', " + COLUMN_CHECK_IN
 					+ ",'unixepoch', 'localtime')";
 			String sort = COLUMN_CHECK_IN + " ASC";
-			Cursor cursor = myCR.query(MyContentProvider.WAITING_CONTENT_URI,
-					projection, selection, null, sort);
+			Cursor cursor = myCR.query(uri, projection, selection, null, sort);
 
 			Map<String, Integer> result = new LinkedHashMap<String, Integer>();
 			if (cursor.moveToFirst())
@@ -292,28 +294,29 @@ public class NFCItemProvider {
 		}
 	}
 
-	public Map<String, Integer> getWaitingItemOfMonthStatistic(int monthIndex,
-			int year) {
+	public Map<String, Integer> getCheckinItemOfMonthStatistic(int monthIndex,
+			int year, Uri uri) {
 		/*
-		 * SELECT strftime('%d', checkin, 'unixepoch', 'localtime'), count(*) FROM
-		 * waiting_items WHERE(checkin >= "1382979600000" AND checkin <=
-		 * "1382979686400") GROUP BY (strftime('%d', checkin,'unixepoch', 'localtime'));
+		 * SELECT strftime('%d', checkin, 'unixepoch', 'localtime'), count(*)
+		 * FROM waiting_items WHERE(checkin >= "1382979600000" AND checkin <=
+		 * "1382979686400") GROUP BY (strftime('%d', checkin,'unixepoch',
+		 * 'localtime'));
 		 */
 		try {
-			Long from = DateUtils.getTimestampFirstDateOfMonth(monthIndex, year);
+			Long from = DateUtils
+					.getTimestampFirstDateOfMonth(monthIndex, year);
 			Long to = DateUtils.getTimestampEndDateOfMonth(monthIndex, year);
-			Log.i("Statistic", "Get Waiting Item Of MonthIndex " + monthIndex +
-					 ": From: " + from + " - To: " + to);
+			Log.i("Statistic", "Get Waiting Item Of MonthIndex " + monthIndex
+					+ ": From: " + from + " - To: " + to);
 			String[] projection = {
-					"strftime('%d', " + COLUMN_CHECK_IN + ", 'unixepoch', 'localtime')",
-					"count(*)" };
+					"strftime('%d', " + COLUMN_CHECK_IN
+							+ ", 'unixepoch', 'localtime')", "count(*)" };
 			String selection = COLUMN_CHECK_IN + " >= \"" + from + "\" AND "
 					+ COLUMN_CHECK_IN + " <= \"" + to + "\""
 					+ ") GROUP BY (strftime('%d', " + COLUMN_CHECK_IN
 					+ ",'unixepoch', 'localtime')";
 			String sort = COLUMN_CHECK_IN + " ASC";
-			Cursor cursor = myCR.query(MyContentProvider.WAITING_CONTENT_URI,
-					projection, selection, null, sort);
+			Cursor cursor = myCR.query(uri, projection, selection, null, sort);
 
 			Map<String, Integer> result = new LinkedHashMap<String, Integer>();
 			int[] weekCount = new int[5];
@@ -344,11 +347,12 @@ public class NFCItemProvider {
 		}
 	}
 
-	public Map<String, Integer> getWaitingItemOfYearStatistic(int year) {
+	public Map<String, Integer> getCheckinItemOfYearStatistic(int year, Uri uri) {
 		/*
-		 * SELECT strftime('%m', checkin, 'unixepoch', 'localtime'), count(*) FROM
-		 * waiting_items WHERE(checkin >= "1382979600000" AND checkin <=
-		 * "1382979686400") GROUP BY (strftime('%m', checkin,'unixepoch', 'localtime'));
+		 * SELECT strftime('%m', checkin, 'unixepoch', 'localtime'), count(*)
+		 * FROM waiting_items WHERE(checkin >= "1382979600000" AND checkin <=
+		 * "1382979686400") GROUP BY (strftime('%m', checkin,'unixepoch',
+		 * 'localtime'));
 		 */
 		try {
 			Long from = DateUtils.getTimestamp(year, 1, 1, 0, 0, 0);
@@ -357,15 +361,14 @@ public class NFCItemProvider {
 			// ": From: " + from + " - To: " + to);
 
 			String[] projection = {
-					"strftime('%m', " + COLUMN_CHECK_IN + ", 'unixepoch', 'localtime')",
-					"count(*)" };
+					"strftime('%m', " + COLUMN_CHECK_IN
+							+ ", 'unixepoch', 'localtime')", "count(*)" };
 			String selection = COLUMN_CHECK_IN + " >= \"" + from + "\" AND "
 					+ COLUMN_CHECK_IN + " <= \"" + to + "\""
 					+ ") GROUP BY (strftime('%m', " + COLUMN_CHECK_IN
 					+ ",'unixepoch', 'localtime')";
 			String sort = COLUMN_CHECK_IN + " ASC";
-			Cursor cursor = myCR.query(MyContentProvider.WAITING_CONTENT_URI,
-					projection, selection, null, sort);
+			Cursor cursor = myCR.query(uri, projection, selection, null, sort);
 
 			Map<String, Integer> result = new LinkedHashMap<String, Integer>();
 			for (int i = 1; i <= 12; i++) {
@@ -391,9 +394,10 @@ public class NFCItemProvider {
 	public Map<String, Integer> getUsedItemStatistic(long from, long to,
 			int[] thresholdArray) {
 		/*
-		 * SELECT strftime('%d', checkout, 'unixepoch', 'localtime'), count(*) FROM
-		 * used_items WHERE(checkout >= "1380405237" AND checkout <=
-		 * "1482979686400") GROUP BY (strftime('%d', checkout,'unixepoch', 'localtime'));
+		 * SELECT strftime('%d', checkout, 'unixepoch', 'localtime'), count(*)
+		 * FROM used_items WHERE(checkout >= "1380405237" AND checkout <=
+		 * "1482979686400") GROUP BY (strftime('%d', checkout,'unixepoch',
+		 * 'localtime'));
 		 */
 		try {
 			String[] projection = { "(checkout - checkin) as time" };

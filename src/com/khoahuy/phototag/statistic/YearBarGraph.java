@@ -1,15 +1,20 @@
 package com.khoahuy.phototag.statistic;
 
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 import com.khoahuy.database.NFCItemProvider;
+import com.khoahuy.database.provider.MyContentProvider;
+import com.khoahuy.utils.StatisticUtils;
 
 import android.graphics.Color;
 
 public class YearBarGraph extends BarGraph {
 
 	public YearBarGraph(int year, NFCItemProvider nfcProvider) {
-		data = nfcProvider.getWaitingItemOfYearStatistic(year);
+		Map<String, Integer> waitingData = nfcProvider.getCheckinItemOfYearStatistic(year, MyContentProvider.WAITING_CONTENT_URI);
+		Map<String, Integer> usedData = nfcProvider.getCheckinItemOfYearStatistic(year, MyContentProvider.USED_CONTENT_URI);
+		data = StatisticUtils.mergeWaitingAndUsedItem(waitingData, usedData);
 		seriesTitle = "Year chart";
 		timeDisplay = String.valueOf(year);
 		charTitle = "Thống kê năm " + timeDisplay;

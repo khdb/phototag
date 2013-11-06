@@ -55,4 +55,15 @@ public class StatisticUtils {
 		result.put(key, value);
 		return result;
 	}
+	
+	public static Map<String, Integer> mergeWaitingAndUsedItem(Map<String, Integer> data1, Map<String, Integer> data2)
+	{
+		Map<String, Integer> result = new LinkedHashMap<String, Integer>();
+		result.putAll(data1);
+		for (LinkedHashMap.Entry<String, Integer> entry : data2.entrySet()) {
+			int value = result.get(entry.getKey()) + entry.getValue();
+			result.put(entry.getKey(), value);
+		}
+		return result;
+	}
 }

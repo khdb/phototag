@@ -25,11 +25,11 @@
     <color name="date_in_out">#CC33B5E5</color>
     <color name="title_in_out">#CCFFFFFF</color>
     <color name="text_date_in_out"> #A4A4A4 </color>
-    <color name="bg_ready2scan">#FF0A122A </color>
+    <color name="bg_ready2scan">#FF4C0B5F</color> 
     <color name="text_ready2scan">#FAFAFA</color>
     <color name="bg_stats">#FF120A2A</color>
-    <color name="bg_stats_in">#FF0B610B</color>
-    <color name="bg_stats_out">#FF61380B</color>
-    <color name="bg_stats_total">#FF210B61</color>
+    <color name="bg_stats_in">#81BEF7</color>
+    <color name="bg_stats_out">#F7819F</color>
+    <color name="bg_stats_total">#E2A9F3</color>
     <color name="bg_plates_container">#000000</color>
 </resources>

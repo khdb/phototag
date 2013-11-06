@@ -12,6 +12,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.RectF;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -63,6 +65,12 @@ public class ViewImageActivity extends AbstractActivity {
 			}
 		});
 
+	}
+	
+	//overwrite the menu from super class
+	//here we don't need any action overflow menus
+	public boolean onCreateOptionsMenu(Menu menu) {
+		return false;
 	}
 
 	@Override

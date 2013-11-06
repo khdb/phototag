@@ -1,4 +1,4 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/main"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -12,34 +12,36 @@
     tools:context=".MainActivity" >
 
 
-        
+         
     <LinearLayout 
+          android:id="@+id/home_stats"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
+          android:layout_alignWithParentIfMissing="true"
+          android:layout_alignParentTop="true"
           android:layout_gravity="center"
           android:baselineAligned="false"
-          android:layout_margin="8dp"
-          
+          android:layout_margin="8dp"        
           >
         
         <LinearLayout 
+            android:id="@+id/checkin_stats_box"
             android:layout_width="wrap_content"
         	android:layout_height="@dimen/main_screen_stats_height"
         	android:orientation="horizontal" 
         	android:background="@color/bg_stats_in"
         	android:gravity="center"
+        	android:layout_weight=".3"
         	>
         	
             <TextView
                 android:id="@+id/count_label_in"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
                 android:paddingLeft="@dimen/stats_label_left_margin"
                 android:text="Vào"
                 android:textColor="@color/title_in_out"
-                android:textSize="18dp"
+                android:textSize="18sp"
                 android:textStyle="normal"
                 android:typeface="normal" />
             
@@ -47,21 +49,21 @@
                 android:id="@+id/txt_checkin_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
                 android:paddingLeft="@dimen/main_screen_vertical_margin"
                 android:paddingRight="@dimen/main_screen_vertical_margin"
                 android:text="@string/check_in_count"
                 android:textColor="@color/title_in_out"
-                android:textSize="24dp"
+                android:textSize="24sp"
                 android:textStyle="bold"
                 android:typeface="normal" />
                        
         </LinearLayout>
         
         <LinearLayout 
+            android:id="@+id/total_stats_box"
             android:layout_width="wrap_content"
         	android:layout_height="@dimen/main_screen_stats_height"
+        	android:layout_toRightOf="@id/checkin_stats_box"
         	android:orientation="horizontal" 
         	android:layout_weight=".4"
         	android:background="@color/bg_stats_total"
@@ -72,12 +74,10 @@
                 android:id="@+id/count_label_total"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
                 android:paddingLeft="@dimen/stats_label_left_margin"
                 android:text="Tổng"
                 android:textColor="@color/title_in_out"
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="normal"
                 android:typeface="normal" />
             
@@ -85,20 +85,21 @@
     		    android:id="@+id/txt_total_count"
     		    android:layout_width="wrap_content"
     		    android:layout_height="wrap_content"
-    		    android:layout_centerHorizontal="true"
-    		    android:layout_centerVertical="true"
     		    android:paddingLeft="@dimen/main_screen_vertical_margin"
     		    android:textColor="@color/title_in_out"
     		    android:text="@string/total_count"
-    		    android:textSize="24dp"
+    		    android:textSize="24sp"
     		    android:textStyle="bold"
     		    android:typeface="normal" />
             
         </LinearLayout>
         
          <LinearLayout 
+            android:id="@+id/checkout_stats_box"
             android:layout_width="wrap_content"
         	android:layout_height="@dimen/main_screen_stats_height"
+        	android:layout_toRightOf="@id/total_stats_box"
+        	android:layout_alignParentRight="true"
         	android:orientation="horizontal" 
         	android:layout_weight=".3"
         	android:background="@color/bg_stats_out"
@@ -109,12 +110,10 @@
                 android:id="@+id/count_label_out"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
                 android:paddingLeft="@dimen/stats_label_left_margin"
                 android:text="Ra"
                 android:textColor="@color/title_in_out"
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="normal"
                 android:typeface="normal" />
             
@@ -122,12 +121,10 @@
     		    android:id="@+id/txt_checkout_count"
     		    android:layout_width="wrap_content"
     		    android:layout_height="wrap_content"
-    		    android:layout_centerHorizontal="true"
-    		    android:layout_centerVertical="true"
     		    android:paddingLeft="@dimen/main_screen_vertical_margin"
     		    android:textColor="@color/title_in_out"
     		    android:text="@string/check_out_count"
-    		    android:textSize="24dp"
+    		    android:textSize="24sp"
     		    android:textStyle="bold"
     		    android:typeface="normal" />
             
@@ -138,13 +135,16 @@
    
      
 <!-- The 2 images, one is to display newest checkin, one is to display newest checkout --> 
+
     <LinearLayout
         android:id="@+id/plate_container_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/home_stats"
         android:orientation="vertical"
-        android:layout_weight=".60"
-        android:showDividers="end" >
+        android:showDividers="end" 
+        android:background="@color/bg_plates_container"
+        >
         
         <RelativeLayout
             android:id="@+id/checkin"
@@ -159,8 +159,7 @@
         		android:layout_width="fill_parent"
         		android:layout_height="wrap_content"
         		android:adjustViewBounds="true"   
-        		android:maxHeight="240dp"  
-        		android:maxWidth="250dp"
+
         		android:contentDescription="@string/thumbnail_desc"
                 android:scaleType="centerCrop"    
         		android:src="@raw/noimage" />
@@ -171,6 +170,7 @@
                 android:layout_height="35dp"
                 android:layout_alignParentTop="true"
                 android:adjustViewBounds="true"
+                android:contentDescription="@string/thumbnail_desc"
                 android:maxHeight="35dp"
                 android:scaleType="fitXY"
                 android:src="@drawable/in_out_label" />
@@ -195,7 +195,7 @@
     		    android:gravity="center_vertical"
     		    android:text="Xe mới vào"
     		    android:textColor="@color/title_in_out"
-    		    android:textSize="18dp"
+    		    android:textSize="18sp"
     		    android:textStyle="bold" />
             
     		<TextView
@@ -207,10 +207,26 @@
     		    android:layout_marginLeft="16dp"
     		    android:text="@string/check_in_not_found"
     		    android:textColor="@color/text_date_in_out"
-    		    android:textSize="16dp"
+    		    android:textSize="16sp"
     		    android:textStyle="normal" />
     		
         </RelativeLayout>       
+        
+        <!-- use for separator beween the images -->
+     <!--    <View
+    		android:layout_width="fill_parent"
+    		android:layout_height="2dp"
+    		android:background="@android:color/darker_gray"/> -->
+    		
+    	<ImageView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="2dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingTop="2dp"
+            android:scaleType="fitXY"
+            android:src="@android:drawable/divider_horizontal_bright" />
         
         <RelativeLayout
             android:id="@+id/checkout"
@@ -224,14 +240,12 @@
         		android:layout_width="fill_parent"
         		android:layout_height="wrap_content"
         		android:adjustViewBounds="true"  
-        		android:maxHeight="240dp"  
-        		android:maxWidth="250dp"
         		android:contentDescription="@string/thumbnail_desc"
                 android:scaleType="centerCrop"
         		android:src="@raw/noimage" />  
             
             <ImageView
-                android:id="@+id/label_in_out"
+                android:id="@+id/label_out"
                 android:layout_width="fill_parent"
                 android:layout_height="35dp"
                 android:layout_alignParentTop="true"
@@ -259,7 +273,7 @@
     		    android:layout_marginLeft="16dp"
     		    android:text="Xe mới ra"
     		    android:textColor="@color/title_in_out"
-    		    android:textSize="18dp"
+    		    android:textSize="18sp"
     		    android:textStyle="bold" />
              
     		<TextView
@@ -270,41 +284,41 @@
     		    android:layout_marginLeft="16dp"
     		    android:text="@string/check_in_not_found"
     		    android:textColor="@color/text_date_in_out"
-    		    android:textSize="16dp"
+    		    android:textSize="16sp"
     		    android:textStyle="normal" />
     		
         </RelativeLayout>
       
         
     </LinearLayout>
+    
 
   <!-- Ready to scan notification -->
-    <LinearLayout
-        	android:id="@+id/layout_ready2scan"
-        	android:layout_width="match_parent"
-        	android:layout_height="wrap_content"
-        	android:orientation="vertical"
-        	android:layout_gravity="bottom"
-        	android:baselineAligned="false"
-        	android:layout_weight=".10"
-        	android:paddingLeft="@dimen/main_screen_vertical_margin"
-    		android:paddingRight="@dimen/main_screen_vertical_margin"
-    		android:background="@color/bg_ready2scan"
-        	>
-    	        
-    		<TextView
-    		    android:id="@+id/text_ready2scan"
-    		    android:layout_width="match_parent"
-    		    android:layout_height="wrap_content"
-    		    android:layout_margin="8dp"
-    		    android:gravity="center"
-    		    android:text="@string/label_ready2scan"
-    		    android:textSize="23sp"
-    		    android:textStyle="normal"
-    		    android:typeface="normal" 
-    		    android:textColor="@color/text_date_in_out" />
+  
     
-    </LinearLayout>
 
+    <RelativeLayout
+        android:id="@+id/layout_ready2scan"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true" 
+        android:background="@color/bg_ready2scan"
+        android:baselineAligned="false"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/main_screen_vertical_margin"
+        android:paddingRight="@dimen/main_screen_vertical_margin" >
 
-</LinearLayout>
+        <TextView
+            android:id="@+id/text_ready2scan"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:gravity="center"
+            android:text="@string/label_ready2scan"
+            android:textColor="@color/text_date_in_out"
+            android:textSize="23sp"
+            android:textStyle="normal"
+            android:typeface="normal" />
+    </RelativeLayout>
+
+</RelativeLayout>

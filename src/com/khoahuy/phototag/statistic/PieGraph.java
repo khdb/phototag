@@ -26,7 +26,7 @@ public class PieGraph {
 	public PieGraph(long from, long to, int[] thresholdArray, NFCItemProvider nfcProvider){
 		data = nfcProvider.getUsedItemStatistic(
 				from, to, thresholdArray);
-		timeDisplay = " từ " + DateUtils.getDateString(from) + " tới " + DateUtils.getDateString(to);
+		timeDisplay = " từ " + DateUtils.getDateString(from, "dd/MM/yyyy") + " tới " + DateUtils.getDateString(to, "dd/MM/yyyy");
 	}
 	
 	public void createGraphic() {

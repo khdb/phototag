@@ -18,7 +18,18 @@ public class DateUtils {
 	public static String getDateString(Long timeStamp) {
 		try {
 			timeStamp = timeStamp * 1000;
-			DateFormat sdf = new SimpleDateFormat("MM/dd/yyyy - HH:mm:ss");
+			DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy - HH:mm:ss");
+			Date netDate = (new Date(timeStamp));
+			return sdf.format(netDate);
+		} catch (Exception ex) {
+			return "Parse time Error";
+		}
+	}
+	
+	public static String getDateString(Long timeStamp, String format) {
+		try {
+			timeStamp = timeStamp * 1000;
+			DateFormat sdf = new SimpleDateFormat(format);
 			Date netDate = (new Date(timeStamp));
 			return sdf.format(netDate);
 		} catch (Exception ex) {

@@ -123,6 +123,11 @@ public class DisplayKhoaStatsActivity extends FragmentActivity implements
 					.setText(mAppSectionsPagerAdapter.getPageTitle(i))
 					.setTabListener(this));
 		}
+
+		Calendar cal = Calendar.getInstance();
+		year = cal.get(Calendar.YEAR);
+		month = cal.get(Calendar.MONTH);
+		day = cal.get(Calendar.DAY_OF_MONTH);
 	}
 
 	@Override
@@ -175,6 +180,7 @@ public class DisplayKhoaStatsActivity extends FragmentActivity implements
 
 	public void sendReportEmail() throws Exception {
 		Calendar cal = Calendar.getInstance();
+		cal.set(year, month, day);
 		NFCItemProvider nfcProvider = new NFCItemProvider(
 				this.getContentResolver());
 
@@ -273,6 +279,53 @@ public class DisplayKhoaStatsActivity extends FragmentActivity implements
 			FragmentTransaction fragmentTransaction) {
 	}
 
+	public void showDatePickerDialog(View v) {
+		DialogFragment newFragment = new DatePickerFragment();
+		newFragment.show(getFragmentManager(), "datePicker");
+	}
+
+	private void showDatePicker() {
+		DatePickerFragment date = new DatePickerFragment();
+
+		/**
+		 * Set Call back to capture selected date
+		 */
+		date.setCallBack(ondate);
+		date.show(getFragmentManager(), "Date Picker");
+	}
+
+	OnDateSetListener ondate = new OnDateSetListener() {
+		@Override
+		public void onDateSet(DatePicker view, int selectedYear,
+				int selectedMonth, int selectedDay) {
+			Toast.makeText(
+					DisplayKhoaStatsActivity.this,
+					String.valueOf(selectedYear) + "-"
+							+ String.valueOf(selectedMonth) + "-"
+							+ String.valueOf(selectedDay), Toast.LENGTH_LONG)
+					.show();
+			year = selectedYear;
+			month = selectedMonth;
+			day = selectedDay;
+			refreshFragment();
+		}
+
+	};
+
+	public void refreshFragment()
+	{
+		FragmentManager fm = this.getSupportFragmentManager();
+		android.support.v4.app.FragmentTransaction fragmentTransaction = fm.beginTransaction();
+   
+        for(Fragment f : fm.getFragments()){
+            fragmentTransaction.detach(f);
+            fragmentTransaction.attach(f);           
+        }
+        fragmentTransaction.commit();
+        
+        
+	}
+
 	/**
 	 * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
 	 * one of the primary sections of the app.
@@ -326,40 +379,6 @@ public class DisplayKhoaStatsActivity extends FragmentActivity implements
 
 	}
 
-	public void showDatePickerDialog(View v) {
-		DialogFragment newFragment = new DatePickerFragment();
-		newFragment.show(getFragmentManager(), "datePicker");
-	}
-
-	private void showDatePicker() {
-		DatePickerFragment date = new DatePickerFragment();
-
-		/**
-		 * Set Call back to capture selected date
-		 */
-		date.setCallBack(ondate);
-		date.show(getFragmentManager(), "Date Picker");
-	}
-
-	OnDateSetListener ondate = new OnDateSetListener() {
-		@Override
-		public void onDateSet(DatePicker view, int selectedYear,
-				int selectedMonth, int selectedDay) {
-			Toast.makeText(
-					DisplayKhoaStatsActivity.this,
-					String.valueOf(selectedYear) + "-"
-							+ String.valueOf(selectedMonth) + "-"
-							+ String.valueOf(selectedDay), Toast.LENGTH_LONG)
-					.show();
-
-			year = selectedYear;
-			month = selectedMonth;
-			day = selectedDay;
-
-		}
-
-	};
-
 	/**
 	 * A dummy fragment representing a section of the app, but that simply
 	 * displays dummy text.
@@ -369,35 +388,31 @@ public class DisplayKhoaStatsActivity extends FragmentActivity implements
 		public static final String ARG_SECTION_NUMBER = "section_number";
 		public static final String ARG_REPORT_TYPE = "report_type"; // Day|Week|Month|Year
 		protected NFCItemProvider nfcProvider;
+		protected View rootView;
 
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
-			View rootView = inflater.inflate(R.layout.fragment_section_reports,
+			rootView = inflater.inflate(R.layout.fragment_section_reports,
 					container, false);
 			Bundle args = getArguments();
 			// ((TextView) rootView.findViewById(android.R.id.text1)).setText(
 			// getString(R.string.dummy_section_text,
 			// args.getInt(ARG_SECTION_NUMBER)));
 			//
-
+			Log.i("Huy", "Month = " + month);
 			// test
 			nfcProvider = new NFCItemProvider(getActivity()
 					.getContentResolver());
 			Calendar cal = Calendar.getInstance();
+			cal.set(year, month, day);
 			// args.getInt(ARG_REPORT_TYPE);
 
 			switch (args.getInt(ARG_REPORT_TYPE)) {
 			case 0:
 				BarGraph barD = new DateBarGraph(cal.getTime(), nfcProvider);
 				View dayView = barD.getView(getActivity());
-
-				// ScrollView scrollView = new ScrollView(getActivity());
-				// scrollView.addView(dayView);
-				// rootView = scrollView;
-
 				rootView = dayView;
-
 				break;
 			case 1:
 				BarGraph barW = new WeekBarGraph(cal.getTime(), nfcProvider);
@@ -421,8 +436,8 @@ public class DisplayKhoaStatsActivity extends FragmentActivity implements
 					int[] thresholdArray = { 60, 120, 180, 240, 300, 360, 420,
 							480, 540, 600 };
 					long from = DateUtils
-							.getTimestampFirstDateOfMonth(10, 2013);
-					long to = DateUtils.getTimestampEndDateOfMonth(10, 2013);
+							.getTimestampFirstDateOfMonth(cal.get(Calendar.MONTH), cal.get(Calendar.YEAR));
+					long to = DateUtils.getTimestampEndDateOfMonth(cal.get(Calendar.MONTH), cal.get(Calendar.YEAR));
 					PieGraph pie = new PieGraph(from, to, thresholdArray,
 							nfcProvider);
 					View otherView = pie.getView(getActivity());
@@ -437,9 +452,6 @@ public class DisplayKhoaStatsActivity extends FragmentActivity implements
 						.setText(getString(R.string.dummy_section_text,
 								args.getInt(ARG_SECTION_NUMBER)));
 			}
-
-			// end test
-
 			return rootView;
 		}
 	}
@@ -458,8 +470,6 @@ public class DisplayKhoaStatsActivity extends FragmentActivity implements
 		public void setCallBack(OnDateSetListener ondate) {
 			ondateSet = ondate;
 		}
-
-		private int year, month, day;
 
 		@Override
 		public void setArguments(Bundle args) {
@@ -492,15 +502,16 @@ public class DisplayKhoaStatsActivity extends FragmentActivity implements
 			dpd.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel",
 					(OnClickListener) null);
 			dpd.setButton(DialogInterface.BUTTON_POSITIVE, "Ok",
-			new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					picker.clearFocus(); // Focus must be cleared so the value
-											// change listener is called
-					ondateSet.onDateSet(picker, picker.getYear(),
-							picker.getMonth(), picker.getDayOfMonth());
-				}
-			});
+					new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							picker.clearFocus(); // Focus must be cleared so the
+													// value
+													// change listener is called
+							ondateSet.onDateSet(picker, picker.getYear(),
+									picker.getMonth(), picker.getDayOfMonth());
+						}
+					});
 
 			return dpd;
 

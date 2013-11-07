@@ -106,42 +106,22 @@ public abstract class AbstractActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle item selection
 		switch (item.getItemId()) {
-		case R.id.action_settings:
-			
-			return true;
 		case R.id.action_statistic:
 			try {
 				Intent khdIntent = new Intent(this, DisplayKhoaStatsActivity.class);
 				startActivity(khdIntent);
-				
+
 			} catch (Exception ex) {
-				
+
 			}
 			return true;
 		case R.id.action_about:
 			try {
 				Intent aboutIntent = new Intent(this, AboutActivity.class);
 				startActivity(aboutIntent);
-				
+
 			} catch (Exception ex) {
-				
-			}
-			return true;
-		case R.id.action_test:
-			try {
-			} catch (Exception ex) {
-				Log.e("Huy", ex.toString());
-			}
-			return true;
-		case R.id.action_khoa_stats:
-			try {
-//				Toast.makeText(this, "Khoa stats selected", Toast.LENGTH_SHORT)
-//	            .show();
-				Intent khdIntent = new Intent(this, DisplayKhoaStatsActivity.class);
-				startActivity(khdIntent);
-				
-			} catch (Exception ex) {
-				
+
 			}
 			return true;
 		default:

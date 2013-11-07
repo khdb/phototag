@@ -145,7 +145,7 @@ public class HomeActivity extends AbstractActivity {
 
 			CharSequence title = "Photo Tag " + nfcProvider.countWaitingItem();
 			Log.i("Huy", "Title = " + title);
-			this.setTitle(title);
+			//this.setTitle(title); //no need to change title
 
 			Intent callerIntent = getIntent();
 			if (callerIntent != null

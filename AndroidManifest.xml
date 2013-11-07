@@ -44,6 +44,7 @@
         <activity
             android:name="com.khoahuy.phototag.ViewImageActivity"
             android:label="@string/title_activity_view_image"
+            android:screenOrientation="portrait"
             android:parentActivityName="com.khoahuy.phototag.HomeActivity" >
 
             <!-- Parent activity meta-data to support 4.0 and lower -->

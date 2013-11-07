@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">PhotoTag</string>
+    <string name="app_name">TapMan</string>
     <string name="action_settings">Cài đặt</string>
     <string name="action_statistics">Thống kê</string>
     <string name="action_about"> Giới thiệu </string>
@@ -36,8 +36,9 @@
     <string name="dummy_section_text">Section %1d is just a dummy section.</string>
     <string name="title_activity_about">Giới thiệu</string>
     <string name="label_ready2scan">sẵn sàng quẹt thẻ ...</string>
-    <string name="label_share_reports"> Share reports </string>
-    
+    <string name="label_share_reports"> Share reports </string> 
+    <string name="plate_check_view_title"> Xe vào lúc </string>
+    <string name="plate_check_view_date">  </string>
     
     
     <string name="about_body_text">

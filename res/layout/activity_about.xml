@@ -13,10 +13,27 @@
         android:layout_height="wrap_content"
         android:text="@string/title_activity_about" /> -->
     
-    <TextView
+ <!--    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="18sp"
-        android:text="@string/about_body_text" />
+        android:text="@string/about_body_text" /> -->
+        
+<ScrollView
+    android:id="@+id/scroll_id"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:scrollbars="vertical" >
+
+    <TextView
+        android:id="@+id/about_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textSize="16sp" />
+    
+    
+</ScrollView>
+
 
 </RelativeLayout>

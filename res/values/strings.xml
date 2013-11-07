@@ -42,12 +42,61 @@
     
     
     <string name="about_body_text">
-        Trải qua hơn 6 năm hình thành và phát triển công ty cổ phần công nghệ 
-        đa truyền thông TNET nay là Công Ty Cổ Phần Truyền Thông VOC đã có những 
-        bước phát triển không ngừng trong việc thiết kế, hỗ trợ và phát triển 
-        website cho doanh nghiệp. Công ty cổ phần truyền thông VOC được thành lập 
-        theo quyết định số 0103018471 do sở kế hoạch và đầu tư thành phố Hà Nội cấp.
-        
+        InstaPark là một chương trình quản lý hệ thống giữ xe thông minh 
+        do công ty Technomad nghiên cứu và phát triển. Với InstaPark sẽ 
+        giúp bạn quản lý việc giữ xe ở những nơi bạn cần, với chi phí đầu tư 
+        rẻ hơn rất nhiều và cực kì linh động so với các hệ thống giữ xe 
+        thông minh khác hiện nay. Vì bạn chỉ cần cài ứng dụng InstaPark 
+        lên smartphone (có hỗ trợ NFC) và các smart tag (thẻ thông minh).
     </string>
-
+    
+    <string name="about_html_content">
+		<![CDATA[
+			
+			
+			<h3> InstaPark </h3>
+			
+			<b> InstaPark </b> là một chương trình quản lý hệ thống giữ xe thông minh 
+        do công ty Technomad nghiên cứu và phát triển. Với InstaPark sẽ 
+        giúp bạn quản lý việc giữ xe ở những nơi bạn cần, với chi phí đầu tư 
+        rẻ hơn rất nhiều và cực kì linh động so với các hệ thống giữ xe 
+        thông minh khác hiện nay. Vì bạn chỉ cần cài ứng dụng InstaPark 
+        lên smartphone <i> (có hỗ trợ NFC) </i> và các smart tag <i> (thẻ thông minh).</i>
+        
+        <h3> Cách sử dụng InstaPark rất đơn giản </h3>
+        
+        <h4> Khi xe vào </h4>
+        
+        
+         <p>	&#8226; Bạn chỉ cần lấy thẻ thông minh quét lên smartphone. <br/> </p>
+         <p>	&#8226; Ngay lập tức InstaPark sẽ cho bạn chụp hình để lưu hình ảnh biển số xe lại. <br/> </p>
+         <p>	&#8226; Cuối cùng bạn sẽ giao thẻ thông minh đó cho khách gửi xe. <br/> </p>
+         	
+       
+        
+        <h4> Khi xe ra</h4>
+        
+         <p>	&#8226; Bạn cần nhận thẻ thông minh của khách gửi xe và quét lên smartphone.<br/> </p>
+         <p>	&#8226; Ngay lập tức InstaPark sẽ hiển thị hình ảnh đã lưu đối với thẻ thông minh này. Khi đó bạn chỉ cần đối chiếu biển số xe trong hình ảnh có đúng với trong xe của khách hàng hoặc không. <br/> </p>
+         <p>	&#8226; Sau cùng bạn sẽ chọn "Lấy xe ra" để kết thúc nhiệm vụ của thẻ thông minh này, hoặc "Chụp hình xe mới vào" để chuyển sang chế độ chụp ảnh để lưu tiếp hình ảnh cho thẻ thông minh này. <br/> </p>
+         	
+        
+         
+        <h4> Thống kê </h4>
+        
+        InstaPark sẽ lưu lịch sử các xe ra vào, giúp ích cho bạn trong việc quản lý hoặc kinh doanh. Các thống kê có thể gửi qua email, bao gồm các loại thống kê
+        
+        <h5>Thống kê sản lượng </h5>
+        
+        số lượng xe đã gửi, thống kê theo thời gian trong Ngày/ 7 ngày gần nhất/ Tháng hoặc Năm mà bạn chọn. 
+        
+        <h5> Thống kê theo thời gian gửi </h5>
+        
+         số lượng xe đã gửi trong tháng, được thống kê chia theo từng tiếng mà xe được gửi.
+        
+        
+		]]>
+    </string>
+    
+    
 </resources>

@@ -4,7 +4,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.text.Html;
 import android.view.Menu;
+import android.widget.TextView;
    
 public class AboutActivity extends Activity {
 
@@ -24,6 +26,9 @@ public class AboutActivity extends Activity {
             // Show the Up button in the action bar.
         	actionBar.setDisplayHomeAsUpEnabled(true);
         }
+        
+        TextView foo = (TextView)findViewById(R.id.about_text);
+        foo.setText(Html.fromHtml(getString(R.string.about_html_content)));
         
 	}
 

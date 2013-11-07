@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">TapMan</string>
+    <string name="app_name">InstaPark</string>
     <string name="action_settings">Cài đặt</string>
     <string name="action_statistics">Thống kê</string>
     <string name="action_about"> Giới thiệu </string>

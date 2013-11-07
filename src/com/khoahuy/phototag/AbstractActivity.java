@@ -108,7 +108,7 @@ public abstract class AbstractActivity extends Activity {
 		switch (item.getItemId()) {
 		case R.id.action_statistic:
 			try {
-				Intent khdIntent = new Intent(this, DisplayKhoaStatsActivity.class);
+				Intent khdIntent = new Intent(this, ReportsActivity.class);
 				startActivity(khdIntent);
 
 			} catch (Exception ex) {

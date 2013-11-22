@@ -27,7 +27,7 @@ class GroupViewSet(viewsets.ModelViewSet):
 
 
 # Routers provide an easy way of automatically determining the URL conf
-router = CustomRouter()
+router = routers.DefaultRouter()
 #router.register(r'users', UserViewSet)
 #router.register(r'groups', GroupViewSet)
 router.register(r'waitings', WaitingViewSet)

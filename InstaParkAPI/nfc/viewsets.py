@@ -4,8 +4,10 @@ from rest_framework import viewsets
 from rest_framework import permissions
 from rest_framework.decorators import link
 from rest_framework.response import Response
+from rest_framework import status
+from django.core.exceptions import ObjectDoesNotExist
 from oauth2_provider.ext.rest_framework import TokenHasReadWriteScope, TokenHasScope
-
+import datetime
 
 class WaitingViewSet(viewsets.ModelViewSet):
 
@@ -13,28 +15,57 @@ class WaitingViewSet(viewsets.ModelViewSet):
     	model = WaitingItem
 
     	@link()
-    	def newests(self, request, *args, **kwargs):
-		result = WaitingItem.objects.raw("SELECT * FROM nfc_waitingitem ORDER BY checkin desc LIMIT 1")[0]
-		serializer = WaitingItemSerializer(result)
-		print serializer
-		return Response(serializer.data)
+    	def newest(self, request, *args, **kwargs):
+		rawQuerySet = WaitingItem.objects.raw("SELECT * FROM nfc_waitingitem ORDER BY checkin desc LIMIT 1")
+		if len(list(rawQuerySet)) > 0:
+			serializer = WaitingItemSerializer(rawQuerySet[0])
+			return Response(serializer.data)
+		else:
+			return Response(None)
 	
 	@link()
-	def test(self, request, *args, **kwargs):
-		return Response(1)
-
+	def oldestOfToday(self, request, *args, **kwargs):
+		current_date = datetime.datetime.now().strftime('%Y-%m-%d 00:00:00')
+		query = "SELECT * FROM nfc_waitingitem WHERE checkin >= '%s'  ORDER BY checkin desc LIMIT 1" % current_date
+		rawQuerySet = WaitingItem.objects.raw(query)
+		if len(list(rawQuerySet)) > 0:
+			serializer = WaitingItemSerializer(rawQuerySet[0])
+			return Response(serializer.data)
+		else:
+			return Response(None)
 
 class UsedViewSet(viewsets.ModelViewSet):
     	permission_classes = [permissions.IsAuthenticated, TokenHasReadWriteScope]
     	model = UsedItem
 
-    	#@link(renderer_classes=[renderers.StaticHTMLRenderer])
+	def create(self, request, *args, **kwargs):
+        	serializer = self.get_serializer(data=request.DATA, files=request.FILES)
+
+        	if serializer.is_valid():
+			try:
+				waitingItem = WaitingItem.objects.get(nfcid=serializer.object.nfcid)
+				serializer.object.checkin = waitingItem.checkin
+				self.pre_save(serializer.object)
+            			self.object = serializer.save(force_insert=True)
+            			self.post_save(self.object, created=True)
+				waitingItem.delete()
+            			headers = self.get_success_headers(serializer.data)
+            			return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+			except ObjectDoesNotExist:
+				return Response("Not found this tag %s" %serializer.object.nfcid, status=status.HTTP_400_BAD_REQUEST)
+
+	        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
     	@link()
-    	def highlight(self, request, *args, **kwargs):
-        	#snippet = self.get_object()
-		a = 1
-		return Response(a)
-        	#return Response(snippet.highlighted)
+    	def newest(self, request, *args, **kwargs):
+		rawQuerySet = UsedItem.objects.raw("SELECT * FROM nfc_useditem ORDER BY checkout desc LIMIT 1")
+		if len(list(rawQuerySet)) > 0:
+			serializer = UsedItemSerializer(result)
+			return Response(serializer.data)
+		else:
+			return Response(None)
 
 
 

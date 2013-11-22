@@ -5,7 +5,6 @@ from nfc.models import WaitingItem, UsedItem
 from nfc.viewsets import WaitingViewSet, UsedViewSet
 admin.autodiscover()
 
-from routers import CustomRouter
 from nfc.views import ApiEndpoint
 from rest_framework import viewsets, routers
 from rest_framework import permissions
@@ -27,7 +26,7 @@ class GroupViewSet(viewsets.ModelViewSet):
 
 
 # Routers provide an easy way of automatically determining the URL conf
-router = CustomRouter()
+router = routers.DefaultRouter()
 #router.register(r'users', UserViewSet)
 #router.register(r'groups', GroupViewSet)
 router.register(r'waitings', WaitingViewSet)

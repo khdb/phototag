@@ -1,0 +1,12 @@
+addWaitingItem				/waitings/ 			POST
+findWaitingItem				/waitings/{id} 			GET
+getNewestWaitingItem/			????				GET
+getOldestWaitingItemOfToday
+countWaitingItemOfToday
+
+
+
+addUsedItem				/useds/				POST
+deleteWaitingItem			/useds/{id} ??			DELETE
+getNewestUsedItem
+countUsedItemOfToday

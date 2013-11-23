@@ -1,6 +1,5 @@
 from django.db import models
 
-
 class WaitingItem(models.Model):
     nfcid = models.CharField(unique=True,primary_key=True, max_length=20)
     image = models.CharField(max_length=100, blank=False, default='')

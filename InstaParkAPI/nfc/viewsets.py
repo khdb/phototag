@@ -146,8 +146,23 @@ class StatisticViewSet(viewsets.GenericViewSet):
 		fromtime = date.strftime('%Y-%m-1 00:00:00')
 		totime = date.strftime('%Y-%m-31 23:59:59')
 		deltaquery = self.rawDeltaQuery(fromtime, totime)
+		thresholds = [3600, 7200, 10800, 14400, 18000, 21600, 25200, 28800, 32400, 36000]
+		name = ["<1h", "<2h", "<3h", "<4h", "<5h", "<6h", "<7h", "<8h", "<9h", "<10h", ">10h"]
+		qualities = [0, 0, 0, 0, 0, 0, 0, 0, 0 ,0, 0]
+		for row in deltaquery:
+			for idx, val in enumerate(thresholds):
+				if row <= val:
+					qualities[idx] += 1
+					break
+				if idx == (len(thresholds) - 1):
+					print row
+					qualities[idx+1] += 1
+		resultmap = []
+		for idx,val in enumerate(qualities):
+			d = dict(index = idx, name = name[idx], value = val)
+			resultmap.append(d)
 		print deltaquery
-	 	return Response(deltaquery)
+	 	return Response(resultmap)
 
 
 	def rawQuery(self, fromtime, totime, statistictype, table, column):
@@ -167,14 +182,10 @@ class StatisticViewSet(viewsets.GenericViewSet):
 	def rawDeltaQuery(self, fromtime, totime):
 		cursor = connection.cursor()
 		selectQuery = "SELECT checkin, checkout "
-		#selectQuery = "SELECT *, (strftime('%s',checkout)), ( strftime('%s', checkin)) as time "
 		fromQuery = "FROM nfc_useditem "
 		whereQuery = "WHERE(checkout >= %s AND checkout <= %s) "
-		print fromtime
-		print totime
 		query = selectQuery + fromQuery + whereQuery
     		cursor.execute(query, [fromtime, totime])
-		print query
 		deltamap = []
 		for row in cursor.fetchall():
 			deltamap.append((row[1] - row[0]).seconds)

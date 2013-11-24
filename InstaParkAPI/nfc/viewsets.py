@@ -7,8 +7,10 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.core.exceptions import ObjectDoesNotExist
 from oauth2_provider.ext.rest_framework import TokenHasReadWriteScope, TokenHasScope
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.db import connection
+
+import calendar
 
 class StatisticType():
 	DAY = "%H"
@@ -38,8 +40,6 @@ class StatisticViewSet(viewsets.GenericViewSet):
 		waitingitem = self.rawQuery(fromtime, totime, StatisticType.DAY, TableName.WAITING, TableName.COLUMN_CHECKIN)
 		useditem = self.rawQuery(fromtime, totime, StatisticType.DAY, TableName.USED, TableName.COLUMN_CHECKIN)
 		resultmap = []
-		print "waitingitem = %s" %waitingitem
-		print "useditem = %s" %useditem
 		for index in range(0,24):
 			key = "%02d" % (index,)
 			d = dict(name = key, index = index, value = 0)
@@ -52,7 +52,25 @@ class StatisticViewSet(viewsets.GenericViewSet):
 
 	@link()
 	def checkinweek(self, request, *args, **kwarfs):
-		return Response("Not implement...")
+		datestr = request.GET.get('date')
+		if datestr is None:
+                	return Response("Wrong paramater", status=status.HTTP_400_BAD_REQUEST)
+		date = datetime.strptime(datestr, '%Y-%m-%d')
+		fromdate = date - timedelta(6)
+		fromtime = fromdate.strftime('%Y-%m-%d 00:00:00')
+		totime = date.strftime('%Y-%m-%d 23:59:59')
+		waitingitem = self.rawQuery(fromtime, totime, StatisticType.WEEK, TableName.WAITING, TableName.COLUMN_CHECKIN)
+		useditem = self.rawQuery(fromtime, totime, StatisticType.WEEK, TableName.USED, TableName.COLUMN_CHECKIN)
+		resultmap = []
+		for index in range(0, 7):
+			key = "%02d" % (index + fromdate.day)
+			d = dict(name = key, index = index, value = 0)
+			if (waitingitem.has_key(key)):
+				d["value"] += waitingitem[key]
+			if (useditem.has_key(key)):
+				d["value"] += useditem[key]
+			resultmap.append(d)
+		return Response(resultmap)
 	
 	@link()
 	def checkinmonth(self, request, *args, **kwarfs):
@@ -60,14 +78,56 @@ class StatisticViewSet(viewsets.GenericViewSet):
 		if datestr is None:
 			return Response("Wrong paramater", status=status.HTTP_400_BAD_REQUEST)
 		date = datetime.strptime(datestr, '%Y-%m-%d')
+		maxday = calendar.monthrange(date.year,date.month)[1]
 		fromtime = date.strftime('%Y-%m-1 00:00:00')
 		totime = date.strftime('%Y-%m-31 23:59:59')
 		waitingitem = self.rawQuery(fromtime, totime, StatisticType.MONTH, TableName.WAITING, TableName.COLUMN_CHECKIN)
 		useditem = self.rawQuery(fromtime, totime, StatisticType.MONTH, TableName.USED, TableName.COLUMN_CHECKIN)
 		resultmap = []
-		print "waitingitem = %s" %waitingitem
-		print "useditem = %s" %useditem
-		for index in range(0,31):
+		d1 = dict(name = "1~7", index = 1, value = 0)
+		d2 = dict(name = "8~14", index = 2, value = 0)
+		d3 = dict(name = "15~21", index = 3, value = 0)
+		d4 = dict(name = "22~28", index = 4, value = 0)
+		d5 = dict(name = "28~end", index = 5, value = 0)
+		for index in range(1,maxday+1):
+			key = "%02d" % (index)
+			d = dict(name = key, index = index, value = 0)
+			value = 0
+			if (waitingitem.has_key(key)):
+				value  += waitingitem[key]
+			if (useditem.has_key(key)):
+				value  += useditem[key]
+			if value > 0:
+				if index <= 7:
+					d1["value"] += value
+				elif index <= 14:
+					d2["value"] += value
+				elif index <= 21:
+					d3["value"] += value
+				elif index <= 28:
+					d4["value"] += value
+				else:
+					d5["value"] += value
+					
+		resultmap.append(d1)
+		resultmap.append(d2)
+		resultmap.append(d3)
+		resultmap.append(d4)
+		resultmap.append(d5)
+	 	return Response(resultmap)
+
+	@link()
+	def checkinyear(self, request, *args, **kwarfs):
+		datestr = request.GET.get('date')
+		if datestr is None:
+			return Response("Wrong paramater", status=status.HTTP_400_BAD_REQUEST)
+		date = datetime.strptime(datestr, '%Y-%m-%d')
+		fromtime = date.strftime('%Y-1-1 00:00:00')
+		totime = date.strftime('%Y-12-31 23:59:59')
+		waitingitem = self.rawQuery(fromtime, totime, StatisticType.YEAR, TableName.WAITING, TableName.COLUMN_CHECKIN)
+		useditem = self.rawQuery(fromtime, totime, StatisticType.YEAR, TableName.USED, TableName.COLUMN_CHECKIN)
+		resultmap = []
+		for index in range(1,13):
 			key = "%02d" % (index,)
 			d = dict(name = key, index = index, value = 0)
 			if (waitingitem.has_key(key)):
@@ -75,8 +135,19 @@ class StatisticViewSet(viewsets.GenericViewSet):
 			if (useditem.has_key(key)):
 				d["value"] += useditem[key]
 			resultmap.append(d)
-		#Get count of waiting item
 	 	return Response(resultmap)
+
+	@link()
+	def delta(self, request, *args, **kwarfs):
+		datestr = request.GET.get('date')
+		if datestr is None:
+			return Response("Wrong paramater", status=status.HTTP_400_BAD_REQUEST)
+		date = datetime.strptime(datestr, '%Y-%m-%d')
+		fromtime = date.strftime('%Y-%m-1 00:00:00')
+		totime = date.strftime('%Y-%m-31 23:59:59')
+		deltaquery = self.rawDeltaQuery(fromtime, totime)
+		print deltaquery
+	 	return Response(deltaquery)
 
 
 	def rawQuery(self, fromtime, totime, statistictype, table, column):
@@ -86,34 +157,38 @@ class StatisticViewSet(viewsets.GenericViewSet):
 		whereQuery = "WHERE(" + column + " >= %s AND " + column +" <= %s) "
 		groupQuery = "GROUP BY (strftime('%s', checkin))" %statistictype
 		query = selectQuery + fromQuery + whereQuery + groupQuery
-		print query
     		cursor.execute(query, [fromtime, totime])
-		#item_map = []
 		d = {}
 		for row in cursor.fetchall():
 			d[row[0]] = row[1]
-			#item_map.append(d)
-		#print item_map
+		cursor.close()
 		return d
-		#print self.dictfetchall(cursor)
 
+	def rawDeltaQuery(self, fromtime, totime):
+		cursor = connection.cursor()
+		selectQuery = "SELECT checkin, checkout "
+		#selectQuery = "SELECT *, (strftime('%s',checkout)), ( strftime('%s', checkin)) as time "
+		fromQuery = "FROM nfc_useditem "
+		whereQuery = "WHERE(checkout >= %s AND checkout <= %s) "
+		print fromtime
+		print totime
+		query = selectQuery + fromQuery + whereQuery
+    		cursor.execute(query, [fromtime, totime])
+		print query
+		deltamap = []
+		for row in cursor.fetchall():
+			deltamap.append((row[1] - row[0]).seconds)
+		cursor.close()
+		return deltamap
+		
 
-	def dictfetchall(self, cursor):
-    		"Returns all rows from a cursor as a dict"
-		desc = cursor.description
-		print "desc = %" %desc
-		return [
-        		dict(zip([col[0] for col in desc], row))
-        		for row in cursor.fetchall()
-    		]
-
-	@link()
-	def test(self, request, *args, **kwargs):
-		print request.GET.get('date')
-        	queryset = WaitingItem.objects.all()
-        	serializer = WaitingItemSerializer(queryset, many=True)
-		return Response(1)
-        	#return Response(serializer.data)
+	def getDateNam7DayAgo(self, date):
+		result = []
+		result.append(date.day)
+		for i in range(0,6):
+			date = date - timedelta(1)
+			result.append(date.day)
+		return result
 
 	
 

@@ -9,6 +9,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from oauth2_provider.ext.rest_framework import TokenHasReadWriteScope, TokenHasScope
 from datetime import datetime, timedelta
 from django.db import connection
+from django.utils.datastructures import MultiValueDictKeyError
 
 import calendar
 
@@ -240,9 +241,11 @@ class UsedViewSet(viewsets.ModelViewSet):
 
 	def create(self, request, *args, **kwargs):
         	serializer = self.get_serializer(data=request.DATA, files=request.FILES)
-
+		print "Welcome create used item"
         	if serializer.is_valid():
 			try:
+				imagefile = self.handlerUploadFile(request.FILES['file'], serializer.object.nfcid)
+				print imagefile
 				waitingItem = WaitingItem.objects.get(nfcid=serializer.object.nfcid)
 				serializer.object.checkin = waitingItem.checkin
 				self.pre_save(serializer.object)
@@ -251,12 +254,22 @@ class UsedViewSet(viewsets.ModelViewSet):
 				waitingItem.delete()
             			headers = self.get_success_headers(serializer.data)
             			return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+			except MultiValueDictKeyError:	
+				return Response("Not found image.", status=status.HTTP_400_BAD_REQUEST)				
 			except ObjectDoesNotExist:
 				return Response("Not found this tag %s" %serializer.object.nfcid, status=status.HTTP_400_BAD_REQUEST)
 
 	        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
+	def handlerUploadFile(self, f, nfcid):
+		timename = datetime.now().strftime("%Y%m%d-%H%M%S")
+		filename = "%s-%s" %(nfcid, timename)
+		mediafolder = "/home/maihuy/InstaParkMedia/"
+		extension = ".jpg"
+		absolutepath = "%s%s%s" %(mediafolder, filename, extension)
+		with open(absolutepath, 'wb+') as destination:
+        		for chunk in f.chunks():
+            			destination.write(chunk)
+		return absolutepath
 
     	@link()
     	def newest(self, request, *args, **kwargs):

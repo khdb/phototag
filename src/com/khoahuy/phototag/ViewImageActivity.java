@@ -1,6 +1,17 @@
 package com.khoahuy.phototag;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+
+import com.khoahuy.network.LoadBitmapAsyncTask;
 import com.khoahuy.phototag.model.NFCItem;
+import com.khoahuy.utils.ConstantUtils;
 import com.khoahuy.utils.DateUtils;
 
 import android.content.Intent;
@@ -29,15 +40,15 @@ public class ViewImageActivity extends AbstractActivity {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_view_image);
-		
-		//To allow up navigation to home activity (Parent activity)
+
+		// To allow up navigation to home activity (Parent activity)
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 
 		imgView = (ImageView) findViewById(R.id.imageView);
 		btnCheckout = (Button) findViewById(R.id.btn_checkout);
 		btnNew = (Button) findViewById(R.id.btn_new);
 		txtCheckin = (TextView) findViewById(R.id.txt_checkin);
-  
+
 		Intent callerIntent = getIntent();
 		Bundle packageFromCaller = callerIntent.getBundleExtra("MyPackage");
 		nfcid = packageFromCaller.getString("nfcid");
@@ -63,9 +74,9 @@ public class ViewImageActivity extends AbstractActivity {
 		});
 
 	}
-	
-	//overwrite the menu from super class
-	//here we don't need any action overflow menus
+
+	// overwrite the menu from super class
+	// here we don't need any action overflow menus
 	public boolean onCreateOptionsMenu(Menu menu) {
 		return false;
 	}
@@ -98,13 +109,13 @@ public class ViewImageActivity extends AbstractActivity {
 
 	
 
-	
-
 	private void getAndDisplayNFCITem() {
-		NFCItem nfcItem = nfcProvider.findWaitingItem(nfcid);
-		Bitmap bmp = BitmapFactory.decodeFile(nfcItem.getImage());
-		Log.i("ViewImageActivity", "img = " + nfcItem.getImage());
-		imgView.setImageBitmap(bmp);
+		NFCItem nfcItem = nfcProvider2.findWaitingItem(nfcid);
+		String imageURL = ConstantUtils.STATIC_URL + nfcItem.getImage();
+		// Bitmap bmp = BitmapFactory.decodeFile(imageURL);
+		Log.d("Huy", "img = " + imageURL);
+		new LoadBitmapAsyncTask(imageURL, imgView).execute();
+		//imgView.setImageBitmap(loadBitmap(imageURL));
 		if (nfcItem.getCheckIn() != null)
 			txtCheckin.setText(DateUtils.getDateString(nfcItem.getCheckIn()));
 

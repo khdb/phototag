@@ -38,6 +38,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 
+import com.khoahuy.database.NFCItemNetworkProvider;
 import com.khoahuy.network.HttpGetAsyncTask;
 import com.khoahuy.network.HttpPostAsyncTask;
 import com.khoahuy.network.TokenManager;
@@ -101,7 +102,12 @@ public class HomeActivity extends AbstractActivity {
 		
 		showReady2ScanBlinkText();
 		
-		TestGet(this);
+		//TestGet(this);
+		//NFCItem nfc = nfcProvider2.findWaitingItem("IDF7AA22");
+		//NFCItem nfc = new NFCItem();
+		//nfc.nfcid = "IDF7AA222";
+		//nfcProvider2.addWaitingItem(nfc);x`
+		//Log.d("Huy", nfc.toString());
 		
 	}
 	
@@ -259,7 +265,7 @@ public class HomeActivity extends AbstractActivity {
 
 
 	private boolean existedUID(String nfcid) {
-		if (nfcProvider.findWaitingItem(nfcid) == null)
+		if (nfcProvider2.findWaitingItem(nfcid) == null)
 			return false;
 		else
 			return true;
@@ -408,7 +414,7 @@ public class HomeActivity extends AbstractActivity {
 		item.setNfcid(nfcid);
 		item.setImage(mCurrentPhotoPath);
 		item.setCheckIn(DateUtils.getCurrentTimestamp());
-		nfcProvider.addWaitingItem(item);
+		nfcProvider2.addWaitingItem(item);
 	}
 	
 	//Khoa

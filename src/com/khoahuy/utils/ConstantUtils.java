@@ -14,8 +14,8 @@ public class ConstantUtils {
 	public static final String DOMAIN = "http://192.168.10.41:8000/"; 
 	public static final String TOKEN_URL =  DOMAIN + "o/token/";
 	public static final String WAITINGITEM_URL = DOMAIN + "waitings/";
-	public static final String USED_ITEM = DOMAIN + "useds/";
-	
+	public static final String USED_ITEM_URL = DOMAIN + "useds/";
+	public static final String STATIC_URL = DOMAIN + "static/";
 	
 	//Token retrun object:
 	public static final String ACCESS_TOKEN = "access_token";

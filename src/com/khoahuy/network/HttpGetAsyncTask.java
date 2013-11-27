@@ -41,13 +41,22 @@ public class HttpGetAsyncTask extends AsyncTask<Void, Void, String> {
 			URL += paramString;
 
 		}
-		accessToken = tokenManager.getAccessToken(false);
-
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.os.AsyncTask#onPreExecute()
+	 */
+	@Override
+	protected void onPreExecute() {
+		
 	}
 
 	@Override
 	protected String doInBackground(Void... params) {
 		try {
+			accessToken = tokenManager.getAccessToken(false);
 			return sendHttpRequest();
 
 		} catch (ClientProtocolException e) {
@@ -73,7 +82,7 @@ public class HttpGetAsyncTask extends AsyncTask<Void, Void, String> {
 		Log.d("Huy", "CODE reponse: " + response.getStatusLine().getStatusCode());
 		switch (response.getStatusLine().getStatusCode()) {
 		case HttpStatus.SC_OK:
-			Log.d("Huy", "OK Status 200");
+		case HttpStatus.SC_NOT_FOUND:
 			break;
 		case HttpStatus.SC_UNAUTHORIZED:
 			// Refresh or create new token"
@@ -109,15 +118,6 @@ public class HttpGetAsyncTask extends AsyncTask<Void, Void, String> {
 	@Override
 	protected void onPostExecute(String result) {
 
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.os.AsyncTask#onPreExecute()
-	 */
-	@Override
-	protected void onPreExecute() {
 	}
 
 }

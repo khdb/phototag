@@ -209,7 +209,36 @@ class WaitingViewSet(viewsets.ModelViewSet):
 	permission_classes = [permissions.IsAuthenticated, TokenHasReadWriteScope]
     	model = WaitingItem
 
-    	@link()
+    	def create(self, request, *args, **kwargs):
+        	serializer = self.get_serializer(data=request.DATA, files=request.FILES)
+        	if serializer.is_valid():
+			try:
+				imagefile = self.handlerUploadFile(request.FILES['file'], serializer.object.nfcid)
+				serializer.object.image = imagefile
+				print imagefile
+				self.pre_save(serializer.object)
+            			self.object = serializer.save(force_insert=True)
+            			self.post_save(self.object, created=True)
+            			headers = self.get_success_headers(serializer.data)
+            			return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+			except MultiValueDictKeyError:	
+				return Response("Not found image.", status=status.HTTP_400_BAD_REQUEST)				
+			except ObjectDoesNotExist:
+				return Response("Not found this tag %s" %serializer.object.nfcid, status=status.HTTP_400_BAD_REQUEST)
+		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+	
+	def handlerUploadFile(self, f, nfcid):
+		timename = datetime.now().strftime("%Y%m%d-%H%M%S")
+		filename = "%s-%s" %(nfcid, timename)
+		mediafolder = "/home/maihuy/InstaParkMedia/"
+		extension = ".jpg"
+		absolutepath = "%s%s%s" %(mediafolder, filename, extension)
+		with open(absolutepath, 'wb+') as destination:
+        		for chunk in f.chunks():
+            			destination.write(chunk)
+		return "%s%s" %(filename, extension)
+
+	@link()
     	def newest(self, request, *args, **kwargs):
 		rawQuerySet = WaitingItem.objects.raw("SELECT * FROM nfc_waitingitem ORDER BY checkin desc LIMIT 1")
 		if len(list(rawQuerySet)) > 0:
@@ -260,6 +289,7 @@ class UsedViewSet(viewsets.ModelViewSet):
 				return Response("Not found this tag %s" %serializer.object.nfcid, status=status.HTTP_400_BAD_REQUEST)
 
 	        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+	
 	def handlerUploadFile(self, f, nfcid):
 		timename = datetime.now().strftime("%Y%m%d-%H%M%S")
 		filename = "%s-%s" %(nfcid, timename)

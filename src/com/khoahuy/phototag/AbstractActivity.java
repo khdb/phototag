@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.Map;
 
 import com.khoahuy.database.NFCItemLocalProvider;
+import com.khoahuy.database.NFCItemNetworkProvider;
 import com.khoahuy.phototag.model.NFCItem;
 import com.khoahuy.phototag.statistic.BarGraph;
 import com.khoahuy.phototag.statistic.DateBarGraph;
@@ -37,6 +38,7 @@ public abstract class AbstractActivity extends Activity {
 	protected AlertDialog mDialog;
 	protected String nfcid;
 	protected NFCItemLocalProvider nfcProvider;
+	protected NFCItemNetworkProvider nfcProvider2;
 
 	private static final int ACTION_PREFS = -1;
 
@@ -59,6 +61,7 @@ public abstract class AbstractActivity extends Activity {
 				getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
 
 		nfcProvider = new NFCItemLocalProvider(this.getContentResolver());
+		nfcProvider2 = new NFCItemNetworkProvider(this);
 	}
 	
 	@Override

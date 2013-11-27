@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.khoahuy.database.NFCItemProvider;
+import com.khoahuy.database.NFCItemLocalProvider;
 import com.khoahuy.database.provider.MyContentProvider;
 import com.khoahuy.utils.DateUtils;
 import com.khoahuy.utils.StatisticUtils;
@@ -12,7 +12,7 @@ import com.khoahuy.utils.StatisticUtils;
 import android.graphics.Color;
 
 public class WeekBarGraph extends BarGraph {
-	public WeekBarGraph(Date date, NFCItemProvider nfcProvider) {
+	public WeekBarGraph(Date date, NFCItemLocalProvider nfcProvider) {
 		try {
 			Map<String, Integer> waitingData = nfcProvider.getCheckinItemOfWeekStatistic(date, MyContentProvider.WAITING_CONTENT_URI);
 			Map<String, Integer> usedData = nfcProvider.getCheckinItemOfWeekStatistic(date, MyContentProvider.USED_CONTENT_URI);

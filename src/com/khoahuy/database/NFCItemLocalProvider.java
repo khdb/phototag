@@ -16,7 +16,7 @@ import com.khoahuy.utils.StatisticUtils;
 import com.khoahuy.database.provider.MyContentProvider;
 import com.khoahuy.phototag.model.NFCItem;
 
-public class NFCItemProvider {
+public class NFCItemLocalProvider {
 
 	private ContentResolver myCR;
 
@@ -27,7 +27,7 @@ public class NFCItemProvider {
 
 	public static final String COLUMN_NFCID = "nfcid";
 
-	public NFCItemProvider(ContentResolver cr) {
+	public NFCItemLocalProvider(ContentResolver cr) {
 		myCR = cr;
 	}
 

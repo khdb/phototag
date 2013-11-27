@@ -19,20 +19,39 @@ package com.khoahuy.phototag;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 
-import com.khoahuy.database.NFCItemProvider;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.ParseException;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+
+import com.khoahuy.network.HttpGetAsyncTask;
+import com.khoahuy.network.HttpPostAsyncTask;
+import com.khoahuy.network.TokenManager;
 import com.khoahuy.phototag.model.NFCItem;
+import com.khoahuy.utils.ConstantUtils;
 import com.khoahuy.utils.DateUtils;
 import com.khoahuy.utils.FileUtils;
 import com.khoahuy.utils.ImageUtils;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -43,6 +62,7 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 
 /**
  * An {@link Activity} which handles a broadcast of a new tag that the device
@@ -80,9 +100,49 @@ public class HomeActivity extends AbstractActivity {
 		totalCount = (TextView) findViewById(R.id.txt_total_count);
 		
 		showReady2ScanBlinkText();
-
+		
+		TestGet(this);
+		
+	}
+	
+	public String TestPost(Context context){
+		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+		nameValuePairs.add(new BasicNameValuePair("nfc", "1s"));
+		Log.d("Huy", "Test 1");
+		HttpPostAsyncTask rat = new HttpPostAsyncTask(context, ConstantUtils.WAITINGITEM_URL,nameValuePairs);
+		rat.execute();
+		try {
+			Log.d("Huy", rat.get());
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			Log.d("Huy", e.toString());
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Log.d("Huy", "Test 2");
+		return "";
 	}
 
+	public String TestGet(Context context){
+		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+		nameValuePairs.add(new BasicNameValuePair("nfcid", "IDBTS853"));
+		HttpGetAsyncTask hat = new HttpGetAsyncTask(context, ConstantUtils.WAITINGITEM_URL, nameValuePairs);
+		
+		hat.execute();
+		try {
+			Log.d("Huy", hat.get());
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			Log.d("Huy", e.toString());
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Log.d("Huy", "Test 2");
+		return "";
+	}
+	
 	private void loadContent() throws IOException {
 		NFCItem nfcItem = nfcProvider.getNewestWaitingItem();
 		if (nfcItem != null) {

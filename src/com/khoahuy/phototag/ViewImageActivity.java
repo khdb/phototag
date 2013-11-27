@@ -1,8 +1,5 @@
 package com.khoahuy.phototag;
 
-import com.imagezoom.ImageAttacher;
-import com.imagezoom.ImageAttacher.OnMatrixChangedListener;
-import com.imagezoom.ImageAttacher.OnPhotoTapListener;
 import com.khoahuy.phototag.model.NFCItem;
 import com.khoahuy.utils.DateUtils;
 
@@ -112,31 +109,6 @@ public class ViewImageActivity extends AbstractActivity {
 			txtCheckin.setText(DateUtils.getDateString(nfcItem.getCheckIn()));
 
 		// usingSimpleImage(imgView);
-	}
-
-	public void usingSimpleImage(ImageView imageView) {
-		ImageAttacher mAttacher = new ImageAttacher(imageView);
-		ImageAttacher.MAX_ZOOM = 2.0f; // Double the current Size
-		ImageAttacher.MIN_ZOOM = 0.5f; // Half the current Size
-		MatrixChangeListener mMaListener = new MatrixChangeListener();
-		mAttacher.setOnMatrixChangeListener(mMaListener);
-		PhotoTapListener mPhotoTap = new PhotoTapListener();
-		mAttacher.setOnPhotoTapListener(mPhotoTap);
-	}
-
-	private class PhotoTapListener implements OnPhotoTapListener {
-
-		@Override
-		public void onPhotoTap(View view, float x, float y) {
-		}
-	}
-
-	private class MatrixChangeListener implements OnMatrixChangedListener {
-
-		@Override
-		public void onMatrixChanged(RectF rect) {
-
-		}
 	}
 
 }

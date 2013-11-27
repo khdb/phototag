@@ -8,7 +8,7 @@ import org.achartengine.model.CategorySeries;
 import org.achartengine.renderer.DefaultRenderer;
 import org.achartengine.renderer.SimpleSeriesRenderer;
 
-import com.khoahuy.database.NFCItemProvider;
+import com.khoahuy.database.NFCItemLocalProvider;
 import com.khoahuy.utils.DateUtils;
 
 import android.content.Context;
@@ -23,7 +23,7 @@ public class PieGraph {
 	protected String timeDisplay;	
 	protected Map<String, Integer> data;
 	
-	public PieGraph(long from, long to, int[] thresholdArray, NFCItemProvider nfcProvider){
+	public PieGraph(long from, long to, int[] thresholdArray, NFCItemLocalProvider nfcProvider){
 		data = nfcProvider.getUsedItemStatistic(
 				from, to, thresholdArray);
 		timeDisplay = " từ " + DateUtils.getDateString(from, "dd/MM/yyyy") + " tới " + DateUtils.getDateString(to, "dd/MM/yyyy");

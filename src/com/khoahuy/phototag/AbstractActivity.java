@@ -5,7 +5,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 
-import com.khoahuy.database.NFCItemProvider;
+import com.khoahuy.database.NFCItemLocalProvider;
 import com.khoahuy.phototag.model.NFCItem;
 import com.khoahuy.phototag.statistic.BarGraph;
 import com.khoahuy.phototag.statistic.DateBarGraph;
@@ -36,7 +36,7 @@ public abstract class AbstractActivity extends Activity {
 	protected PendingIntent mPendingIntent;
 	protected AlertDialog mDialog;
 	protected String nfcid;
-	protected NFCItemProvider nfcProvider;
+	protected NFCItemLocalProvider nfcProvider;
 
 	private static final int ACTION_PREFS = -1;
 
@@ -58,7 +58,7 @@ public abstract class AbstractActivity extends Activity {
 		mPendingIntent = PendingIntent.getActivity(this, 0, new Intent(this,
 				getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
 
-		nfcProvider = new NFCItemProvider(this.getContentResolver());
+		nfcProvider = new NFCItemLocalProvider(this.getContentResolver());
 	}
 	
 	@Override

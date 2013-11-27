@@ -7,7 +7,7 @@ import java.util.Calendar;
 import java.util.List;
 import org.achartengine.GraphicalView;
 
-import com.khoahuy.database.NFCItemProvider;
+import com.khoahuy.database.NFCItemLocalProvider;
 import com.khoahuy.phototag.statistic.BarGraph;
 import com.khoahuy.phototag.statistic.DateBarGraph;
 import com.khoahuy.phototag.statistic.MonthBarGraph;
@@ -181,7 +181,7 @@ public class ReportsActivity extends FragmentActivity implements
 	public void sendReportEmail() throws Exception {
 		Calendar cal = Calendar.getInstance();
 		cal.set(year, month, day);
-		NFCItemProvider nfcProvider = new NFCItemProvider(
+		NFCItemLocalProvider nfcProvider = new NFCItemLocalProvider(
 				this.getContentResolver());
 
 		// Take day graph image
@@ -387,7 +387,7 @@ public class ReportsActivity extends FragmentActivity implements
 
 		public static final String ARG_SECTION_NUMBER = "section_number";
 		public static final String ARG_REPORT_TYPE = "report_type"; // Day|Week|Month|Year
-		protected NFCItemProvider nfcProvider;
+		protected NFCItemLocalProvider nfcProvider;
 		protected View rootView;
 
 		@Override
@@ -402,7 +402,7 @@ public class ReportsActivity extends FragmentActivity implements
 			//
 			Log.i("Huy", "Month = " + month);
 			// test
-			nfcProvider = new NFCItemProvider(getActivity()
+			nfcProvider = new NFCItemLocalProvider(getActivity()
 					.getContentResolver());
 			Calendar cal = Calendar.getInstance();
 			cal.set(year, month, day);

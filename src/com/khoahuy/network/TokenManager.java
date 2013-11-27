@@ -20,6 +20,7 @@ public class TokenManager {
 
 	public String getAccesToken() {
 		try {
+			Log.d("Token", "Get Token: Begin");
 			SharedPreferences settings = context.getSharedPreferences(
 					ConstantUtils.PREFS_NAME, Context.MODE_PRIVATE);
 			String accessToken = settings.getString(ConstantUtils.ACCESS_TOKEN,
@@ -50,11 +51,12 @@ public class TokenManager {
 				ConstantUtils.TOKEN_URL, ConstantUtils.GRANT_TYPE_PASSWORD,
 				ConstantUtils.CLIENT_ID, ConstantUtils.CLIENT_SECRET, 
 				ConstantUtils.CLIENT_USERNAME, ConstantUtils.CLIENT_PASSWORD);
-		tat.execute();
-		return saveTokenFromJson(tat.get());
+		String response = tat.execute().get();
+		return saveTokenFromJson(response);
 	}
 
 	private String saveTokenFromJson(String jsonString) throws JSONException {
+		Log.d("Token", "Save token Token: " + jsonString);
 		JSONObject tokenObject = new JSONObject(jsonString);
 		String accessToken = tokenObject.getString(ConstantUtils.ACCESS_TOKEN);
 		String refreshToken = tokenObject
@@ -76,6 +78,7 @@ public class TokenManager {
 
 	public String refreshToken() {
 		try {
+			Log.d("Token", "Refresh Token: Begin");
 			SharedPreferences settings = context.getSharedPreferences(
 					ConstantUtils.PREFS_NAME, Context.MODE_PRIVATE);
 
@@ -83,12 +86,19 @@ public class TokenManager {
 					ConstantUtils.REFRESH_TOKEN, null);
 
 			if (refreshToken == null)
+			{
+				Log.d("Token", "Refresh Token: Oh no refresh_token is null.");
 				return requestNewAccessToken();
+			}
 			else{
+				Log.d("Token", "Refresh Token: Have refresh_token. Refresh request again access token.");
 				TokenAsyncTask tat = new TokenAsyncTask(context,
 						ConstantUtils.TOKEN_URL, ConstantUtils.GRANT_TYPE_REFRESH,
 						ConstantUtils.CLIENT_ID, ConstantUtils.CLIENT_SECRET, ConstantUtils.REFRESH_TOKEN);
 				tat.execute();
+				String text = tat.get();
+				//return text;
+				Log.d("Token", "Refresh Token: Reponse from server: " + text);
 				return saveTokenFromJson(tat.get());
 			}
 		} catch (ExecutionException e) {

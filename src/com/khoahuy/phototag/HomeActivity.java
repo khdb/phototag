@@ -112,7 +112,8 @@ public class HomeActivity extends AbstractActivity {
 		HttpPostAsyncTask rat = new HttpPostAsyncTask(context, ConstantUtils.WAITINGITEM_URL,nameValuePairs);
 		rat.execute();
 		try {
-			Log.d("Huy", rat.get());
+			String text = rat.get();
+			Log.d("Huy", text);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			Log.d("Huy", e.toString());
@@ -125,13 +126,11 @@ public class HomeActivity extends AbstractActivity {
 	}
 
 	public String TestGet(Context context){
-		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-		nameValuePairs.add(new BasicNameValuePair("nfcid", "IDBTS853"));
-		HttpGetAsyncTask hat = new HttpGetAsyncTask(context, ConstantUtils.WAITINGITEM_URL, nameValuePairs);
+		HttpGetAsyncTask hat = new HttpGetAsyncTask(context, ConstantUtils.WAITINGITEM_URL, "IDBTS853", null);
 		
-		hat.execute();
 		try {
-			Log.d("Huy", hat.get());
+			String text = hat.execute().get();
+			Log.d("Huy", text);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			Log.d("Huy", e.toString());

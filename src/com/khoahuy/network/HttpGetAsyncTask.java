@@ -14,69 +14,96 @@ import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
-import com.khoahuy.exception.UnauthorizedException;
+import com.khoahuy.phototag.model.Token;
 import com.khoahuy.utils.ConstantUtils;
 
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
-
 public class HttpGetAsyncTask extends AsyncTask<Void, Void, String> {
 
-	
 	private List<NameValuePair> nameValuePairs;
 	private String URL;
 	private String accessToken = "";
-	private TokenManager tokenManager;
-	
-	public HttpGetAsyncTask(Context context, String url, List<NameValuePair> params) {
-		URL = url;
+	private Token tokenManager;
+
+	public HttpGetAsyncTask(Context context, String url, String nfcid,
+			List<NameValuePair> params) {
+		URL = url + nfcid;
 		nameValuePairs = params;
-		tokenManager = new TokenManager(context);
-		accessToken = tokenManager.getAccesToken();
-		
+		tokenManager = new Token(context);
+		if (nameValuePairs != null && nameValuePairs.size() > 0)
+		{
+			String paramString = URLEncodedUtils.format(params, "utf-8");
+			if(!URL.endsWith("?"))
+			        URL += "?";
+			URL += paramString;
+
+		}
+		accessToken = tokenManager.getAccessToken(false);
+
 	}
 
 	@Override
-	protected String doInBackground(Void... params){
+	protected String doInBackground(Void... params) {
+		try {
+			return sendHttpRequest();
+
+		} catch (ClientProtocolException e) {
+			// TODO Auto-generated catch block
+			Log.e("Huy", e.getMessage());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			Log.e("Huy", e.getMessage());
+		} catch (Exception e) {
+			Log.e("Huy", e.getMessage());
+		}
+		return "";
+	}
+
+	private String sendHttpRequest() throws ClientProtocolException,
+			IOException, Exception {
 		HttpClient httpclient = new DefaultHttpClient();
-	    URL += "IDBTS853";
-	    HttpGet httpget = new HttpGet(URL);
-	    try {
-	    	httpget.addHeader("Authorization", ConstantUtils.BEARER + " " + accessToken +"1");
-	        HttpResponse response = httpclient.execute(httpget);
-	        switch (response.getStatusLine().getStatusCode()){
-	        	case HttpStatus.SC_OK:
-	        		break;
-	        	case HttpStatus.SC_UNAUTHORIZED:
-	        		//Refresh or create new token"
-	        		accessToken = tokenManager.refreshToken();
-	        		
-	        	default:
-	        		throw new Exception("Request have some problems...");
-	        }
-	    
-	        HttpEntity responseEntity = response.getEntity();
-	        if(responseEntity!=null) {
-	            String mss = EntityUtils.toString(responseEntity);
-		        return mss;
-	        }
-	        
-	    } catch (ClientProtocolException e) {
-	        // TODO Auto-generated catch block
-	    	Log.e("Huy", e.getMessage());
-	    } catch (IOException e) {
-	        // TODO Auto-generated catch block
-	    	Log.e("Huy", e.getMessage());
-	    } catch (Exception e){
-	    	Log.e("Huy", e.getMessage());
-	    }
+		HttpGet httpget = new HttpGet(URL);
+
+		httpget.addHeader("Authorization", ConstantUtils.BEARER + " "
+				+ accessToken);
+		HttpResponse response = httpclient.execute(httpget);
+		Log.d("Huy", "CODE reponse: " + response.getStatusLine().getStatusCode());
+		switch (response.getStatusLine().getStatusCode()) {
+		case HttpStatus.SC_OK:
+			Log.d("Huy", "OK Status 200");
+			break;
+		case HttpStatus.SC_UNAUTHORIZED:
+			// Refresh or create new token"
+			Log.d("Huy", "Unauthorized Status 401");
+			accessToken = tokenManager.getAccessToken(true);
+			if (("").equals(accessToken))
+			{
+				throw new Exception("Request have some problems...");
+			}
+			httpget.removeHeaders("Authorization");
+			httpget.addHeader("Authorization", ConstantUtils.BEARER + " "
+					+ accessToken);
+			Log.d("Huy", "Request again");
+			response = httpclient.execute(httpget);
+			break;
+		default:
+			throw new Exception("Request have some problems...");
+		}
+
+		HttpEntity responseEntity = response.getEntity();
+		if (responseEntity != null) {
+			String mss = EntityUtils.toString(responseEntity);
+			return mss;
+		}
 		return "";
 	}
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
 	 */
 	@Override
@@ -86,6 +113,7 @@ public class HttpGetAsyncTask extends AsyncTask<Void, Void, String> {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see android.os.AsyncTask#onPreExecute()
 	 */
 	@Override

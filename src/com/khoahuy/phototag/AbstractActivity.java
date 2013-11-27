@@ -145,14 +145,16 @@ public abstract class AbstractActivity extends Activity {
 	}
 	
 	protected void checkoutNFCItem(String nfcid) {
-		NFCItem nfcItem = nfcProvider.findWaitingItem(nfcid);
+		/*NFCItem nfcItem = nfcProvider.findWaitingItem(nfcid);
 		if (nfcItem != null) {
 			if (nfcProvider.deleteWaitingItem(nfcid)) {
 				// Delete image file:
-				renameImageFileToTemp(nfcItem.getImage());
-				nfcProvider.addUsedItem(nfcItem);
+				//renameImageFileToTemp(nfcItem.getImage());
+				nfcProvider2.addUsedItem(nfcItem);
 			}
-		}
+		}*/
+		NFCItem nfcItem = nfcProvider2.findWaitingItem(nfcid);
+		nfcProvider2.addUsedItem(nfcItem);
 	}
 	
 	private void renameImageFileToTemp(String filePath) {

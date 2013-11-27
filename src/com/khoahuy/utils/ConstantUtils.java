@@ -14,7 +14,11 @@ public class ConstantUtils {
 	public static final String DOMAIN = "http://192.168.10.41:8000/"; 
 	public static final String TOKEN_URL =  DOMAIN + "o/token/";
 	public static final String WAITINGITEM_URL = DOMAIN + "waitings/";
-	public static final String USED_ITEM_URL = DOMAIN + "useds/";
+	public static final String WAITINGITEM_NEWEST_URL = WAITINGITEM_URL + "0/newest";
+	public static final String WAITINGITEM_COUNT_TODAY_URL = WAITINGITEM_URL + "0/countToday";
+	public static final String USEDITEM_URL = DOMAIN + "useds/";
+	public static final String USEDITEM_NEWEST_URL = USEDITEM_URL + "0/newest";
+	public static final String USEDITEM_COUNT_TODAY_URL = USEDITEM_URL + "0/countToday";
 	public static final String STATIC_URL = DOMAIN + "static/";
 	
 	//Token retrun object:
@@ -29,3 +33,4 @@ public class ConstantUtils {
 	public static final String BEARER = "bearer";
 		
 }
+

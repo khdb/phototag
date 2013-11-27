@@ -111,10 +111,7 @@ public class ViewImageActivity extends AbstractActivity {
 
 	private void getAndDisplayNFCITem() {
 		NFCItem nfcItem = nfcProvider2.findWaitingItem(nfcid);
-		String imageURL = ConstantUtils.STATIC_URL + nfcItem.getImage();
-		// Bitmap bmp = BitmapFactory.decodeFile(imageURL);
-		Log.d("Huy", "img = " + imageURL);
-		new LoadBitmapAsyncTask(imageURL, imgView).execute();
+		new LoadBitmapAsyncTask(nfcItem.getImage(), imgView).execute();
 		//imgView.setImageBitmap(loadBitmap(imageURL));
 		if (nfcItem.getCheckIn() != null)
 			txtCheckin.setText(DateUtils.getDateString(nfcItem.getCheckIn()));

@@ -33,24 +33,32 @@ public class HttpGetAsyncTask extends AsyncTask<Void, Void, String> {
 		URL = url + nfcid;
 		nameValuePairs = params;
 		tokenManager = new Token(context);
-		if (nameValuePairs != null && nameValuePairs.size() > 0)
-		{
+		if (nameValuePairs != null && nameValuePairs.size() > 0) {
 			String paramString = URLEncodedUtils.format(params, "utf-8");
-			if(!URL.endsWith("?"))
-			        URL += "?";
+			if (!URL.endsWith("?"))
+				URL += "?";
 			URL += paramString;
 
 		}
 	}
-	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.os.AsyncTask#onPreExecute()
-	 */
+
+	public HttpGetAsyncTask(Context context, String url,
+			List<NameValuePair> params) {
+		URL = url;
+		nameValuePairs = params;
+		tokenManager = new Token(context);
+		if (nameValuePairs != null && nameValuePairs.size() > 0) {
+			String paramString = URLEncodedUtils.format(params, "utf-8");
+			if (!URL.endsWith("?"))
+				URL += "?";
+			URL += paramString;
+
+		}
+	}
+
 	@Override
 	protected void onPreExecute() {
-		
+
 	}
 
 	@Override
@@ -79,7 +87,8 @@ public class HttpGetAsyncTask extends AsyncTask<Void, Void, String> {
 		httpget.addHeader("Authorization", ConstantUtils.BEARER + " "
 				+ accessToken);
 		HttpResponse response = httpclient.execute(httpget);
-		Log.d("Huy", "CODE reponse: " + response.getStatusLine().getStatusCode());
+		Log.d("Huy", "CODE reponse: "
+				+ response.getStatusLine().getStatusCode());
 		switch (response.getStatusLine().getStatusCode()) {
 		case HttpStatus.SC_OK:
 		case HttpStatus.SC_NOT_FOUND:
@@ -88,8 +97,7 @@ public class HttpGetAsyncTask extends AsyncTask<Void, Void, String> {
 			// Refresh or create new token"
 			Log.d("Huy", "Unauthorized Status 401");
 			accessToken = tokenManager.getAccessToken(true);
-			if (("").equals(accessToken))
-			{
+			if (("").equals(accessToken)) {
 				throw new Exception("Request have some problems...");
 			}
 			httpget.removeHeaders("Authorization");

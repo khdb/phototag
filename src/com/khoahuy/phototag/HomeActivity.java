@@ -41,6 +41,7 @@ import org.json.JSONObject;
 import com.khoahuy.database.NFCItemNetworkProvider;
 import com.khoahuy.network.HttpGetAsyncTask;
 import com.khoahuy.network.HttpPostAsyncTask;
+import com.khoahuy.network.LoadBitmapAsyncTask;
 import com.khoahuy.network.TokenManager;
 import com.khoahuy.phototag.model.NFCItem;
 import com.khoahuy.utils.ConstantUtils;
@@ -149,38 +150,36 @@ public class HomeActivity extends AbstractActivity {
 	}
 	
 	private void loadContent() throws IOException {
-		NFCItem nfcItem = nfcProvider.getNewestWaitingItem();
+		NFCItem nfcItem = nfcProvider2.getNewestWaitingItem();
 		if (nfcItem != null) {
-			Bitmap bmp = BitmapFactory.decodeFile(nfcItem.getImage());
-			img1.setImageBitmap(bmp);
+			new LoadBitmapAsyncTask(nfcItem.getImage(), img1).execute();
 			if (nfcItem.getCheckIn() != null)
+			{
 				//text1.setText(DateUtils.getDateString(nfcItem.getCheckIn()) + " - " +  DateUtils.getRelativeTime(nfcItem.getCheckIn()));
 			    text1.setText(DateUtils.getRelativeTime(nfcItem.getCheckIn()));
+			}
 		} else {
 			img1.setImageResource(R.raw.noimage);
 			text1.setText(R.string.check_in_not_found);
 		}
   
 		// Get last waiting item from 24h ago
-		nfcItem = nfcProvider.getNewestUsedItem();
+		nfcItem = nfcProvider2.getNewestUsedItem();
 		if (nfcItem != null) {
-			File temp = FileUtils.createImageFileTemp(getAlbumName());
-			if (temp.exists()) {
-				Bitmap bmp = BitmapFactory.decodeFile(temp.getAbsolutePath());
-				img2.setImageBitmap(bmp);
-			} else
-				img2.setImageResource(R.raw.noimage);
+			nfcItem.setImage("temp.jpg");
+			new LoadBitmapAsyncTask(nfcItem.getImage(), img2).execute();
 			if (nfcItem.getCheckIn() != null)
-				//text2.setText(DateUtils.getDateString(nfcItem.getCheckIn()) + " - " + DateUtils.getRelativeTime(nfcItem.getCheckIn()));
 			    text2.setText( DateUtils.getRelativeTime(nfcItem.getCheckIn()));
+			else
+				text2.setText(R.string.check_in_not_found);
 		} else {
 			img2.setImageResource(R.raw.noimage);
 			text2.setText(R.string.check_in_not_found);
 		}
 
 		// Update Checkin/Checkout/Total count
-		int checkinItemToday = nfcProvider.countWaitingItemOfToday();
-		int checkoutItemToday = nfcProvider.countUsedItemOfToday();
+		int checkinItemToday = nfcProvider2.countWaitingItemOfToday();
+		int checkoutItemToday = nfcProvider2.countUsedItemOfToday();
 		int totalItemToday = checkinItemToday + checkoutItemToday;
 		checkinCount.setText(String.valueOf(checkinItemToday));
 		checkoutCount.setText(String.valueOf(checkoutItemToday));
@@ -209,11 +208,7 @@ public class HomeActivity extends AbstractActivity {
 		super.onResume();
 		try {
 			loadContent();
-
-			CharSequence title = "Photo Tag " + nfcProvider.countWaitingItem();
-			Log.i("Huy", "Title = " + title);
-			//this.setTitle(title); //no need to change title
-
+			
 			Intent callerIntent = getIntent();
 			if (callerIntent != null
 					&& Intent.EXTRA_UID.equals(callerIntent.getAction())) {
